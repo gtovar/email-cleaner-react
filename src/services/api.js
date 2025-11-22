@@ -1,5 +1,8 @@
-// src/services/api.js
-const API_BASE = 'http://localhost:3000/api/v1';
+// 1) Leer de Vite env, con un fallback seguro:
+const DEFAULT_API_BASE = 'http://localhost:3000/api/v1';
+
+const API_BASE =
+  (import.meta.env && import.meta.env.VITE_API_BASE_URL) || DEFAULT_API_BASE;
 
 function getAuthHeaders() {
   const token = localStorage.getItem('accessToken') || 'dummy';
