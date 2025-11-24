@@ -2,16 +2,19 @@
 import { useEffect, useState } from 'react';
 import { getSuggestions } from '../services/api.js';
 import ConfirmButton from './ConfirmButton.jsx';
+import StatusMessage from './StatusMessage.jsx';
 
 function SuggestionsList() {
   const [emails, setEmails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [feedbackType, setFeedbackType] = useState(null);
 
   useEffect(() => {
     async function loadSuggestions() {
       setLoading(true);
       setFeedback(null);
+      setFeedbackType(null);
 
       try {
         const data = await getSuggestions('daily');
@@ -34,17 +37,19 @@ function SuggestionsList() {
     // Remueve el email de la lista local (idempotente)
     setEmails((prev) => prev.filter((email) => email.id !== emailId));
     setFeedback(`✅ Acción "${action}" confirmada para el correo ${emailId}`);
+    setFeedbackType('success');
   };
 
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Sugerencias de limpieza</h2>
 
-      {loading && <p className="mb-4 text-sm text-gray-500">Cargando...</p>}
+      <StatusMessage
+      message={feedback}
+      type={feedbackType || 'info'}
+      />
 
-      {feedback && (
-        <div className="mb-4 text-sm text-blue-700">{feedback}</div>
-      )}
+      {loading && <p className="mb-4 text-sm text-gray-500">Cargando...</p>}
 
       {!loading && emails.length === 0 && (
         <p className="text-sm text-gray-500">

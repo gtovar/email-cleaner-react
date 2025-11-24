@@ -2,11 +2,13 @@
 import { useEffect, useState } from 'react';
 import { getHistory, confirmAction } from '../services/api.js';
 import HistoryItem from './HistoryItem.jsx';
+import StatusMessage from './StatusMessage.jsx';
 
 function HistoryList() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [feedbackType, setFeedbackType] = useState(null);
   const [page, setPage] = useState(1);
   const perPage = 20; // fijo y explícito en el componente
 
@@ -23,6 +25,7 @@ function HistoryList() {
                 setFeedback(
                     err.message || '❌ Error al cargar el historial desde el backend.',
                 );
+                setFeedbackType('error');
                 setHistory([]); //esta linea porque la agregaste que hace cual es su funcion quiero imaginar que hay un error en el try luego que?
             } finally {
                 setLoading(false);
@@ -36,9 +39,11 @@ function HistoryList() {
       setFeedback(null);
       await confirmAction([emailId], action);
       setFeedback(`✅ Acción "${action}" repetida para ${emailId}`);
+      setFeedbackType('success');
     } catch (err) {
       console.error(err);
       setFeedback(err.message || '❌ Error al repetir la acción.');
+      setFeedbackType('error');
     }
   };
 
@@ -49,11 +54,16 @@ function HistoryList() {
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Historial de acciones</h2>
 
-      {loading && <p className="mb-4 text-sm text-gray-500">Cargando...</p>}
+      <StatusMessage
+      message={feedback}
+      type={feedbackType || 'info'}
+      />
 
-      {feedback && (
-        <div className="mb-4 text-sm text-blue-700">{feedback}</div>
+
+      {loading && (
+          <p className="mb-4 text-sm text-gray-500">Cargando...</p>
       )}
+
 
       {!loading && history.length === 0 && (
         <p className="text-sm text-gray-500">
