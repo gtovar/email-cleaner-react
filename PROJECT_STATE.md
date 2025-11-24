@@ -2,227 +2,153 @@
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
 SNAPSHOT_DATE: 2025-11-21 19:45 CST
+AUTHOR: Gilberto / ChatGPT
 COMMIT: b24e4b40934bf31c83fc3fac82a8939f5f5d9ac1
 ENVIRONMENT: local development (npm run dev)
 
-COMPONENT_SCOPE:
-  - React 18 + Vite
-  - TailwindCSS
-  - Custom HTTP service layer (api.js)
-  - Two main views: SuggestionsList, HistoryList
-  - Manual navigation via state (no React Router)
-
 Notes:
-- Snapshot covers ONLY this frontend repository.
-- Backend Fastify and ML service are external dependencies.
-- The frontend depends strictly on API_BASE configuration.
+- This snapshot covers ONLY the React frontend repository.
+- Fastify backend and ML microservice are external dependencies.
+- The frontend depends on a correct configuration of VITE_API_BASE_URL.
+- State is based on the current codebase, not on plans or memory.
 
 ---
 
 ## 2. Executive Summary
 
-The frontend builds and mounts correctly under Vite.  
-Two functional screens exist: “Suggestions” and “History”.  
-Navigation is implemented through internal state in `App.jsx`.  
-API calls are centralized in `src/services/api.js` and successfully reach the backend when API_BASE is correct.  
-However, several flows remain incomplete or out of sync with backend behaviour.
+This snapshot reflects the real, verifiable state of the React frontend at commit b24e4b4.  
+The app builds and mounts correctly under Vite.  
+Two working screens exist: Suggestions and History.  
+Navigation between both views is handled via local state in App.jsx.  
+HTTP communication is centralized in src/services/api.js and uses VITE_API_BASE_URL from .env files.  
+Basic loading, empty and error states exist in the main components.  
+Further UX reliability work is tracked under HU8.
 
 ---
 
 ## 3. Component-by-Component Technical State
 
-### 3.1 React Application Structure
+### 3.1 Fastify Backend
+
+- Not part of this repository snapshot.
+- See backend PROJECT_STATE.md for Fastify details.
+
+### 3.2 ML Microservice (FastAPI)
+
+- Not part of this repository snapshot.
+- See ML service PROJECT_STATE.md (when available).
+
+### 3.3 React Frontend
 
 - Code present:
-  - `src/App.jsx`
-  - `src/components/SuggestionsList.jsx`
-  - `src/components/HistoryList.jsx`
-  - `src/components/ConfirmButton.jsx`
-  - `src/services/api.js`
-  - `src/main.jsx`
-  - `tailwind.config.js`
-  - `index.html`
+  - src/App.jsx
+  - src/components/SuggestionsList.jsx
+  - src/components/HistoryList.jsx
+  - src/components/ConfirmButton.jsx
+  - src/services/api.js
+  - src/main.jsx
+  - tailwind.config.js
+  - index.html
+- Working screens:
+  - Suggestions: loads and displays suggestion cards, supports accept/reject.
+  - History: loads and displays action history, supports “repeat action”.
+- Connected to backend:
+  - Uses VITE_API_BASE_URL from .env.example / .env.local in src/services/api.js.
+  - Endpoints used: /notifications/summary, /notifications/confirm, /notifications/history.
+- Tests:
+  - No frontend test suite is present in this repository.
 
-- App shell:
-  - Navigation via `activeTab` state.
-  - Renders:
-    - `<SuggestionsList />`  
-    - `<HistoryList />`  
+### 3.4 PostgreSQL Database
 
-- Styling:
-  - TailwindCSS integrated and working.
+- Not directly used or configured in this repository.
+- Database access is handled entirely by the backend.
 
----
+### 3.5 n8n
 
-### 3.2 Suggestions Feature (GET /suggestions)
+- Not present in this frontend repository.
 
-- Component:
-  - `src/components/SuggestionsList.jsx`
+### 3.6 Docker Infrastructure
 
-- Behaviour:
-  - On mount → calls `getSuggestions()` from `api.js`.
-  - Displays suggestion cards with accept/reject buttons.
-  - Uses `ConfirmButton` to call backend.
-
-- Verified against repo:
-  - UI renders but suggestions mapping logic is partial.
-  - No empty-state handling (“no suggestions available”).
-  - No loading state.
-  - No error boundary.
-
----
-
-### 3.3 Confirm Action Feature (POST /notifications/confirm)
-
-- Code in:
-  - `src/components/ConfirmButton.jsx`
-  - `src/services/api.js`
-
-- Behaviour:
-  - Sends `{ ids, action }` payload.
-  - Shows success message (“Acción X confirmada…”).
-
-- Verified:
-  - Works when backend responds correctly.
-  - Error state exists but is simplistic.
-  - No optimistic UI or disabling while loading.
-
----
-
-### 3.4 History Feature (GET /notifications/history)
-
-- Component:
-  - `src/components/HistoryList.jsx`
-
-- Behaviour:
-  - On mount → calls `getHistory()`.
-  - Renders list of action cards.
-  - “Repetir acción” calls `confirmAction()` again.
-
-- Verified:
-  - Cards render.
-  - Payload mapping is incomplete (missing date formatting, missing perPage/page UI).
-  - No pagination UI.
-  - No empty-state messaging.
-
----
-
-### 3.5 Navigation
-
-- Implemented in:
-  - `src/App.jsx`
-
-- Verified:
-  - functional, stable, no router required.
-  - switching tabs does not crash the SPA.
-
-- Limitation:
-  - No URL-based navigation (refresh resets the view).
-  - No global state persistence.
-
----
-
-### 3.6 API Layer (src/services/api.js)
-
-- API_BASE defined directly in file.
-- Methods:
-  - getSuggestions()
-  - confirmAction()
-  - getHistory()
-
-- Verified issues:
-  - API_BASE is hardcoded, must be configurable.
-  - No centralized headers beyond Bearer token.
-  - Error handling is minimal.
+- This repository does not define its own docker-compose stack.
+- Frontend is run with npm run dev against an existing backend environment.
 
 ---
 
 ## 4. User Story Status (Evidence-Driven)
 
-### HU6 — “Frontend wiring: Suggestions + Confirm + History”
+### HU7 — API_BASE externalization + Environment readiness (Frontend)
 
-**Status:** PARTIAL
+Status: DONE
 
-**Evidence:**
-- SuggestionsList exists and calls `/suggestions`.
-- ConfirmAction works via ConfirmButton.
-- HistoryList exists and calls `/notifications/history`.
-- Navigation between both screens working.
+Evidence:
+- src/services/api.js reads API_BASE from import.meta.env.VITE_API_BASE_URL.
+- .env.example defines VITE_API_BASE_URL=http://localhost:3000/api/v1.
+- .env.local defines VITE_API_BASE_URL for local development.
+- SuggestionsList.jsx, HistoryList.jsx and ConfirmButton.jsx use the centralized API functions from src/services/api.js.
+- Manual execution via npm run dev confirms that the frontend can reach the backend using the configured API base.
 
-**Pending:**
-- Empty states for both screens.
-- Loading states.
-- Error handling consistent with backend.
-- History pagination UI.
-- Schema alignment with backend suggestions payload.
+Pending (real items):
+- None.
 
-**Technical risks:**
-- UI behaviour may break if backend ML schema changes.
-- Lack of validation on suggestion items.
-- Missing loading/error boundaries cause UI flicker.
+Risks (technical):
+- None identified for API_BASE configuration at this snapshot.
 
-**Recent decision/change:**
-- Kept PARTIAL because flows exist but are not robust nor aligned with final backend contracts.
+Decision (recent change):
+- Marked as DONE at commit b24e4b4 after verifying that API_BASE is no longer hardcoded and all main flows use the env-based HTTP service.
 
 ---
 
-### HU7 — “API_BASE externalization + Environment readiness”
+### HU8 — Frontend UX reliability (loading, errors, empty states)
 
-**Status:** NOT_STARTED
+Status: IN_PROGRESS
 
-**Evidence:**
-- API_BASE hardcoded in `src/services/api.js`.
+Evidence:
+- SuggestionsList.jsx implements:
+  - loading state while fetching suggestions,
+  - empty-state message when the list is empty,
+  - basic error feedback for failures.
+- HistoryList.jsx implements:
+  - loading state while fetching history,
+  - empty-state message when there are no actions,
+  - basic error feedback for failures,
+  - “repeat action” flow via confirmAction.
+- ConfirmButton.jsx:
+  - disables while loading,
+  - shows success and error messages.
 
-**Pending:**
-- Move API_BASE to env or config layer.
-- Add switching for dev/stage/prod builds.
+Pending (real items):
+- HistoryList pagination UI is not implemented (page/perPage are fixed in code).
+- Error handling is not unified at a global level (no shared error boundary or global banner).
+- No retry logic or structured error codes mapping.
+- No automated frontend tests to assert loading/error/empty behaviours.
 
-**Technical risks:**
-- Hardcoded URL breaks deploys and local/remote testing.
+Risks (technical):
+- History pagination cannot be controlled from the UI at this stage.
+- Error handling is basic and duplicated across components.
+- Any change in backend payload shape may break mapping without tests detecting it.
 
-**Decision:**
-- Marked as NOT_STARTED until env-based configuration is implemented.
-
----
-
-### HU8 — “Frontend UX reliability (loading, errors, empty states)”
-
-**Status:** NOT_STARTED
-
-**Evidence:**
-- No loading states.
-- Limited error handling.
-- No empty-state UI in Suggestions or History.
-
-**Pending:**
-- Implement loading skeletons or spinners.
-- Add empty-state UI for both screens.
-- Unified error messages and retry options.
-
-**Technical risks:**
-- Unclear behaviour when backend returns empty lists or error codes.
-
-**Decision:**
-- Marked as NOT_STARTED; blocked only by implementation.
+Decision (recent change):
+- Marked as IN_PROGRESS at commit b24e4b4 to reflect that loading/empty/error states exist,
+  but pagination and global UX reliability are still incomplete.
 
 ---
 
 ## 5. Current Technical Risks
 
-- Contract drift between backend suggestions payload and frontend mapping.
-- No environment-based configuration for API_BASE.
-- No pagination controls in HistoryList.
-- Limited error handling across the SPA.
+- No automated tests exist for the React components (Suggestions, History, ConfirmButton).
+- History pagination is hardcoded and not exposed via UI controls.
+- Error handling is basic and not centralized; there is no global error boundary or shared error component.
+- Frontend depends on backend contracts without a typed client or schema validation.
 
 ---
 
 ## 6. Next Immediate Action
 
-➡️ Externalize API_BASE into an environment config (HU7) and update `api.js` to use it.
+➡️ Implement pagination controls in HistoryList.jsx using the existing page/perPage parameters, and verify the behaviour manually against the backend.
 
 ---
 
 ## Version log
 
-- 2025-11-21 19:45 CST — Initial creation of PROJECT_STATE.md based on full code audit (commit: pending)
+- 2025-11-21 19:45 CST — Updated HU7 to DONE and HU8 to IN_PROGRESS; aligned risks and next step with current React code (commit: b24e4b40934bf31c83fc3fac82a8939f5f5d9ac1).
 
