@@ -4,17 +4,64 @@
 
 ---
 
-### 2025-11-20 — Snapshot inicial generado para el frontend (PROJECT_STATE.md y README_REENTRY.md creados).
+### 2025-11-20 — Snapshot inicial generado para el frontend
 
-### 2025-11-20 — HU7 creada tras detectar API_BASE hardcoded en `src/services/api.js`.
+* PROJECT_STATE.md y README_REENTRY.md creados.
 
-### 2025-11-21 — API_BASE externalizado a `VITE_API_BASE_URL` y fallback local verificado. HU7 marcada como DONE.
+### 2025-11-20 — HU7 creada
 
-### 2025-11-21 — Validado loading, empty state y error handling básico en `SuggestionsList`, `HistoryList` y `ConfirmButton`.
+* Detectado API_BASE hardcoded en `src/services/api.js`.
 
-### 2025-11-21 — Se definió HU8 (UX Reliability) con pendientes reales: paginación, consistencia de errores y retry pattern.
+### 2025-11-21 — HU7 completada
 
-### 2025-11-21 — Se corrigió inconsistencia histórica: HU6 confirm/history pertenece solo al backend y se elimina del frontend.
+* API_BASE externalizado a `VITE_API_BASE_URL`.
+* Fallback local verificado.
 
-### 2025-11-21 — PROJECT_STATE.md actualizado para reflejar HU7 DONE y HU8 IN_PROGRESS.
+### 2025-11-21 — UX básico validado
+
+* Loading, empty state y error handling en SuggestionsList, HistoryList, ConfirmButton.
+
+### 2025-11-21 — HU8 definida
+
+* UX Reliability pendiente: paginación, error consistency y retry pattern.
+
+### 2025-11-21 — Corrección histórica
+
+* HU6 confirm/history pertenece solo al backend.
+
+### 2025-11-21 — PROJECT_STATE.md actualizado
+
+* HU7 marcada como DONE.
+* HU8 marcada como IN_PROGRESS.
+
+---
+
+### 2025-11-25 — HU8: Pagination implemented in HistoryList
+
+* Added page state and perPage control.
+* Added Previous/Next controls.
+* getHistory now uses dynamic page.
+* Behaviour stable across pages.
+
+### 2025-11-25 — HU8: Standardized error handling
+
+* Created `StatusMessage.jsx`.
+* Replaced ad-hoc error/success messages in all components.
+
+### 2025-11-25 — HU10: Confirmation flow completed
+
+* ConfirmButton unified with StatusMessage.
+* SuggestionsList hides items after confirmation.
+* HistoryList repeat-action verified manually.
+
+---
+
+### 2025-11-27 — README_REENTRY updated using official template
+
+* Migrated to standard reentry structure.
+* Single Next Action set (HU13 active).
+
+### 2025-11-27 — HU13 created
+
+* Retry + timeout client introduced as new HU.
 

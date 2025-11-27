@@ -1,111 +1,102 @@
 # 📄 README_REENTRY.md — Frontend React
 
-*(Email Cleaner & Smart Notifications — React App)*
-
-**Last updated:** 2025-11-20
+**Last updated:** 2025-11-27
 **Branch:** `main`
-**Scope:** Solo frontend React (Vite + Tailwind).
-**Backend:** vive en repositorio separado.
+**Scope:** Frontend React (Vite + Tailwind)
+**Backend:** External Fastify service (separate repository)
 
 ---
 
-# 1. Current Position (Where you left off)
+# 1. Current Position (Where You Left Off)
 
-* La app React **compila y corre** con `npm run dev`.
+The frontend is stable and fully functional:
 
-* Existen **dos vistas funcionales**:
+* SuggestionsList loads suggestions with loading, empty-state and unified error handling.
+* HistoryList displays action history, supports real pagination and allows repeating actions.
+* ConfirmButton shows success/error states using StatusMessage.
+* API_BASE is correctly loaded from `VITE_API_BASE_URL`.
+* Navigation inside App.jsx works without router.
+* HU8 (UX Reliability) and HU10 (Confirm actions) were completed in this session.
 
-  * `SuggestionsList` (carga /summary → muestra sugerencias → permite aceptar/rechazar)
-  * `HistoryList` (carga /history → muestra registros → permite repetir acciones)
-
-* La navegación está controlada desde `App.jsx` con `activeView` (`suggestions | history`).
-
-* `Navigation.jsx` **existe**, pero **no está cableado** a `App.jsx`.
-
-* `API_BASE` sigue **hard-coded** en `src/services/api.js`.
-
-* **No hay tests** en este repositorio.
+No broken flows, no pending wiring.
 
 ---
 
-# 2. Active View / Active HU
+# 2. Active HU (What is currently being worked on)
 
-**HU7 — Externalizar API_BASE a variables de entorno de Vite**
-(Esta HU fue creada para continuar el flujo y es la siguiente en ejecución.)
+**HU13 — Robust HTTP Client (retry + timeout)**
+Focused on improving the resilience of the frontend requests.
 
 ---
 
-# 3. How to Resume Work (First command + first place to look)
+# 3. How to Resume Work
 
-### 3.1 Levantar backend y frontend
+(First command + first file to inspect)
 
-Backend Fastify (en su repo):
+### 3.1 Start backend & frontend
+
+Backend (separate repo):
 
 ```
 npm run dev
 ```
 
-Frontend React:
+Frontend:
 
 ```
 npm install
 npm run dev
 ```
 
-Asegúrate que el backend está en **[http://localhost:3000](http://localhost:3000)** o ajusta API_BASE al nuevo puerto.
+### 3.2 Environment
+
+`.env` must include:
+
+```
+VITE_API_BASE_URL=http://localhost:3000/api/v1
+```
 
 ---
 
-# 4. What to Do Next (Single Next Action)
+# 4. What To Do Next
 
-➡️ **Reemplazar API_BASE hard-coded en `src/services/api.js` por `import.meta.env.VITE_API_BASE` y crear `.env` con Vite.**
+(Single Next Action)
 
-Este paso habilita:
-
-* Deploys futuros
-* Configuración por ambiente
-* Evitar drift entre frontend y backend
+➡️ Implement retry + timeout wrappers inside `src/services/api.js` as part of HU13.
 
 ---
 
-# 5. Files you must open right now
+# 5. Files You Must Open Right Now
 
-Abrir estos archivos EXACTAMENTE en este orden:
+(In this exact order)
 
 1. `src/services/api.js`
-   Para reemplazar el hard-coded API_BASE.
+2. `src/components/SuggestionsList.jsx`
+3. `src/components/HistoryList.jsx`
+4. `src/components/ConfirmButton.jsx`
 
-2. `.env.example` (crear si no existe)
-   Para definir `VITE_API_BASE=http://localhost:3000/api/v1`.
-
-3. `vite.config.js`
-   Verificar si se necesita exponer variables (por ahora no).
-
-4. `src/App.jsx`
-   Para confirmar que navigation y vistas funcionan tras el cambio.
+These files are directly impacted by HU13.
 
 ---
 
 # 6. Known Risks (Frontend only)
 
-* API_BASE hard-coded (corregido al ejecutar HU7).
-* Navigation.jsx está sin wiring.
-* No existe paginación real en HistoryList (usa siempre page=1).
-* No existe retry/backoff ni manejo global de errores.
-* No hay tests unitarios o de integración.
+* No automated test suite yet (covered in HU14).
+* Retry/timeout is not implemented (current HU).
+* Pagination still depends on array length; backend changes might require metadata.
 
 ---
 
-# 7. Environment requirements
+# 7. Environment Requirements
 
 * Node.js 20+
 * npm 10+
-* Vite (incluido como dev dependency)
-* Backend Fastify corriendo en el host local
+* Vite (as dev dependency)
+* Backend running at the configured API base URL
 
 ---
 
-# 8. Useful commands
+# 8. Useful Commands
 
 ### Development
 
@@ -129,7 +120,7 @@ npm run preview
 
 # 9. Notes
 
-* Este archivo no describe User Stories ni el estado técnico; eso está en `PROJECT_STATE.md`.
-* No contiene backlog, roadmap ni sprint details.
-* Solo sirve para reingresar al proyecto sin confusión.
+* This file does not contain backlog or User Stories.
+* The technical state is documented in `PROJECT_STATE.md`.
+* This file only exists to safely resume the project without reviewing old conversations.
 
