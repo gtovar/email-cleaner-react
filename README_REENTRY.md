@@ -1,7 +1,9 @@
 # 📄 README_REENTRY.md — Frontend React
 
-**Last updated:** 2025-11-27
-**Branch:** `main`
+*(Email Cleaner & Smart Notifications — React App)*
+
+**Last updated:** 2025-11-28
+**Branch:** `develop`
 **Scope:** Frontend React (Vite + Tailwind)
 **Backend:** External Fastify service (separate repository)
 
@@ -9,23 +11,23 @@
 
 # 1. Current Position (Where You Left Off)
 
-The frontend is stable and fully functional:
+The frontend is fully operational:
 
-* SuggestionsList loads suggestions with loading, empty-state and unified error handling.
-* HistoryList displays action history, supports real pagination and allows repeating actions.
-* ConfirmButton shows success/error states using StatusMessage.
-* API_BASE is correctly loaded from `VITE_API_BASE_URL`.
-* Navigation inside App.jsx works without router.
-* HU8 (UX Reliability) and HU10 (Confirm actions) were completed in this session.
+* SuggestionsList loads suggestions with loading, empty-state, and normalized error handling.
+* HistoryList loads paginated history, supports repeating actions, and shows proper feedback.
+* ConfirmButton works with success/error states through StatusMessage.
+* API_BASE and timeout values are read from environment variables.
+* All network requests now use the centralized resilient client (`httpRequest`).
+* HU8, HU10, and HU13 are completed and verified manually.
 
-No broken flows, no pending wiring.
+No broken flows. No pending wiring. No temporary test code remaining.
 
 ---
 
 # 2. Active HU (What is currently being worked on)
 
-**HU13 — Robust HTTP Client (retry + timeout)**
-Focused on improving the resilience of the frontend requests.
+**HU14 — Frontend Test Suite (Unit + Integration)**
+Focus: configure Jest/Vitest and add tests for the HTTP client and UI components.
 
 ---
 
@@ -35,7 +37,7 @@ Focused on improving the resilience of the frontend requests.
 
 ### 3.1 Start backend & frontend
 
-Backend (separate repo):
+Backend (separate repository):
 
 ```
 npm run dev
@@ -54,36 +56,35 @@ npm run dev
 
 ```
 VITE_API_BASE_URL=http://localhost:3000/api/v1
+VITE_API_TIMEOUT_MS=5000
 ```
 
 ---
 
-# 4. What To Do Next
+# 4. What To Do Next (Single Next Action)
 
-(Single Next Action)
-
-➡️ Implement retry + timeout wrappers inside `src/services/api.js` as part of HU13.
+➡️ **Initialize HU14 by creating the frontend test environment (Jest/Vitest).**
 
 ---
 
 # 5. Files You Must Open Right Now
 
-(In this exact order)
+(Open exactly in this order)
 
 1. `src/services/api.js`
-2. `src/components/SuggestionsList.jsx`
-3. `src/components/HistoryList.jsx`
+2. `src/services/__tests__/` *(to be created for HU14)*
+3. `src/components/StatusMessage.jsx`
 4. `src/components/ConfirmButton.jsx`
 
-These files are directly impacted by HU13.
+These are the first targets for the initial HU14 test cases.
 
 ---
 
 # 6. Known Risks (Frontend only)
 
-* No automated test suite yet (covered in HU14).
-* Retry/timeout is not implemented (current HU).
-* Pagination still depends on array length; backend changes might require metadata.
+* No automated test suite (critical for resilience).
+* Error normalization and retry logic presently verified only with manual testing.
+* Pagination correctness depends on backend metadata.
 
 ---
 
@@ -121,6 +122,6 @@ npm run preview
 # 9. Notes
 
 * This file does not contain backlog or User Stories.
-* The technical state is documented in `PROJECT_STATE.md`.
-* This file only exists to safely resume the project without reviewing old conversations.
+* The full technical state lives in `PROJECT_STATE.md`.
+* This file exists only to allow safe resumption without reviewing previous conversations.
 
