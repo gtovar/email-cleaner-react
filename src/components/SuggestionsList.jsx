@@ -22,9 +22,8 @@ function SuggestionsList() {
         setEmails(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error(err);
-        setFeedback(
-          err.message || '❌ Error al cargar sugerencias desde el backend.',
-        );
+        setFeedback( err.message || '❌ Error al cargar sugerencias desde el backend.');
+          setFeedbackType('error');
       } finally {
         setLoading(false);
       }

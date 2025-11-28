@@ -10,7 +10,7 @@ function HistoryList() {
   const [feedback, setFeedback] = useState(null);
   const [feedbackType, setFeedbackType] = useState(null);
   const [page, setPage] = useState(1);
-  const perPage = 20; // fijo y explícito en el componente
+  const perPage = 20;
 
     useEffect(() => {
         async function loadHistory() {
@@ -22,11 +22,9 @@ function HistoryList() {
                 setHistory(Array.isArray(data) ? data : []);
             } catch (err) {
                 console.error(err);
-                setFeedback(
-                    err.message || '❌ Error al cargar el historial desde el backend.',
-                );
+                setFeedback( err.message || '❌ Error al cargar el historial desde el backend.');
                 setFeedbackType('error');
-                setHistory([]); //esta linea porque la agregaste que hace cual es su funcion quiero imaginar que hay un error en el try luego que?
+                setHistory([]); 
             } finally {
                 setLoading(false);
             }
