@@ -1,126 +1,159 @@
-# 📄 README_REENTRY.md — Frontend React
+# ✅ README_REENTRY.md (VERSIÓN FINAL — FRONTEND)
 
-**Last updated:** 2025-11-27
-**Branch:** `main`
-**Scope:** Frontend React (Vite + Tailwind)
-**Backend:** External Fastify service (separate repository)
+**Email Cleaner & Smart Notifications — Frontend (React + Vite)**
+**Reentry File — For fast project continuation**
 
 ---
 
-# 1. Current Position (Where You Left Off)
+## 1. Current Context Snapshot
 
-The frontend is stable and fully functional:
+* **Repository:** `email-cleaner-react`
+* **Active branch:** `feature/hu14-frontend-test-suite`
+* **Working HU:** **HU14 — Frontend Test Suite**
+* **Completed tasks in this branch:**
 
-* SuggestionsList loads suggestions with loading, empty-state and unified error handling.
-* HistoryList displays action history, supports real pagination and allows repeating actions.
-* ConfirmButton shows success/error states using StatusMessage.
-* API_BASE is correctly loaded from `VITE_API_BASE_URL`.
-* Navigation inside App.jsx works without router.
-* HU8 (UX Reliability) and HU10 (Confirm actions) were completed in this session.
+  * T-HU14-01 — Testing environment setup (Vitest + RTL + happy-dom)
+  * T-HU14-02 — Component test suite (StatusMessage, ConfirmButton, SuggestionsList)
+  * T-HU14-03 — HistoryList tests + integration flow
+* **All frontend tests are currently passing (`npm test`)**
 
-No broken flows, no pending wiring.
-
----
-
-# 2. Active HU (What is currently being worked on)
-
-**HU13 — Robust HTTP Client (retry + timeout)**
-Focused on improving the resilience of the frontend requests.
+The project is stable. The frontend test suite is now considered *feature-complete* for HU14.
 
 ---
 
-# 3. How to Resume Work
+## 2. What Changed in the Last Session
 
-(First command + first file to inspect)
+* Complete rewrite and cleanup of all frontend test files to follow:
 
-### 3.1 Start backend & frontend
+  * English-only code
+  * Comments aligned with the Good Practices Guide
+  * API mocks corrected and standardized
+* Added full test coverage for:
 
-Backend (separate repo):
+  * `StatusMessage`
+  * `ConfirmButton`
+  * `SuggestionsList`
+  * `HistoryList`
+  * Integration flow (suggestion → confirmAction → UI update)
+* Updated API mocking patterns to use `vi.mock()` + `await import()` consistently
+* No production component was modified solo to satisfy tests
 
-```
-npm run dev
-```
+---
 
-Frontend:
+## 3. Exact Commands to Resume Work
+
+From the project root:
 
 ```
 npm install
 npm run dev
+npm test
 ```
 
-### 3.2 Environment
-
-`.env` must include:
+If tests fail due to environment issues, verify:
 
 ```
-VITE_API_BASE_URL=http://localhost:3000/api/v1
+vite.config.js → test.environment = 'happy-dom'
+vite.config.js → test.setupFiles = './tests/setupTests.js'
 ```
 
 ---
 
-# 4. What To Do Next
+## 4. Where the Workflow Stopped
 
-(Single Next Action)
+You stopped **after finishing all HU14 test tasks** and before updating documentation:
 
-➡️ Implement retry + timeout wrappers inside `src/services/api.js` as part of HU13.
+* `PROJECT_STATE.md` (frontend) pending update with HU14 DONE
+* `Sprint_Log.md` (frontend) pending update
+* This `README_REENTRY.md` now updated
 
----
-
-# 5. Files You Must Open Right Now
-
-(In this exact order)
-
-1. `src/services/api.js`
-2. `src/components/SuggestionsList.jsx`
-3. `src/components/HistoryList.jsx`
-4. `src/components/ConfirmButton.jsx`
-
-These files are directly impacted by HU13.
+No coding tasks remain for HU14.
 
 ---
 
-# 6. Known Risks (Frontend only)
+## 5. Immediate Next Step
 
-* No automated test suite yet (covered in HU14).
-* Retry/timeout is not implemented (current HU).
-* Pagination still depends on array length; backend changes might require metadata.
+### **Next concrete action (Step 1):**
+
+Merge branch:
+
+```
+git checkout main
+git merge feature/hu14-frontend-test-suite
+```
+
+### **Then (Step 2):**
+
+Update documentation in `main`:
+
+* PROJECT_STATE.md
+* Sprint_Log.md
+
+### **Then (Step 3):**
+
+Decide next HU:
+
+* **HU15 (opción natural):** Integración de HistoryList con backend real
+* **o HU16:** UI/UX cleanup
+* **o HU17:** E2E tests (Playwright)
 
 ---
 
-# 7. Environment Requirements
+## 6. Technical Quick Reference
 
-* Node.js 20+
-* npm 10+
-* Vite (as dev dependency)
-* Backend running at the configured API base URL
-
----
-
-# 8. Useful Commands
-
-### Development
+Run dev server:
 
 ```
 npm run dev
 ```
 
-### Build
+Run full test suite:
 
 ```
-npm run build
+npm test
 ```
 
-### Preview build
+Run tests in watch mode:
 
 ```
-npm run preview
+npm run test:watch
+```
+
+Run coverage:
+
+```
+npm run test:coverage
+```
+
+Key folders:
+
+```
+src/components/
+src/services/api.js
+tests/
 ```
 
 ---
 
-# 9. Notes
+## 7. Notes for Future You
 
-* This file does not contain backlog or User Stories.
-* The technical state is documented in `PROJECT_STATE.md`.
-* This file only exists to safely resume the project without reviewing old conversations.
+* The frontend is now test-ready for interview demos.
+* HU14 is complete; don’t reopen it.
+* If you return after a long break, always start by:
+
+```
+git pull
+npm install
+npm test
+```
+
+---
+
+## 8. Reentry Status
+
+**Updated:** yes
+**Aligned with current branch:** yes
+**Dependencies installed:** yes
+**Tests passing:** yes
+**Safe to continue:** yes
 

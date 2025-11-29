@@ -40,28 +40,62 @@
 
 * Added page state and perPage control.
 * Added Previous/Next controls.
-* getHistory now uses dynamic page.
-* Behaviour stable across pages.
 
 ### 2025-11-25 — HU8: Standardized error handling
 
 * Created `StatusMessage.jsx`.
-* Replaced ad-hoc error/success messages in all components.
+* Unified success/error messages.
 
 ### 2025-11-25 — HU10: Confirmation flow completed
 
-* ConfirmButton unified with StatusMessage.
-* SuggestionsList hides items after confirmation.
-* HistoryList repeat-action verified manually.
+* Confirmation buttons functional.
+* SuggestionsList and HistoryList verified manually.
 
 ---
 
-### 2025-11-27 — README_REENTRY updated using official template
+### 2025-11-27 — README_REENTRY updated
 
-* Migrated to standard reentry structure.
-* Single Next Action set (HU13 active).
+* Migrated to official reentry format.
 
 ### 2025-11-27 — HU13 created
 
-* Retry + timeout client introduced as new HU.
+* Retry + timeout client defined as new HU.
+
+---
+
+### 2025-11-28 — HU13 implemented
+
+* Added resilient HTTP client (`httpRequest`) with retry/timeout.
+* Updated getSuggestions, getHistory, confirmAction.
+
+### 2025-11-28 — Code cleanup post-HU13
+
+* Removed temporary logs, forced errors, and delay test code.
+
+### 2025-11-28 — PROJECT_STATE updated
+
+* HU13 marked DONE with full technical evidence.
+
+### 2025-11-28 — HU14 / T-HU14-01 + T-HU14-02
+
+- T-HU14-01 — Setup Vitest + React Testing Library + happy-dom — DONE.
+- T-HU14-02 — Tests iniciales:
+  - StatusMessage (render básico + tipos de mensaje).
+  - ConfirmButton (loading, éxito, error).
+  - SuggestionsList (loading, empty, error, acción “Aceptar”).
+- Deuda explícita:
+  - T-HU14-03 para HistoryList + flujo de integración.
+  - TODOs anotados en archivos de test.
+
+### 2025-11-29 — HU14 / T-HU14-03 implementada
+
+* Se agregaron tests completos para HistoryList: loading, empty, error, paginación y repeatAction.
+* Se implementó test de integración confirmActionFlow.
+* Suite completa del frontend estable bajo Vitest.
+
+### 2025-11-29 — HU14 cerrada (frontend)
+
+* T-HU14-01, T-HU14-02 y T-HU14-03 marcadas como DONE.
+* Tests unitarios + integración del frontend finalizados.
+* Preparación para actualización de PROJECT_STATE y README_REENTRY.
 
