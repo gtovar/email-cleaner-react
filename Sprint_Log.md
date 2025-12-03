@@ -99,3 +99,16 @@
 * Tests unitarios + integración del frontend finalizados.
 * Preparación para actualización de PROJECT_STATE y README_REENTRY.
 
+### 2025-11-30 — HU14 merged into main
+* Frontend test suite (16 tests) fully green.
+* Branch feature/hu14-frontend-test-suite merged into main.
+* Documentation updates started (PROJECT_STATE.md and README_REENTRY.md).
+
+### 2025-12-02 — HU15 httpRequest unit tests completed
+* Added tests/httpRequest.test.jsx to cover httpRequest success, timeout, network errors, 4xx, 5xx and retry behaviour.
+* Full frontend test suite remains green after adding HU15 tests.
+
+### 2025-12-03 — Frontend README rewritten
+* README updated using official documentation guide.
+* Added quick start, testing, API endpoints, structure, contribution rules.
+

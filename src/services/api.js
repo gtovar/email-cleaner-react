@@ -7,7 +7,7 @@ const API_BASE =
 const DEFAULT_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS) || 5000;
 const DEFAULT_MAX_RETRIES = 2;
 
-async function httpRequest(
+export async function httpRequest(
   path,
   {
     method = 'GET',
@@ -158,5 +158,3 @@ export async function getHistory(page = 1, perPage = 20) {
       return Array.isArray(result?.data) ? result.data : [];
 
 }
-
-
