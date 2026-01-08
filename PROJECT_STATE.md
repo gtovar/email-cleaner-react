@@ -11,7 +11,7 @@ Nada inventado. Nada adelantado. Todo verificado.
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: **2025-11-30 22:15 CST**
+SNAPSHOT_DATE: **2026-01-06 02:00 CST**
 COMMIT: **0545850d** (extraído del snapshot real)
 ENVIRONMENT: **main (local development)**
 

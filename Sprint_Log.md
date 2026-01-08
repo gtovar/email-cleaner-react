@@ -112,3 +112,5 @@
 * README updated using official documentation guide.
 * Added quick start, testing, API endpoints, structure, contribution rules.
 
+Token usage: total=80,299 input=71,254 (+ 358,016 cached) output=9,045 (reasoning 4,800)
+To continue this session, run codex resume 019ae13f-a072-7171-bea5-9b94e5bbe91c

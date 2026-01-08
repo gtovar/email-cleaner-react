@@ -6,8 +6,8 @@
 ## 1. Current Context Snapshot
 
 - **Repository:** `email-cleaner-react`
-- **Active branch:** `main`
-- **Last completed HU:** **HU15 — httpRequest unit tests**
+- **Active branch:** `develop`
+- **Last completed HU:** **HU15 — httpRequest unit tests**, UI suggestions + confirm button + history list + tests vitest
 - **Current technical state:**
   - Frontend fully stable.
   - 16+ tests passing (unit + integration + httpRequest).
