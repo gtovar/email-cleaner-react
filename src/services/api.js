@@ -141,10 +141,10 @@ export async function getSuggestions(period = 'daily') {
     return Array.isArray(data) ? data : [];
 }
 
-export async function confirmAction(ids, action) {
+export async function confirmAction(emailIds, action) {
     const data = await httpRequest('/notifications/confirm', {
         method: 'POST',
-        body: { ids, action },
+        body: { emailIds, action },
     });
 
     // Mantenemos el contrato actual: devolver lo que el backend diga

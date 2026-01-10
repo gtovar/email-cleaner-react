@@ -128,23 +128,23 @@ tests/httpRequest.test.jsx
 
   * Read PROJECT_STATE.md (frontend) for the latest snapshot.
   * Read Sprint_Log.md for historical context.
-* Keep new work in feature branches:
+* Keep new work in HU branches:
 
-  * `feature/huXX-...`
+  * `feat/hu17-unify-suggestions-summary`
 * Always run:
 
   ```bash
   npm test
   ```
 
-  before merging into `main`.
+  before merging into `develop`.
+* Update `main` only from `develop` for releases/checkpoints.
 
 ---
 
 ## 8. Reentry Status
 
 **Updated:** yes
-**Aligned with main:** yes
+**Aligned with develop:** yes
 **All tests passing:** yes
 **Next task open:** yes (to be decided)
-

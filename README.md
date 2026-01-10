@@ -156,10 +156,10 @@ These documents must remain consistent with code and tests.
 
 ## 9. Contribution Guide
 
-1. Create a branch based on `main`:
+1. Create a branch based on `develop` (allowed types: feat/, fix/, docs/, refactor/, chore/):
 
    ```bash
-   git checkout -b feature/<hu-or-task-name>
+   git checkout -b feat/hu17-unify-suggestions-summary
    ```
 2. Follow commit best practices:
 
@@ -173,7 +173,8 @@ These documents must remain consistent with code and tests.
    ```
 
    before pushing.
-4. Submit PR → review → squash merge into `main`.
+4. Submit PR → review → squash merge into `develop`.
+5. Update `main` only from `develop` for releases/checkpoints.
 
 ---
 
