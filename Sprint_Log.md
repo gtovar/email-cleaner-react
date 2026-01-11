@@ -1,101 +1,21 @@
-# 📄 Sprint_Log.md — Frontend React
+# Sprint_Log.md — Frontend React
 
-*(Email Cleaner & Smart Notifications — React App)*
-
----
-
-### 2025-11-20 — Snapshot inicial generado para el frontend
-
-* PROJECT_STATE.md y README_REENTRY.md creados.
-
-### 2025-11-20 — HU7 creada
-
-* Detectado API_BASE hardcoded en `src/services/api.js`.
-
-### 2025-11-21 — HU7 completada
-
-* API_BASE externalizado a `VITE_API_BASE_URL`.
-* Fallback local verificado.
-
-### 2025-11-21 — UX básico validado
-
-* Loading, empty state y error handling en SuggestionsList, HistoryList, ConfirmButton.
-
-### 2025-11-21 — HU8 definida
-
-* UX Reliability pendiente: paginación, error consistency y retry pattern.
-
-### 2025-11-21 — Corrección histórica
-
-* HU6 confirm/history pertenece solo al backend.
-
-### 2025-11-21 — PROJECT_STATE.md actualizado
-
-* HU7 marcada como DONE.
-* HU8 marcada como IN_PROGRESS.
+Sprint: 2026-01
+Scope: UI alignment for suggestions vs summary
+Backend: yes (email-cleaner-fastify)
+Frontend: yes
 
 ---
 
-### 2025-11-25 — HU8: Pagination implemented in HistoryList
+### 2025-11-28 — HU13 completed
+- Added HTTP client retries and timeouts in `src/services/api.js`.
 
-* Added page state and perPage control.
-* Added Previous/Next controls.
+### 2025-11-29 — HU14 completed
+- Frontend test suite stabilized under Vitest.
 
-### 2025-11-25 — HU8: Standardized error handling
+### 2025-12-03 — HU15 completed
+- Added `tests/httpRequest.test.jsx` for HTTP client coverage.
 
-* Created `StatusMessage.jsx`.
-* Unified success/error messages.
-
-### 2025-11-25 — HU10: Confirmation flow completed
-
-* Confirmation buttons functional.
-* SuggestionsList and HistoryList verified manually.
-
----
-
-### 2025-11-27 — README_REENTRY updated
-
-* Migrated to official reentry format.
-
-### 2025-11-27 — HU13 created
-
-* Retry + timeout client defined as new HU.
-
----
-
-### 2025-11-28 — HU13 implemented
-
-* Added resilient HTTP client (`httpRequest`) with retry/timeout.
-* Updated getSuggestions, getHistory, confirmAction.
-
-### 2025-11-28 — Code cleanup post-HU13
-
-* Removed temporary logs, forced errors, and delay test code.
-
-### 2025-11-28 — PROJECT_STATE updated
-
-* HU13 marked DONE with full technical evidence.
-
-### 2025-11-28 — HU14 / T-HU14-01 + T-HU14-02
-
-- T-HU14-01 — Setup Vitest + React Testing Library + happy-dom — DONE.
-- T-HU14-02 — Tests iniciales:
-  - StatusMessage (render básico + tipos de mensaje).
-  - ConfirmButton (loading, éxito, error).
-  - SuggestionsList (loading, empty, error, acción “Aceptar”).
-- Deuda explícita:
-  - T-HU14-03 para HistoryList + flujo de integración.
-  - TODOs anotados en archivos de test.
-
-### 2025-11-29 — HU14 / T-HU14-03 implementada
-
-* Se agregaron tests completos para HistoryList: loading, empty, error, paginación y repeatAction.
-* Se implementó test de integración confirmActionFlow.
-* Suite completa del frontend estable bajo Vitest.
-
-### 2025-11-29 — HU14 cerrada (frontend)
-
-* T-HU14-01, T-HU14-02 y T-HU14-03 marcadas como DONE.
-* Tests unitarios + integración del frontend finalizados.
-* Preparación para actualización de PROJECT_STATE y README_REENTRY.
-
+### 2026-01-11 — Summary widget added
+- Added `src/components/SummaryPanel.jsx`.
+- Aligned suggestions list with `/api/v1/suggestions`.

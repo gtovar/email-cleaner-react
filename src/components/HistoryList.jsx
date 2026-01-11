@@ -69,7 +69,7 @@ function HistoryList() {
         </p>
       )}
 
-      {history.length > 0 && (// no me explicaste esto
+      {history.length > 0 && (
           <>
           <div className="space-y-3">
           {history.map((item) => {
@@ -103,7 +103,7 @@ function HistoryList() {
           <button
           type="button"
           onClick={() => {
-              if (canGoNext) { //Aqui no me explicaste esto en tus respuestas cambiaste esta linea
+              if (canGoNext) { 
                   setPage((p) => p + 1);
               }
           }}
