@@ -129,16 +129,16 @@ function getAuthHeaders() {
   };
 }
 
-export async function getSuggestions(period = 'daily') {
-    const data = await httpRequest(
-        `/notifications/summary?period=${encodeURIComponent(period)}`,
-        {
-            method: 'GET',
-        }
-    );
+export async function getSuggestions() {
+  const data = await httpRequest('/suggestions', { method: 'GET' });
+  return data.emails;
+}
 
-    // El backend devuelve un array de sugerencias directamente
-    return Array.isArray(data) ? data : [];
+export async function getSummary(period = 'daily') {
+  return httpRequest(
+    `/notifications/summary?period=${encodeURIComponent(period)}`,
+    { method: 'GET' }
+  );
 }
 
 export async function confirmAction(emailIds, action) {
