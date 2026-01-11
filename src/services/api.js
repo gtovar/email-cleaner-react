@@ -129,22 +129,22 @@ function getAuthHeaders() {
   };
 }
 
-export async function getSuggestions(period = 'daily') {
-    const data = await httpRequest(
-        `/notifications/summary?period=${encodeURIComponent(period)}`,
-        {
-            method: 'GET',
-        }
-    );
-
-    // El backend devuelve un array de sugerencias directamente
-    return Array.isArray(data) ? data : [];
+export async function getSuggestions() {
+  const data = await httpRequest('/suggestions', { method: 'GET' });
+  return data.emails;
 }
 
-export async function confirmAction(ids, action) {
+export async function getSummary(period = 'daily') {
+  return httpRequest(
+    `/notifications/summary?period=${encodeURIComponent(period)}`,
+    { method: 'GET' }
+  );
+}
+
+export async function confirmAction(emailIds, action) {
     const data = await httpRequest('/notifications/confirm', {
         method: 'POST',
-        body: { ids, action },
+        body: { emailIds, action },
     });
 
     // Mantenemos el contrato actual: devolver lo que el backend diga

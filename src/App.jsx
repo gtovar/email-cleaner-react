@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SummaryPanel from './components/SummaryPanel.jsx';
 import SuggestionsList from './components/SuggestionsList.jsx';
 import HistoryList from './components/HistoryList.jsx';
 import Navigation from './components/Navigation.jsx';
@@ -14,7 +15,12 @@ function App() {
       </header>
 
       <main>
-        {activeView === 'summary' && <SuggestionsList />}
+        {activeView === 'summary' && (
+          <div className="p-4">
+            <SummaryPanel />
+            <SuggestionsList />
+          </div>
+        )}
         {activeView === 'history' && <HistoryList />}
       </main>
     </div>
@@ -22,4 +28,3 @@ function App() {
 }
 
 export default App;
-
