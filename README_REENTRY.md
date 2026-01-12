@@ -11,6 +11,7 @@
 - Added OAuth callback handling and login button in `src/App.jsx`.
 - Updated `src/services/api.js` to use cookie-based auth (`credentials: 'include'`).
 - Documented OAuth variables in `.env.example` and README.
+- Aligned HU label fields in `PROJECT_STATE.md` with the frontend template.
 
 ## 3) Exact Commands to Resume Work
 ```bash

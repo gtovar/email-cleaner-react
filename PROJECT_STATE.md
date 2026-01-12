@@ -1,13 +1,13 @@
 # PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-01-11 23:51 CST — Commit: pending
+Last updated: 2026-01-12 01:45 CST — Commit: pending
 
 ---
 
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-01-11 23:51 CST
+SNAPSHOT_DATE: 2026-01-12 01:45 CST
 COMMIT: pending
 ENVIRONMENT: develop
 
@@ -117,37 +117,37 @@ Notes:
 
 ### HU17 — Suggestions vs Summary alignment (frontend)
 
-**Status:** IN_PROGRESS
+**Estado:** IN_PROGRESS
 
-**Evidence:**
+**Evidencia comprobable:**
 - `src/components/SummaryPanel.jsx`
 - `src/components/SuggestionsList.jsx`
 - `src/services/api.js`
 
-**Open items:**
+**Pendientes (reales):**
 - Add tests for SummaryPanel states.
 
-**Technical risks:**
+**Riesgos técnicos:**
 - SummaryPanel has no automated tests.
 
-**Recent change:**
+**Decisión o cambio reciente:**
 - Summary widget added alongside the suggestions list (commit: pending).
 
 ### HU18 — Google OAuth session flow (frontend)
 
-**Status:** IN_PROGRESS
+**Estado:** IN_PROGRESS
 
-**Evidence:**
+**Evidencia comprobable:**
 - `src/App.jsx` (login button + callback handling)
 - `src/services/api.js` (`credentials: 'include'`)
 
-**Open items:**
+**Pendientes (reales):**
 - Add tests for auth callback behavior.
 
-**Technical risks:**
+**Riesgos técnicos:**
 - Frontend depends on backend cookie settings (SameSite/Secure).
 
-**Recent change:**
+**Decisión o cambio reciente:**
 - OAuth UI flow wired to backend login (commit: pending).
 
 ---
@@ -168,3 +168,4 @@ Notes:
 # Version log
 
 - 2026-01-11 23:51 CST — Doc alignment and tests verified (commit: pending)
+- 2026-01-12 01:45 CST — Template label alignment for HU sections (commit: pending)

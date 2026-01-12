@@ -22,3 +22,6 @@ Frontend: yes
 
 ### 2026-01-11 — OAuth UI flow wired
 - Added login button and callback handling for backend OAuth.
+
+### 2026-01-12 — Frontend doc alignment
+- Updated `PROJECT_STATE.md` to match the frontend template labels.
