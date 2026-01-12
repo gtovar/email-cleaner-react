@@ -1,15 +1,15 @@
 # PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-01-11 17:44 CST — Commit: pending
+Last updated: 2026-01-11 23:51 CST — Commit: pending
 
 ---
 
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-01-11 17:44 CST
+SNAPSHOT_DATE: 2026-01-11 23:51 CST
 COMMIT: pending
-ENVIRONMENT: feat/hu18-oauth-flow
+ENVIRONMENT: develop
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -94,6 +94,7 @@ Notes:
 - `.env.example` present: yes.
 - Required env vars:
   - `VITE_API_BASE_URL`
+  - `VITE_API_ORIGIN`
 - Dev environment state:
   - Works against local Fastify backend endpoints.
 
@@ -108,7 +109,7 @@ Notes:
   - `tests/integration/confirmActionFlow.test.jsx`
   - `tests/httpRequest.test.jsx`
 - Status:
-  - Not re-run after SummaryPanel addition.
+  - PASS (Vitest, 6 files / 21 tests).
 
 ---
 
@@ -127,10 +128,10 @@ Notes:
 - Add tests for SummaryPanel states.
 
 **Technical risks:**
-- OAuth UI not implemented; requires manual token setup.
+- SummaryPanel has no automated tests.
 
 **Recent change:**
-- Summary widget added alongside the suggestions list (commit: 28b4a26).
+- Summary widget added alongside the suggestions list (commit: pending).
 
 ### HU18 — Google OAuth session flow (frontend)
 
@@ -144,7 +145,7 @@ Notes:
 - Add tests for auth callback behavior.
 
 **Technical risks:**
-- Frontend relies on backend setting httpOnly session cookie.
+- Frontend depends on backend cookie settings (SameSite/Secure).
 
 **Recent change:**
 - OAuth UI flow wired to backend login (commit: pending).
@@ -166,5 +167,4 @@ Notes:
 
 # Version log
 
-- 2026-01-11 14:53 CST — SummaryPanel added and suggestions aligned to `/api/v1/suggestions` (commit: 28b4a26)
-- 2026-01-11 17:44 CST — OAuth UI flow wired to backend cookie auth (commit: pending)
+- 2026-01-11 23:51 CST — Doc alignment and tests verified (commit: pending)

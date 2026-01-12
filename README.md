@@ -1,7 +1,7 @@
 # Email Cleaner & Smart Notifications — Frontend (React + Vite)
 
 Frontend application for the Email Cleaner & Smart Notifications system.  
-This interface allows users to visualize ML-generated suggestions, review the action history, and interact with the backend via a resilient HTTP client.
+This interface allows users to visualize ML-generated suggestions, view summary aggregates, review action history, and interact with the backend via a resilient HTTP client.
 
 This README follows the project’s official documentation style.
 
@@ -12,6 +12,7 @@ This README follows the project’s official documentation style.
 This repository contains the **React + Vite frontend** for:
 
 - Displaying categorized email suggestions (from ML service).
+- Showing aggregated summary metrics (daily/weekly).
 - Reviewing historical actions (confirm/reject decisions).
 - Sending confirm/reject actions to the backend.
 - Providing a clean UI for interacting with the Fastify backend and ML microservice.
@@ -101,11 +102,13 @@ Testing environment:
 ```txt
 src/
  ├─ components/
+ │   ├─ SummaryPanel.jsx
  │   ├─ SuggestionsList.jsx
  │   ├─ HistoryList.jsx
- │   └─ Navigation.jsx
+ │   ├─ ConfirmButton.jsx
+ │   └─ StatusMessage.jsx
  ├─ services/
- │   └─ api.js               # httpRequest(), getSuggestions(), getHistory(), confirmAction()
+ │   └─ api.js               # httpRequest(), getSuggestions(), getSummary(), getHistory(), confirmAction()
  └─ App.jsx
 
 tests/
@@ -120,30 +123,30 @@ tests/
 
 The frontend interacts strictly with the Fastify backend (same contract validated by tests):
 
-Authentication is handled via Google OAuth on the backend. After sign-in, the backend sets an httpOnly `session_token` cookie used by the API requests.
+Authentication is handled via Google OAuth on the backend. After sign-in, the backend sets an httpOnly `session_token` cookie used by API requests (via `credentials: 'include'`).
 
 ### Suggestions (actionable list)
 
 ```
-GET /suggestions
+GET /api/v1/suggestions
 ```
 
 ### Summary (digest)
 
 ```
-GET /notifications/summary?period=daily|weekly
+GET /api/v1/notifications/summary?period=daily|weekly
 ```
 
 ### Action History
 
 ```
-GET /notifications/history?page=X&perPage=20
+GET /api/v1/notifications/history?page=X&perPage=20
 ```
 
 ### Confirm/Reject Action
 
 ```
-POST /notifications/confirm
+POST /api/v1/notifications/confirm
 ```
 
 These endpoints are defined in the backend’s Swagger (Fastify).

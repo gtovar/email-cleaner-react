@@ -2,15 +2,15 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `feat/hu18-oauth-flow`
+- Branch: `develop`
 - Latest commit: pending
 - Summary widget + suggestions list are composed in `src/App.jsx`.
 - OAuth login button redirects to backend and uses httpOnly session cookie.
 
 ## 2) What Changed During the Last Session
 - Added OAuth callback handling and login button in `src/App.jsx`.
-- Updated `src/services/api.js` to use cookie-based auth (`credentials: include`).
-- Documented new OAuth variables in `.env.example` and README.
+- Updated `src/services/api.js` to use cookie-based auth (`credentials: 'include'`).
+- Documented OAuth variables in `.env.example` and README.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -33,4 +33,4 @@ npm run dev
 
 ## 7) Reentry Status
 - Reentry: clean
-- Tests: not re-run after SummaryPanel addition
+- Tests: PASS (Vitest, 6 files / 21 tests)
