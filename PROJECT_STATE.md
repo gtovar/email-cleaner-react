@@ -1,15 +1,15 @@
 # PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-01-11 14:53 CST — Commit: 28b4a26
+Last updated: 2026-01-11 17:44 CST — Commit: pending
 
 ---
 
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-01-11 14:53 CST
-COMMIT: 28b4a26
-ENVIRONMENT: feat/hu17-unify-suggestions-summary
+SNAPSHOT_DATE: 2026-01-11 17:44 CST
+COMMIT: pending
+ENVIRONMENT: feat/hu18-oauth-flow
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -24,7 +24,7 @@ Notes:
 - Summary aggregates load from `/api/v1/notifications/summary` with period controls.
 - History screen loads paginated data from `/api/v1/notifications/history`.
 - Confirmation actions call `/api/v1/notifications/confirm` and update UI state.
-- OAuth login UI is not implemented; token is read from `localStorage`.
+- OAuth login UI redirects to backend and uses httpOnly cookies for auth.
 
 ---
 
@@ -77,6 +77,8 @@ Notes:
 
 - API_BASE:
   - `VITE_API_BASE_URL` with fallback to `http://localhost:3000/api/v1`.
+- API_ORIGIN:
+  - `VITE_API_ORIGIN` with fallback to `http://localhost:3000`.
 - Implemented methods:
   - `getSuggestions`
   - `getSummary`
@@ -85,7 +87,7 @@ Notes:
 - Error handling:
   - Normalized HTTP and network errors with retries and timeout.
 - Auth:
-  - Uses `localStorage.getItem('accessToken')`, fallback `dummy`.
+  - Uses httpOnly session cookie with `credentials: 'include'`.
 
 ## 3.4 Environment
 
@@ -130,21 +132,39 @@ Notes:
 **Recent change:**
 - Summary widget added alongside the suggestions list (commit: 28b4a26).
 
+### HU18 — Google OAuth session flow (frontend)
+
+**Status:** IN_PROGRESS
+
+**Evidence:**
+- `src/App.jsx` (login button + callback handling)
+- `src/services/api.js` (`credentials: 'include'`)
+
+**Open items:**
+- Add tests for auth callback behavior.
+
+**Technical risks:**
+- Frontend relies on backend setting httpOnly session cookie.
+
+**Recent change:**
+- OAuth UI flow wired to backend login (commit: pending).
+
 ---
 
 # 5. Current Technical Risks
 
-- OAuth login flow is not implemented in the UI.
+- OAuth callback handling is not covered by tests.
 - SummaryPanel has no automated tests.
 
 ---
 
 # 6. Next Immediate Action
 
-➡️ Add a SummaryPanel test for empty and error states.
+➡️ Add auth callback tests for the login flow.
 
 ---
 
 # Version log
 
 - 2026-01-11 14:53 CST — SummaryPanel added and suggestions aligned to `/api/v1/suggestions` (commit: 28b4a26)
+- 2026-01-11 17:44 CST — OAuth UI flow wired to backend cookie auth (commit: pending)

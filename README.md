@@ -44,14 +44,16 @@ npm install
 
 The frontend expects the following:
 
-| Variable            | Default                        | Usage                    |
-| ------------------- | ------------------------------ | ------------------------ |
-| `VITE_API_BASE_URL` | `http://localhost:3000/api/v1` | Root URL for backend API |
+| Variable            | Default                        | Usage                          |
+| ------------------- | ------------------------------ | ------------------------------ |
+| `VITE_API_BASE_URL` | `http://localhost:3000/api/v1` | Root URL for backend API       |
+| `VITE_API_ORIGIN`   | `http://localhost:3000`        | Backend origin for OAuth login |
 
 Create a `.env` file if you want to customize it:
 
 ```env
 VITE_API_BASE_URL=http://localhost:3000/api/v1
+VITE_API_ORIGIN=http://localhost:3000
 ```
 
 ---
@@ -118,10 +120,18 @@ tests/
 
 The frontend interacts strictly with the Fastify backend (same contract validated by tests):
 
-### Summary (ML Suggestions)
+Authentication is handled via Google OAuth on the backend. After sign-in, the backend sets an httpOnly `session_token` cookie used by the API requests.
+
+### Suggestions (actionable list)
 
 ```
-GET /emails/summary
+GET /suggestions
+```
+
+### Summary (digest)
+
+```
+GET /notifications/summary?period=daily|weekly
 ```
 
 ### Action History

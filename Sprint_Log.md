@@ -19,3 +19,6 @@ Frontend: yes
 ### 2026-01-11 — Summary widget added
 - Added `src/components/SummaryPanel.jsx`.
 - Aligned suggestions list with `/api/v1/suggestions`.
+
+### 2026-01-11 — OAuth UI flow wired
+- Added login button and callback handling for backend OAuth.

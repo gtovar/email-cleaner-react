@@ -2,14 +2,15 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `feat/hu17-unify-suggestions-summary`
-- Latest commit: 28b4a26
+- Branch: `feat/hu18-oauth-flow`
+- Latest commit: pending
 - Summary widget + suggestions list are composed in `src/App.jsx`.
+- OAuth login button redirects to backend and uses httpOnly session cookie.
 
 ## 2) What Changed During the Last Session
-- Added `src/components/SummaryPanel.jsx` for aggregated metrics.
-- Updated `src/services/api.js` to call `/api/v1/suggestions` for list data.
-- App renders SummaryPanel + SuggestionsList together.
+- Added OAuth callback handling and login button in `src/App.jsx`.
+- Updated `src/services/api.js` to use cookie-based auth (`credentials: include`).
+- Documented new OAuth variables in `.env.example` and README.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -19,10 +20,10 @@ npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- SummaryPanel added; no tests yet for it.
+- OAuth flow wired, no tests yet for auth callback.
 
 ## 5) Immediate Next Step
-➡️ Add SummaryPanel tests for empty and error states.
+➡️ Add auth callback tests for login flow.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
