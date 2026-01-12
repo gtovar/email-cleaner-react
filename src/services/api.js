@@ -3,6 +3,9 @@ const DEFAULT_API_BASE = 'http://localhost:3000/api/v1';
 
 const API_BASE =
   (import.meta.env && import.meta.env.VITE_API_BASE_URL) || DEFAULT_API_BASE;
+export const API_ORIGIN =
+  (import.meta.env && import.meta.env.VITE_API_ORIGIN) ||
+  API_BASE.replace(/\/api\/v1\/?$/, '');
 
 const DEFAULT_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS) || 5000;
 const DEFAULT_MAX_RETRIES = 2;
@@ -19,9 +22,8 @@ export async function httpRequest(
 ) {
   const url = `${API_BASE}${path}`;
 
-  // headers base: auth + JSON
   const baseHeaders = {
-    ...getAuthHeaders(),
+    'Content-Type': 'application/json',
     ...headers,
   };
 
@@ -44,6 +46,7 @@ export async function httpRequest(
     try {
       const response = await fetch(url, {
         ...fetchOptions,
+        credentials: 'include',
         signal: controller.signal,
       });
 
@@ -120,14 +123,6 @@ function shouldRetryError(normalizedMessage) {
   return normalizedMessage === 'Network error' || normalizedMessage === 'Timeout';
 }
 
-
-function getAuthHeaders() {
-  const token = localStorage.getItem('accessToken') || 'dummy';
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  };
-}
 
 export async function getSuggestions() {
   const data = await httpRequest('/suggestions', { method: 'GET' });
