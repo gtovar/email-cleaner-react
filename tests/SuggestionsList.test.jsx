@@ -25,9 +25,11 @@ describe('SuggestionsList', () => {
     const { getSuggestions, confirmAction } = await import('../src/services/api.js');
     getSuggestions.mockReset();
     confirmAction.mockReset();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
+    console.error.mockRestore();
     vi.clearAllMocks();
   });
 
@@ -117,4 +119,3 @@ describe('SuggestionsList', () => {
     });
   });
 });
-

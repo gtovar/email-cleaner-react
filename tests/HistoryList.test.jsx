@@ -28,9 +28,11 @@ describe('HistoryList', () => {
     const { getHistory, confirmAction } = await import('../src/services/api.js');
     getHistory.mockReset();
     confirmAction.mockReset();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
+    console.error.mockRestore();
     vi.clearAllMocks();
   });
 
@@ -166,4 +168,3 @@ describe('HistoryList', () => {
     });
   });
 });
-
