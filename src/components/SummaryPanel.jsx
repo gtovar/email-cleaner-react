@@ -30,23 +30,28 @@ function SummaryPanel() {
   const classifications = summary?.classifications || {};
 
   return (
-    <section className="mb-6 rounded-xl bg-white p-4 shadow-sm border">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800">Summary</h3>
-          <p className="text-xs text-gray-500">
-            Window: {period === 'daily' ? '24 hours' : '7 days'}
-          </p>
-        </div>
+    <section className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-3">
+        <p className="text-xs text-muted-foreground">
+          Window: {period === 'daily' ? '24 hours' : '7 days'}
+        </p>
         <div className="flex gap-2">
           <button
-            className={`px-3 py-1 rounded text-sm ${period === 'daily' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+            className={`rounded px-3 py-1 text-xs font-medium ${
+              period === 'daily'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary text-secondary-foreground hover:bg-muted'
+            }`}
             onClick={() => setPeriod('daily')}
           >
             Daily
           </button>
           <button
-            className={`px-3 py-1 rounded text-sm ${period === 'weekly' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+            className={`rounded px-3 py-1 text-xs font-medium ${
+              period === 'weekly'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary text-secondary-foreground hover:bg-muted'
+            }`}
             onClick={() => setPeriod('weekly')}
           >
             Weekly
@@ -54,66 +59,72 @@ function SummaryPanel() {
         </div>
       </div>
 
-      {loading && <p className="mt-3 text-sm text-gray-500">Loading summary...</p>}
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {loading && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Loading summary...
+        </p>
+      )}
+      {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
 
       {!loading && !error && summary && (
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-lg bg-gray-50 p-3">
-            <div className="text-xs text-gray-500">Total suggestions</div>
-            <div className="text-xl font-semibold text-gray-800">
-              {summary.totalSuggestions ?? 0}
+        <div className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-lg bg-muted p-3">
+              <div className="text-xs text-muted-foreground">Total suggestions</div>
+              <div className="text-xl font-semibold text-foreground">
+                {summary.totalSuggestions ?? 0}
+              </div>
             </div>
-          </div>
-          <div className="rounded-lg bg-gray-50 p-3">
-            <div className="text-xs text-gray-500">Confirmed</div>
-            <div className="text-xl font-semibold text-gray-800">
-              {summary.totalConfirmed ?? 0}
+            <div className="rounded-lg bg-muted p-3">
+              <div className="text-xs text-muted-foreground">Confirmed</div>
+              <div className="text-xl font-semibold text-foreground">
+                {summary.totalConfirmed ?? 0}
+              </div>
             </div>
-          </div>
-          <div className="rounded-lg bg-gray-50 p-3">
-            <div className="text-xs text-gray-500">Events</div>
-            <div className="text-xl font-semibold text-gray-800">
-              {summary.totalEvents ?? 0}
+            <div className="rounded-lg bg-muted p-3">
+              <div className="text-xs text-muted-foreground">Events</div>
+              <div className="text-xl font-semibold text-foreground">
+                {summary.totalEvents ?? 0}
+              </div>
             </div>
           </div>
 
-          <div className="sm:col-span-3 grid gap-4 sm:grid-cols-3">
+          <div className="space-y-4">
             <div>
-              <div className="text-xs font-semibold text-gray-500 mb-2">
+              <div className="mb-2 text-xs font-semibold text-muted-foreground">
                 Suggested actions
               </div>
               {Object.keys(suggestedActions).length === 0 && (
-                <div className="text-xs text-gray-400">No data</div>
+                <div className="text-xs text-muted-foreground">No data</div>
               )}
               {Object.entries(suggestedActions).map(([action, count]) => (
-                <div key={action} className="text-sm text-gray-700">
+                <div key={action} className="text-sm text-foreground">
                   {action}: {count}
                 </div>
               ))}
             </div>
             <div>
-              <div className="text-xs font-semibold text-gray-500 mb-2">
+              <div className="mb-2 text-xs font-semibold text-muted-foreground">
                 Confirmed actions
               </div>
               {Object.keys(confirmedActions).length === 0 && (
-                <div className="text-xs text-gray-400">No data</div>
+                <div className="text-xs text-muted-foreground">No data</div>
               )}
               {Object.entries(confirmedActions).map(([action, count]) => (
-                <div key={action} className="text-sm text-gray-700">
+                <div key={action} className="text-sm text-foreground">
                   {action}: {count}
                 </div>
               ))}
             </div>
             <div>
-              <div className="text-xs font-semibold text-gray-500 mb-2">
+              <div className="mb-2 text-xs font-semibold text-muted-foreground">
                 Classifications
               </div>
               {Object.keys(classifications).length === 0 && (
-                <div className="text-xs text-gray-400">No data</div>
+                <div className="text-xs text-muted-foreground">No data</div>
               )}
               {Object.entries(classifications).map(([label, count]) => (
-                <div key={label} className="text-sm text-gray-700">
+                <div key={label} className="text-sm text-foreground">
                   {label}: {count}
                 </div>
               ))}
