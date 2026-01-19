@@ -33,7 +33,7 @@ describe('SuggestionsList', () => {
     vi.clearAllMocks();
   });
 
-  test('shows "Cargando..." while data is loading', async () => {
+  test('shows skeletons while data is loading', async () => {
     const { getSuggestions } = await import('../src/services/api.js');
     // Promise we resolve later to observe the loading state
     let resolvePromise;
@@ -44,19 +44,14 @@ describe('SuggestionsList', () => {
 
     render(<SuggestionsList />);
 
-    // At the beginning "Cargando..." should be visible
-    expect(
-      screen.getByText('Cargando...', { exact: false })
-    ).toBeInTheDocument();
+    // At the beginning skeletons should be visible
+    expect(document.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0);
 
     // Resolve as empty list
     resolvePromise([]);
 
     await waitFor(() => {
-      // "Cargando..." should no longer be visible
-      expect(
-        screen.queryByText('Cargando...', { exact: false })
-      ).not.toBeInTheDocument();
+      expect(document.querySelectorAll('.animate-pulse').length).toBe(0);
     });
   });
 
@@ -67,9 +62,7 @@ describe('SuggestionsList', () => {
     render(<SuggestionsList />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText('No hay sugerencias disponibles por el momento.')
-      ).toBeInTheDocument();
+      expect(screen.getByText('All caught up!')).toBeInTheDocument();
     });
   });
 
@@ -104,18 +97,15 @@ describe('SuggestionsList', () => {
     const acceptButton = screen.getByRole('button', { name: 'Aceptar' });
     fireEvent.click(acceptButton);
 
-    // ConfirmButton calls confirmAction and then handleActionSuccess
     await waitFor(() => {
-      // API called with the correct id and action
       expect(confirmAction).toHaveBeenCalledWith(['email-1'], 'accept');
-      // The email should be removed from the list
-      expect(
-        screen.queryByText('Correo de prueba')
-      ).not.toBeInTheDocument();
-      // And the success message built by handleActionSuccess should appear
-      expect(
-        screen.getByText(/Acción "accept" confirmada para el correo email-1/)
-      ).toBeInTheDocument();
     });
+
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Correo de prueba')).not.toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
   });
 });

@@ -42,8 +42,12 @@ afterEach(() => {
 });
 
 describe('ConfirmButton', () => {
-  test('disables the button while loading and shows "..."', async () => {
-    confirmAction.mockResolvedValueOnce({});
+  test('disables the button while loading and shows a spinner', async () => {
+    let resolvePromise;
+    const pendingPromise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+    confirmAction.mockReturnValueOnce(pendingPromise);
 
     render(
       <ConfirmButton
@@ -58,14 +62,15 @@ describe('ConfirmButton', () => {
 
     fireEvent.click(button);
 
-    // After click it should be disabled and show "..."
+    // After click it should be disabled and show loading feedback
     expect(button).toBeDisabled();
-    expect(button).toHaveTextContent('...');
+    expect(button).toHaveAttribute('aria-busy', 'true');
+    expect(button.querySelector('.animate-spin')).not.toBeNull();
 
-    await waitFor(() => {
-      expect(confirmAction).toHaveBeenCalledTimes(1);
-      expect(button).toBeEnabled();
-    });
+    resolvePromise({});
+
+    await waitFor(() => expect(confirmAction).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(button).toBeEnabled());
   });
 
   test('calls onSuccess when confirmAction resolves OK', async () => {
@@ -91,7 +96,7 @@ describe('ConfirmButton', () => {
     });
   });
 
-  test('shows an error message when confirmAction throws', async () => {
+  test('logs an error when confirmAction throws', async () => {
     const fakeError = new Error('Backend caído');
     confirmAction.mockRejectedValueOnce(fakeError);
 
@@ -106,14 +111,7 @@ describe('ConfirmButton', () => {
     const button = screen.getByRole('button', { name: 'Aceptar' });
     fireEvent.click(button);
 
-    await waitFor(() => {
-      // Accept either the real error message or the component fallback
-      const errorNode =
-        screen.queryByText('Backend caído') ||
-        screen.queryByText('Error al confirmar la acción');
-
-      expect(errorNode).not.toBeNull();
-    });
+    await waitFor(() => expect(consoleErrorSpy).toHaveBeenCalled());
+    expect(button).toBeEnabled();
   });
 });
-

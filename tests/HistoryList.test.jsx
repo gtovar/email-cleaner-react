@@ -36,7 +36,7 @@ describe('HistoryList', () => {
     vi.clearAllMocks();
   });
 
-  test('shows "Cargando..." on first render', async () => {
+  test('shows skeletons on first render', async () => {
     const { getHistory } = await import('../src/services/api.js');
 
     let resolveHistory;
@@ -49,14 +49,14 @@ describe('HistoryList', () => {
 
     render(<HistoryList />);
 
-    // While the promise is pending, the real loading message must be visible
-    expect(screen.getByText('Cargando...')).toBeInTheDocument();
+    // While the promise is pending, skeletons should be visible
+    expect(document.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0);
 
     // Now resolve the promise so the component can finish loading
     resolveHistory([]);
 
     await waitFor(() => {
-      expect(screen.queryByText('Cargando...')).not.toBeInTheDocument();
+      expect(document.querySelectorAll('.animate-pulse').length).toBe(0);
     });
   });
 
@@ -69,9 +69,7 @@ describe('HistoryList', () => {
     render(<HistoryList />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText('No hay acciones registradas todavía.')
-      ).toBeInTheDocument();
+      expect(screen.getByText('No history yet')).toBeInTheDocument();
     });
   });
 

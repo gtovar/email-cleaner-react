@@ -55,6 +55,9 @@ export async function httpRequest(
       // Si la respuesta no es OK, normalizamos el error según status
       if (!response.ok) {
         const msg = normalizeHttpError(response.status);
+        if (response.status === 401 && typeof authExpiryHandler === 'function') {
+          authExpiryHandler();
+        }
           throw new HttpError(response.status, msg);
       }
 
@@ -121,6 +124,12 @@ function shouldRetryError(normalizedMessage) {
   // - Reintentar en errores de red y timeout
   // - NO reintentar en errores de request (4xx o similares)
   return normalizedMessage === 'Network error' || normalizedMessage === 'Timeout';
+}
+
+let authExpiryHandler = null;
+
+export function onAuthExpired(handler) {
+  authExpiryHandler = handler;
 }
 
 

@@ -2,16 +2,18 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `develop`
+- Branch: `main`
 - Latest commit: pending
-- Summary widget + suggestions list are composed in `src/App.jsx`.
-- OAuth login button redirects to backend and uses httpOnly session cookie.
+- Summary lives in a right-side drawer (Sheet) opened from the header.
+- OAuth login uses a dedicated Login page and httpOnly session cookie.
+- Session expiry triggers a Login screen via `onAuthExpired`.
+- Vitest suite is green after UI refactor alignment.
 
 ## 2) What Changed During the Last Session
-- Added OAuth callback handling and login button in `src/App.jsx`.
-- Updated `src/services/api.js` to use cookie-based auth (`credentials: 'include'`).
-- Documented OAuth variables in `.env.example` and README.
-- Aligned HU label fields in `PROJECT_STATE.md` with the frontend template.
+- Added Login page and session-expired UX in `src/App.jsx`.
+- Replaced the inline Summary widget with a right-side drawer.
+- Added shadcn-style UI components (`src/components/ui/*`).
+- Added skeleton loaders and EmptyState components.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -21,13 +23,15 @@ npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- OAuth flow wired, no tests yet for auth callback.
+- Frontend tests updated to match the current UI (skeletons, EmptyState, delayed removal, `onAuthExpired` mock).
 
 ## 5) Immediate Next Step
-➡️ Add auth callback tests for login flow.
+➡️ Add coverage for SummaryPanel and auth callback UI if needed.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
+- `src/pages/LoginPage.jsx`
+- `src/components/activity/ActivityPanel.jsx`
 - `src/components/SummaryPanel.jsx`
 - `src/components/SuggestionsList.jsx`
 - `src/services/api.js`
