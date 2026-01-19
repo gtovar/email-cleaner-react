@@ -60,7 +60,7 @@ function SuggestionsList() {
     loadSuggestions();
   }, []);
 
-  const handleActionSuccess = (emailId, action) => {
+  const handleActionSuccess = (emailId, _action) => {
     const removedEmail = emails.find((email) => email.id === emailId);
     const nextReviewedCount = Math.max(0, initialCount - (emails.length - 1));
     const progressPercent = initialCount
@@ -134,36 +134,6 @@ function SuggestionsList() {
       return 'Detalle de sugerencia no legible.';
     }
     return String(value);
-  };
-
-  const splitSender = (value) => {
-    if (!value || typeof value !== 'string') {
-      return { name: value, email: null };
-    }
-    const normalized = value
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#34;/g, '"');
-    const match = normalized.match(/^(.*?)\s*<([^>]+)>\s*$/);
-    if (match) {
-      const name = match[1].trim().replace(/^"+|"+$/g, '');
-      const email = match[2].trim();
-      return { name: name || email, email };
-    }
-    const emailMatch = normalized.match(
-      /([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i
-    );
-    if (emailMatch) {
-      const email = emailMatch[1].trim();
-      const name = normalized
-        .replace(emailMatch[0], '')
-        .replace(/[<>"]/g, '')
-        .replace(/\s{2,}/g, ' ')
-        .trim();
-      return { name: name || email, email };
-    }
-    return { name: normalized, email: null };
   };
 
   const formatDate = (value) => {

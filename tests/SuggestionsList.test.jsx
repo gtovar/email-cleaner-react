@@ -3,7 +3,6 @@ import React from 'react';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import SuggestionsList from '../src/components/SuggestionsList.jsx';
-import * as api from '../src/services/api.js';
 
 // Mock the API module
 vi.mock('../src/services/api.js', () => ({
