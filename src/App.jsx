@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Mail, Menu } from 'lucide-react';
 import { Toaster } from 'sonner';
 import './App.css';
@@ -7,15 +7,37 @@ import SuggestionsPage from './pages/SuggestionsPage.jsx';
 import HistoryPage from './pages/HistoryPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import { API_ORIGIN, onAuthExpired } from './services/api.js';
+import InboxPage from './pages/InboxPage.jsx';
+import { API_ORIGIN, getAuthMe, logout, onAuthExpired } from './services/api.js';
 import { Button } from './components/ui/button.jsx';
 import ActivityPanel from './components/activity/ActivityPanel.jsx';
 
 function App() {
   const [activeView, setActiveView] = useState('suggestions');
   const [authMessage, setAuthMessage] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [authStatus, setAuthStatus] = useState('checking');
+  const [authEmail, setAuthEmail] = useState(null);
   const [activityOpen, setActivityOpen] = useState(false);
+  const isAuthenticated = authStatus === 'authenticated';
+
+  const syncAuthStatus = useCallback(async () => {
+    setAuthStatus('checking');
+    setAuthMessage(null);
+    try {
+      const data = await getAuthMe();
+      if (data?.authenticated) {
+        setAuthStatus('authenticated');
+        setAuthEmail(data.email || null);
+        setActiveView('suggestions');
+      } else {
+        setAuthStatus('anonymous');
+        setActiveView('login');
+      }
+    } catch (err) {
+      setAuthStatus('anonymous');
+      setActiveView('login');
+    }
+  }, []);
 
   useEffect(() => {
     const { pathname, search } = window.location;
@@ -28,21 +50,29 @@ function App() {
 
     if (error) {
       setAuthMessage({ type: 'error', text: 'Google sign-in failed. Please try again.' });
-      setIsAuthenticated(false);
+      setAuthStatus('anonymous');
       setActiveView('login');
-    } else {
-      setAuthMessage({ type: 'success', text: 'Google sign-in complete. Redirecting...' });
-      setIsAuthenticated(true);
-      setActiveView('suggestions');
+      window.history.replaceState(null, '', '/');
+      return;
     }
 
-    setActiveView('suggestions');
+    setAuthMessage(null);
+    syncAuthStatus();
     window.history.replaceState(null, '', '/');
-  }, []);
+  }, [syncAuthStatus]);
+
+  useEffect(() => {
+    const { pathname } = window.location;
+    if (pathname === '/auth/callback') {
+      return;
+    }
+    syncAuthStatus();
+  }, [syncAuthStatus]);
 
   useEffect(() => {
     onAuthExpired(() => {
-      setIsAuthenticated(false);
+      setAuthStatus('anonymous');
+      setAuthEmail(null);
       setAuthMessage({
         type: 'error',
         text: 'Sesión expirada. Inicia sesión de nuevo.',
@@ -52,16 +82,24 @@ function App() {
   }, []);
 
   const handleLogin = () => {
+    setAuthMessage(null);
     window.location.href = `${API_ORIGIN}/auth/google`;
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setActiveView('login');
-    setAuthMessage({
-      type: 'error',
-      text: 'Sesión cerrada. Inicia sesión de nuevo.',
-    });
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAuthStatus('anonymous');
+      setAuthEmail(null);
+      setActiveView('login');
+      setAuthMessage({
+        type: 'error',
+        text: 'Sesión cerrada. Inicia sesión de nuevo.',
+      });
+    }
   };
 
   return (
@@ -100,17 +138,27 @@ function App() {
       )}
 
       <main>
-        {authMessage && isAuthenticated && (
-          <div
-            className={`p-4 text-sm ${
-              authMessage.type === 'error' ? 'text-red-700' : 'text-green-700'
-            }`}
-          >
-            {authMessage.text}
+        {authStatus === 'checking' && (
+          <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12">
+            <div className="w-full max-w-md space-y-6 text-center">
+              <div className="mb-2 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                <Mail className="h-8 w-8 text-primary" aria-hidden="true" />
+              </div>
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+                Email Cleaner
+              </h1>
+              <p className="mx-auto max-w-xs text-base text-muted-foreground">
+                Validando sesión...
+              </p>
+              <div role="status" aria-live="polite" className="text-sm text-muted-foreground">
+                Espera un momento.
+              </div>
+            </div>
           </div>
         )}
-        {isAuthenticated ? (
+        {authStatus !== 'checking' && isAuthenticated ? (
           <>
+            {activeView === 'inbox' && <InboxPage />}
             {activeView === 'suggestions' && <SuggestionsPage />}
             {activeView === 'history' && <HistoryPage />}
             {activeView === 'settings' && <SettingsPage />}
@@ -122,14 +170,15 @@ function App() {
                 setActivityOpen(false);
               }}
               onLogout={handleLogout}
+              authEmail={authEmail}
             />
           </>
-        ) : (
+        ) : authStatus !== 'checking' ? (
           <LoginPage
             onLogin={handleLogin}
             message={authMessage?.type === 'error' ? authMessage.text : null}
           />
-        )}
+        ) : null}
       </main>
     </div>
   );

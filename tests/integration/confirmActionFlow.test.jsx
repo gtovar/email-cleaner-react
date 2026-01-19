@@ -24,6 +24,8 @@ vi.mock('../../src/services/api.js', () => ({
   confirmAction: vi.fn(),
   getHistory: vi.fn(),
   onAuthExpired: vi.fn(),
+  getAuthMe: vi.fn(),
+  logout: vi.fn(),
 }));
 
 describe('Flujo integración: sugerencias → confirmación → historial', () => {
@@ -32,11 +34,13 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       getSuggestions,
       confirmAction,
       getHistory,
+      getAuthMe,
     } = await import('../../src/services/api.js');
 
     getSuggestions.mockReset();
     confirmAction.mockReset();
     getHistory.mockReset();
+    getAuthMe.mockReset();
   });
 
   afterEach(() => {
@@ -48,7 +52,10 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       getSuggestions,
       confirmAction,
       getHistory,
+      getAuthMe,
     } = await import('../../src/services/api.js');
+
+    getAuthMe.mockResolvedValue({ authenticated: true, email: 'user@example.com' });
 
     // 1) Mock de sugerencias iniciales
     getSuggestions.mockResolvedValueOnce([
@@ -81,11 +88,14 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
 
     render(<App />);
 
-    // Paso A: se cargan las sugerencias
-    await waitFor(() => {
-      expect(getSuggestions).toHaveBeenCalledTimes(1);
-      expect(screen.getByText('Prueba HU14')).toBeInTheDocument();
-    });
+    // Paso A: se cargan las sugerencias (hay un delay minimo en auth sync)
+    await waitFor(
+      () => {
+        expect(getSuggestions).toHaveBeenCalledTimes(1);
+        expect(screen.getByText('Prueba HU14')).toBeInTheDocument();
+      },
+      { timeout: 2500 }
+    );
 
     // Paso B: el usuario hace clic en "Aceptar"
     const acceptButton = screen.getByRole('button', { name: 'Aceptar' });
