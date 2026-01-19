@@ -278,7 +278,7 @@ export default function InboxList() {
       ),
       enableSorting: false,
     },
-  ], []);
+  ], [mobileActionsId]);
 
   const table = useReactTable({
     data: filteredEmails,
