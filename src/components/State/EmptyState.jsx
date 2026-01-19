@@ -1,4 +1,4 @@
-import { Inbox, History } from 'lucide-react';
+import { Inbox, History, Mail } from 'lucide-react';
 
 const EmptyState = ({ type }) => {
   const config = {
@@ -11,6 +11,11 @@ const EmptyState = ({ type }) => {
       icon: History,
       title: 'No history yet',
       description: 'Your accepted and rejected suggestions will appear here.',
+    },
+    inbox: {
+      icon: Mail,
+      title: 'Inbox en cero',
+      description: 'No encontramos correos para mostrar en este momento.',
     },
   };
 

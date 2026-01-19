@@ -1,7 +1,7 @@
 // src/components/Navigation.jsx
 import React from 'react';
 
-import { History, Mail } from 'lucide-react';
+import { History, Inbox, Mail } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +18,23 @@ export default function Navigation({ currentView, setView }) {
   return (
     <TooltipProvider>
       <nav className="flex flex-wrap items-center gap-2 rounded-lg bg-muted px-2 py-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              className={`${baseClasses} ${
+                currentView === 'inbox' ? activeClasses : idleClasses
+              }`}
+              onClick={() => setView('inbox')}
+            >
+              <span className="flex items-center gap-2">
+                <Inbox className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden sm:inline">Inbox</span>
+              </span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Inbox</TooltipContent>
+        </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <button
