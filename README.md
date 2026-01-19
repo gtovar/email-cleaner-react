@@ -1,7 +1,7 @@
 # Email Cleaner & Smart Notifications — Frontend (React + Vite)
 
 Frontend application for the Email Cleaner & Smart Notifications system.  
-This interface allows users to visualize ML-generated suggestions, view summary aggregates, review action history, and interact with the backend via a resilient HTTP client.
+This interface allows users to visualize ML-generated suggestions, view summary aggregates in a drawer, review action history, and interact with the backend via a resilient HTTP client.
 
 This README follows the project’s official documentation style.
 
@@ -12,12 +12,12 @@ This README follows the project’s official documentation style.
 This repository contains the **React + Vite frontend** for:
 
 - Displaying categorized email suggestions (from ML service).
-- Showing aggregated summary metrics (daily/weekly).
+- Showing aggregated summary metrics (daily/weekly) in a right-side drawer.
 - Reviewing historical actions (confirm/reject decisions).
 - Sending confirm/reject actions to the backend.
 - Providing a clean UI for interacting with the Fastify backend and ML microservice.
 
-The frontend is intentionally lightweight, resilient, and fully tested.
+The frontend is intentionally lightweight and resilient, with a Vitest-based test suite.
 
 ---
 
@@ -95,6 +95,11 @@ Testing environment:
 * @testing-library/react
 * happy-dom
 
+CI:
+* GitHub Actions runs lint, test, and build on PRs and pushes to `develop`.
+
+See `PROJECT_STATE.md` for the latest test status (currently passing).
+
 ---
 
 ## 6. Project Structure
@@ -102,11 +107,32 @@ Testing environment:
 ```txt
 src/
  ├─ components/
+ │   ├─ activity/ActivityPanel.jsx
+ │   ├─ State/EmptyState.jsx
  │   ├─ SummaryPanel.jsx
  │   ├─ SuggestionsList.jsx
  │   ├─ HistoryList.jsx
  │   ├─ ConfirmButton.jsx
  │   └─ StatusMessage.jsx
+ ├─ pages/
+ │   ├─ LoginPage.jsx
+ │   ├─ SuggestionsPage.jsx
+ │   ├─ HistoryPage.jsx
+ │   └─ SettingsPage.jsx
+ ├─ components/ui/
+ │   ├─ alert-dialog.jsx
+ │   ├─ badge.jsx
+ │   ├─ button.jsx
+ │   ├─ collapsible.jsx
+ │   ├─ input.jsx
+ │   ├─ label.jsx
+ │   ├─ select.jsx
+ │   ├─ separator.jsx
+ │   ├─ sheet.jsx
+ │   ├─ skeleton.jsx
+ │   ├─ switch.jsx
+ │   ├─ table.jsx
+ │   └─ tooltip.jsx
  ├─ services/
  │   └─ api.js               # httpRequest(), getSuggestions(), getSummary(), getHistory(), confirmAction()
  └─ App.jsx
@@ -169,7 +195,7 @@ These documents must remain consistent with code and tests.
 
 ## 9. Contribution Guide
 
-1. Create a branch based on `develop` (allowed types: feat/, fix/, docs/, refactor/, chore/):
+1. Create a branch based on `main` (allowed types: feat/, fix/, docs/, refactor/, chore/):
 
    ```bash
    git checkout -b feat/hu17-unify-suggestions-summary

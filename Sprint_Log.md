@@ -25,3 +25,15 @@ Frontend: yes
 
 ### 2026-01-12 — Frontend doc alignment
 - Updated `PROJECT_STATE.md` to match the frontend template labels.
+
+### 2026-01-18 — UI refactor and auth UX
+- Added Login screen and session-expired handling in `src/App.jsx`.
+- Moved Summary into a right-side drawer and added shadcn-style UI components.
+
+### 2026-01-18 — Test suite aligned
+- Updated Vitest expectations for skeleton loaders, EmptyState, and delayed removal.
+- Integration flow now mocks `onAuthExpired`.
+
+### 2026-01-19 — CI added and lint fixed
+- Added GitHub Actions CI (lint, test, build) for PRs and `develop`.
+- Fixed lint failures found by CI.

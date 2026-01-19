@@ -23,6 +23,9 @@ vi.mock('../../src/services/api.js', () => ({
   getSuggestions: vi.fn(),
   confirmAction: vi.fn(),
   getHistory: vi.fn(),
+  onAuthExpired: vi.fn(),
+  getAuthMe: vi.fn(),
+  logout: vi.fn(),
 }));
 
 describe('Flujo integración: sugerencias → confirmación → historial', () => {
@@ -31,11 +34,13 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       getSuggestions,
       confirmAction,
       getHistory,
+      getAuthMe,
     } = await import('../../src/services/api.js');
 
     getSuggestions.mockReset();
     confirmAction.mockReset();
     getHistory.mockReset();
+    getAuthMe.mockReset();
   });
 
   afterEach(() => {
@@ -47,7 +52,10 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       getSuggestions,
       confirmAction,
       getHistory,
+      getAuthMe,
     } = await import('../../src/services/api.js');
+
+    getAuthMe.mockResolvedValue({ authenticated: true, email: 'user@example.com' });
 
     // 1) Mock de sugerencias iniciales
     getSuggestions.mockResolvedValueOnce([
@@ -80,26 +88,31 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
 
     render(<App />);
 
-    // Paso A: se cargan las sugerencias
-    await waitFor(() => {
-      expect(getSuggestions).toHaveBeenCalledTimes(1);
-      expect(screen.getByText('Prueba HU14')).toBeInTheDocument();
-    });
+    // Paso A: se cargan las sugerencias (hay un delay minimo en auth sync)
+    await waitFor(
+      () => {
+        expect(getSuggestions).toHaveBeenCalledTimes(1);
+        expect(screen.getByText('Prueba HU14')).toBeInTheDocument();
+      },
+      { timeout: 2500 }
+    );
 
     // Paso B: el usuario hace clic en "Aceptar"
     const acceptButton = screen.getByRole('button', { name: 'Aceptar' });
     fireEvent.click(acceptButton);
 
-    // Confirmamos que se llamó confirmAction y que aparece el StatusMessage correcto
+    // Confirmamos que se llamó confirmAction
     await waitFor(() => {
       expect(confirmAction).toHaveBeenCalledWith(['email-1'], 'accept');
-
-      // En el código: `✅ Acción "accept" confirmada para el correo email-1`
-      // Usamos regex para ignorar el emoji y no exigir punto final
-      expect(
-        screen.getByText(/Acción "accept" confirmada para el correo email-1/)
-      ).toBeInTheDocument();
     });
+
+    // La card se elimina con delay de 1200ms
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Prueba HU14')).not.toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
 
     // Paso C: el usuario se mueve a la vista de historial
     // Modelamos explícitamente que usa el botón del HEADER (role="banner")
@@ -134,4 +147,3 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
     });
   });
 });
-

@@ -23,7 +23,6 @@ export async function httpRequest(
   const url = `${API_BASE}${path}`;
 
   const baseHeaders = {
-    'Content-Type': 'application/json',
     ...headers,
   };
 
@@ -34,6 +33,7 @@ export async function httpRequest(
   };
 
   if (body !== undefined && body !== null) {
+    baseHeaders['Content-Type'] = 'application/json';
     fetchOptions.body = JSON.stringify(body);
   }
 
@@ -55,6 +55,9 @@ export async function httpRequest(
       // Si la respuesta no es OK, normalizamos el error según status
       if (!response.ok) {
         const msg = normalizeHttpError(response.status);
+        if ((response.status === 401 || response.status === 403) && typeof authExpiryHandler === 'function') {
+          authExpiryHandler();
+        }
           throw new HttpError(response.status, msg);
       }
 
@@ -121,6 +124,46 @@ function shouldRetryError(normalizedMessage) {
   // - Reintentar en errores de red y timeout
   // - NO reintentar en errores de request (4xx o similares)
   return normalizedMessage === 'Network error' || normalizedMessage === 'Timeout';
+}
+
+let authExpiryHandler = null;
+
+export function onAuthExpired(handler) {
+  authExpiryHandler = handler;
+}
+
+export async function getAuthMe() {
+  return httpRequest('/auth/me', { method: 'GET' });
+}
+
+export async function logout() {
+  return httpRequest('/auth/logout', { method: 'POST' });
+}
+
+export async function getEmails({
+  pageToken,
+  unread,
+  olderThan,
+  category,
+  minAttachmentSize,
+} = {}) {
+  const params = new URLSearchParams();
+  if (pageToken) params.set('pageToken', pageToken);
+  if (typeof unread === 'boolean') params.set('unread', String(unread));
+  if (typeof olderThan === 'number') params.set('olderThan', String(olderThan));
+  if (category) params.set('category', category);
+  if (typeof minAttachmentSize === 'number') {
+    params.set('minAttachmentSize', String(minAttachmentSize));
+  }
+  const query = params.toString();
+  const data = await httpRequest(`/emails${query ? `?${query}` : ''}`, {
+    method: 'GET',
+  });
+  return {
+    emails: data?.emails || [],
+    nextPageToken: data?.nextPageToken || null,
+    total: typeof data?.total === 'number' ? data.total : null,
+  };
 }
 
 
