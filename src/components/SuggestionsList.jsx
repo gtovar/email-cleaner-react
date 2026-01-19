@@ -60,7 +60,7 @@ function SuggestionsList() {
     loadSuggestions();
   }, []);
 
-  const handleActionSuccess = (emailId, _action) => {
+  const handleActionSuccess = (emailId) => {
     const removedEmail = emails.find((email) => email.id === emailId);
     const nextReviewedCount = Math.max(0, initialCount - (emails.length - 1));
     const progressPercent = initialCount
