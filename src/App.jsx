@@ -33,7 +33,7 @@ function App() {
         setAuthStatus('anonymous');
         setActiveView('login');
       }
-    } catch (err) {
+    } catch {
       setAuthStatus('anonymous');
       setActiveView('login');
     }
