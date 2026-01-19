@@ -1,13 +1,13 @@
 # PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-01-18 03:12 CST — Commit: pending
+Last updated: 2026-01-19 06:20 CST — Commit: pending
 
 ---
 
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-01-18 03:12 CST
+SNAPSHOT_DATE: 2026-01-19 06:20 CST
 COMMIT: pending
 ENVIRONMENT: local
 
@@ -113,6 +113,8 @@ Notes:
   - `tests/httpRequest.test.jsx`
 - Status:
   - PASS (Vitest, 6 files / 21 tests).
+- CI:
+  - GitHub Actions runs lint, test, and build on PRs and pushes to `develop`.
 
 ---
 
@@ -166,7 +168,7 @@ Notes:
 
 # 6. Next Immediate Action
 
-➡️ Fix failing Vitest suites for updated UI and `onAuthExpired` mocking.
+➡️ Add tests for SummaryPanel and auth callback UI.
 
 ---
 

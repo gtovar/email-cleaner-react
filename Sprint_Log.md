@@ -33,3 +33,7 @@ Frontend: yes
 ### 2026-01-18 — Test suite aligned
 - Updated Vitest expectations for skeleton loaders, EmptyState, and delayed removal.
 - Integration flow now mocks `onAuthExpired`.
+
+### 2026-01-19 — CI added and lint fixed
+- Added GitHub Actions CI (lint, test, build) for PRs and `develop`.
+- Fixed lint failures found by CI.

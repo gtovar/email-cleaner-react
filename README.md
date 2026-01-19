@@ -95,6 +95,9 @@ Testing environment:
 * @testing-library/react
 * happy-dom
 
+CI:
+* GitHub Actions runs lint, test, and build on PRs and pushes to `develop`.
+
 See `PROJECT_STATE.md` for the latest test status (currently passing).
 
 ---
