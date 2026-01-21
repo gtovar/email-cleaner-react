@@ -217,26 +217,26 @@ function SuggestionsList() {
 
       <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {emails.map((email) => (
-          <Card
-            key={email.id}
-            className="transition-all hover:shadow-md"
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between gap-4">
+            <Card
+              key={email.id}
+              className="transition-all hover:shadow-md"
+            >
+            <CardHeader className="pb-3 p-4 sm:p-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
                     <Mail className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                   </div>
-                  <h3 className="font-medium leading-snug truncate" title={email.subject}>
+                  <h3 className="font-medium leading-snug line-clamp-2 break-words sm:truncate" title={email.subject}>
                     {email.subject || '(Sin asunto)'}
                   </h3>
                 </div>
-                <Badge variant="secondary" className="shrink-0">
+                <Badge variant="secondary" className="shrink-0 self-start sm:self-auto">
                   Pending
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="pb-4">
+            <CardContent className="pb-4 p-4 sm:p-6 sm:pt-0">
               {!compactView && (
                 <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   {formatDate(email.date) && (
@@ -266,14 +266,14 @@ function SuggestionsList() {
                   </p>
                 )}
             </CardContent>
-            <CardFooter className="gap-2 pt-0">
+            <CardFooter className="gap-2 pt-0 p-4 sm:p-6 sm:pt-0 flex-col sm:flex-row">
               <ConfirmButton
                 emailId={email.id}
                 action="accept"
                 onSuccess={handleActionSuccess}
                 onStart={() => setProcessingId(email.id)}
                 disabled={processingId === email.id || rejectLoadingId === email.id}
-                className="flex-1 gap-2"
+                className="flex-1 w-full sm:w-auto gap-2"
                 icon={<Check className="h-4 w-4" aria-hidden="true" />}
               />
               <AlertDialog
@@ -283,7 +283,7 @@ function SuggestionsList() {
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex-1 gap-2 text-muted-foreground hover:text-foreground hover:bg-muted"
+                    className="flex-1 w-full sm:w-auto gap-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                     disabled={processingId === email.id || rejectLoadingId === email.id}
                   >
                     <X className="h-4 w-4" aria-hidden="true" />
