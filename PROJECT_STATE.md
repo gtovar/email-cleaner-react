@@ -79,9 +79,9 @@ Notes:
 ## 3.3 API Client (`src/services/api.js`)
 
 - API_BASE:
-  - `VITE_API_BASE_URL` with fallback to `http://localhost:3000/api/v1`.
+  - `VITE_API_BASE_URL` with fallback to `https://localhost:3000/api/v1`.
 - API_ORIGIN:
-  - `VITE_API_ORIGIN` with fallback to `http://localhost:3000`.
+  - `VITE_API_ORIGIN` with fallback to `https://localhost:3000`.
 - Implemented methods:
   - `getSuggestions`
   - `getSummary`

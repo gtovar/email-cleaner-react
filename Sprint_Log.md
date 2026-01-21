@@ -37,3 +37,7 @@ Frontend: yes
 ### 2026-01-19 — CI added and lint fixed
 - Added GitHub Actions CI (lint, test, build) for PRs and `develop`.
 - Fixed lint failures found by CI.
+
+### 2026-01-20 — HTTPS local guidance
+- Updated local dev guidance to HTTPS for web/mobile parity.
+- Updated `.env.example`, `README.md`, and `PROJECT_STATE.md` accordingly.
