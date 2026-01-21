@@ -1,116 +1,108 @@
-# DEPLOYMENT.md
+# DEPLOYMENT.md (React Frontend)
 
 ## Purpose
 
-Document a repeatable deployment flow for the React frontend on Google Cloud Run.
+Repeatable deployment flow for the React frontend using **Vercel**.
 
-## Deployment Target
+---
 
-Cloud Run (static frontend served from a container).
+## 1) Prerequisites
 
-## Prerequisites
+- Vercel account + CLI installed.
+- Backend URL available (Cloud Run).
+- Domain: `app.emailcleaner.gilbertotovar.com`.
 
-* Google Cloud project with Cloud Run enabled.
-* `gcloud` installed and authenticated.
-* Artifact Registry enabled.
-* A backend URL (public) for runtime configuration.
+---
 
-## Build and Runtime Configuration
+## 2) Environment variables (Vercel)
 
-Current frontend uses Vite build-time variables (`VITE_*`). For true runtime configuration,
-serve a small config file at container start (example below) and read it in the app.
+Set **production** env vars:
 
-Required values:
-
-* `API_BASE_URL` (example: `https://api.example.com/api/v1`)
-* `API_ORIGIN` (example: `https://api.example.com`)
-
-## Dockerfile (static server + runtime config)
-
-```Dockerfile
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY ops/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY ops/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-EXPOSE 8080
-CMD ["/entrypoint.sh"]
+```
+VITE_API_ORIGIN=https://api.emailcleaner.gilbertotovar.com
+VITE_API_BASE_URL=https://api.emailcleaner.gilbertotovar.com/api/v1
 ```
 
-## Runtime config entrypoint (example)
+Commands:
 
-Create `ops/entrypoint.sh`:
-
-```sh
-#!/bin/sh
-cat <<EOF > /usr/share/nginx/html/runtime-config.js
-window.__APP_CONFIG__ = {
-  API_BASE_URL: "${API_BASE_URL}",
-  API_ORIGIN: "${API_ORIGIN}"
-};
-EOF
-
-nginx -g "daemon off;"
+```bash
+vercel env add VITE_API_ORIGIN production
+vercel env add VITE_API_BASE_URL production
 ```
 
-Your app should read `window.__APP_CONFIG__` when present, and fall back to Vite envs.
+---
 
-## Nginx config (example)
+## 3) SPA routing (required)
 
-Create `ops/nginx/default.conf`:
+Vercel needs a rewrite for client-side routes (OAuth callback):
 
-```nginx
-server {
-  listen 8080;
-  server_name _;
-  root /usr/share/nginx/html;
-  index index.html;
+`vercel.json`
 
-  location / {
-    try_files $uri /index.html;
-  }
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
 ```
 
-## Build and Deploy (Cloud Run)
+---
 
-1) Build the container locally:
-
-```bash
-docker build -t gcr.io/YOUR_PROJECT/email-cleaner-frontend:latest .
-```
-
-2) Push the image:
+## 4) Deploy
 
 ```bash
-docker push gcr.io/YOUR_PROJECT/email-cleaner-frontend:latest
+cd email-cleaner-react
+vercel
+vercel --prod
 ```
 
-3) Deploy to Cloud Run:
+Production URL:
+- `https://email-cleaner-react.vercel.app`
+
+---
+
+## 5) CI/CD automation (GitHub Actions)
+
+Workflow: `.github/workflows/deploy.yml`
+
+Required GitHub Secrets:
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+Notes:
+- Deploys on `main` and on manual trigger.
+
+---
+
+## 6) Custom domain (app)
+
+Add domain in Vercel:
 
 ```bash
-gcloud run deploy email-cleaner-frontend \
-  --image gcr.io/YOUR_PROJECT/email-cleaner-frontend:latest \
-  --platform managed \
-  --region YOUR_REGION \
-  --allow-unauthenticated \
-  --set-env-vars API_BASE_URL="https://api.example.com/api/v1",API_ORIGIN="https://api.example.com"
+vercel domains add app.emailcleaner.gilbertotovar.com
 ```
 
-## Validation
+DNS in GoDaddy:
+- Type: `A`
+- Name: `app.emailcleaner`
+- Value: `76.76.21.21`
 
-* Open the Cloud Run URL in a browser.
-* Verify login redirects to the backend.
-* Confirm `/api/v1/suggestions` and `/api/v1/notifications/summary` load.
+Verify DNS:
 
-## Notes
+```bash
+dig +short app.emailcleaner.gilbertotovar.com
+```
 
-* If runtime config is not implemented, use build-time `VITE_*` variables instead.
-* For staging vs production, deploy separate services or revisions.
+---
+
+## 7) Validation
+
+- Open `https://app.emailcleaner.gilbertotovar.com`
+- Confirm login redirects to:
+  `https://api.emailcleaner.gilbertotovar.com/auth/google/callback`
+- Confirm UI loads suggestions after login.
+
+---
+
+**Last updated:** January 2026
