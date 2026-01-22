@@ -34,6 +34,7 @@ function SuggestionsList() {
   const [rejectLoadingId, setRejectLoadingId] = useState(null);
   const [processingId, setProcessingId] = useState(null);
   const [ariaMessage, setAriaMessage] = useState('');
+  const removalTimersRef = useRef(new Map());
 
   useEffect(() => {
     async function loadSuggestions() {
@@ -70,6 +71,11 @@ function SuggestionsList() {
       nextReviewedCount % 2 === 0
         ? `Bien hecho — ${nextReviewedCount} correos menos en tu inbox`
         : `Vas avanzando — ya limpiaste ${progressPercent}%`;
+    const pendingTimers = removalTimersRef.current;
+    const existingTimer = pendingTimers.get(emailId);
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+    }
     setFeedback(null);
     setFeedbackType(null);
     setAriaMessage(feedbackMessage);
@@ -79,15 +85,28 @@ function SuggestionsList() {
         action: {
           label: 'Deshacer',
           onClick: () => {
-            setEmails((prev) => [removedEmail, ...prev]);
+            const activeTimer = pendingTimers.get(emailId);
+            if (activeTimer) {
+              clearTimeout(activeTimer);
+            }
+            pendingTimers.delete(emailId);
+            setProcessingId((current) => (current === emailId ? null : current));
+            setEmails((prev) => {
+              if (prev.some((email) => email.id === emailId)) {
+                return prev;
+              }
+              return [removedEmail, ...prev];
+            });
           },
         },
       });
     }
-    setTimeout(() => {
+    const removalTimer = setTimeout(() => {
       setEmails((prev) => prev.filter((email) => email.id !== emailId));
       setProcessingId((current) => (current === emailId ? null : current));
+      pendingTimers.delete(emailId);
     }, 1200);
+    pendingTimers.set(emailId, removalTimer);
   };
 
   const reviewedCount = Math.max(0, initialCount - emails.length);
