@@ -272,6 +272,9 @@ function SuggestionsList() {
                 action="accept"
                 onSuccess={handleActionSuccess}
                 onStart={() => setProcessingId(email.id)}
+                onFinish={() =>
+                  setProcessingId((current) => (current === email.id ? null : current))
+                }
                 disabled={processingId === email.id || rejectLoadingId === email.id}
                 className="flex-1 w-full sm:w-auto gap-2"
                 icon={<Check className="h-4 w-4" aria-hidden="true" />}
@@ -332,6 +335,7 @@ function SuggestionsList() {
                           setFeedbackType('error');
                         } finally {
                           setRejectLoadingId(null);
+                          setProcessingId((current) => (current === email.id ? null : current));
                         }
                       }}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
