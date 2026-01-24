@@ -28,7 +28,7 @@ The frontend is intentionally lightweight and resilient, with a Vitest-based tes
 - **npm:** v10+  
 - **Vite:** 6.x or 7.x
 - Backend running locally at:  
-  `https://localhost:3000/api/v1` (HTTPS recommended for mobile testing)
+  `http://localhost:3000/api/v1`
 
 ---
 
@@ -47,14 +47,14 @@ The frontend expects the following:
 
 | Variable            | Default                        | Usage                          |
 | ------------------- | ------------------------------ | ------------------------------ |
-| `VITE_API_BASE_URL` | `https://localhost:3000/api/v1` | Root URL for backend API       |
-| `VITE_API_ORIGIN`   | `https://localhost:3000`        | Backend origin for OAuth login |
+| `VITE_API_BASE_URL` | `http://localhost:3000/api/v1` | Root URL for backend API       |
+| `VITE_API_ORIGIN`   | `http://localhost:3000`        | Backend origin for OAuth login |
 
 Create a `.env` file if you want to customize it:
 
 ```env
-VITE_API_BASE_URL=https://localhost:3000/api/v1
-VITE_API_ORIGIN=https://localhost:3000
+VITE_API_BASE_URL=http://localhost:3000/api/v1
+VITE_API_ORIGIN=http://localhost:3000
 ```
 
 ---
