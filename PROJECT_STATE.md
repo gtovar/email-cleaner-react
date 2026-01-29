@@ -1,13 +1,13 @@
 # PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-01-19 06:20 CST — Commit: pending
+Last updated: 2026-01-29 00:00 CST — Commit: pending
 
 ---
 
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-01-19 06:20 CST
+SNAPSHOT_DATE: 2026-01-29 00:00 CST
 COMMIT: pending
 ENVIRONMENT: local
 
@@ -25,6 +25,8 @@ Notes:
 - History screen loads paginated data from `/api/v1/notifications/history`.
 - Confirmation actions call `/api/v1/notifications/confirm` and update UI state.
 - Login view handles OAuth redirect and session expiry via `onAuthExpired`.
+- Public Home page renders at `/` for unauthenticated users.
+- Open Graph / Twitter tags are defined in `index.html` with assets in `public/`.
 
 ---
 
@@ -38,7 +40,7 @@ Notes:
   - `index.html`
   - `tailwind.config.js`
 - Navigation:
-  - Local state toggles between Suggestions, History, Settings, and Login (no router).
+  - Local state toggles between Home, Login, Suggestions, History, Settings, and Inbox (no router).
 - Styling:
   - TailwindCSS + shadcn-style UI components.
 
@@ -79,9 +81,9 @@ Notes:
 ## 3.3 API Client (`src/services/api.js`)
 
 - API_BASE:
-  - `VITE_API_BASE_URL` with fallback to `https://localhost:3000/api/v1`.
+  - `VITE_API_BASE_URL` with fallback to `http://localhost:3000/api/v1`.
 - API_ORIGIN:
-  - `VITE_API_ORIGIN` with fallback to `https://localhost:3000`.
+  - `VITE_API_ORIGIN` with fallback to `http://localhost:3000`.
 - Implemented methods:
   - `getSuggestions`
   - `getSummary`
@@ -112,7 +114,7 @@ Notes:
   - `tests/integration/confirmActionFlow.test.jsx`
   - `tests/httpRequest.test.jsx`
 - Status:
-  - PASS (Vitest, 6 files / 21 tests).
+  - Last verified PASS (Vitest, 6 files / 21 tests) on 2026-01-19.
 - CI:
   - GitHub Actions runs lint, test, and build on PRs and pushes to `develop`.
 
@@ -168,7 +170,7 @@ Notes:
 
 # 6. Next Immediate Action
 
-➡️ Add tests for SummaryPanel and auth callback UI.
+➡️ Commit Home + Open Graph assets on a feature branch.
 
 ---
 
@@ -177,3 +179,4 @@ Notes:
 - 2026-01-11 23:51 CST — Doc alignment and tests verified (commit: pending)
 - 2026-01-12 01:45 CST — Template label alignment for HU sections (commit: pending)
 - 2026-01-18 02:53 CST — UI refactor (drawer summary, login screen) and tests failing (commit: pending)
+- 2026-01-29 00:00 CST — Home page + Open Graph preview assets (commit: pending)
