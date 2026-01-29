@@ -169,14 +169,44 @@ export default function InboxList() {
   }, [emails, query]);
 
   const selectedCount = selectedIds.size;
+  const visibleIds = useMemo(() => filteredEmails.map((email) => email.id), [filteredEmails]);
+  const visibleSelectedCount = useMemo(() => {
+    if (visibleIds.length === 0) return 0;
+    let count = 0;
+    for (const id of visibleIds) {
+      if (selectedIds.has(id)) count += 1;
+    }
+    return count;
+  }, [selectedIds, visibleIds]);
+  const allVisibleSelected = visibleIds.length > 0 && visibleSelectedCount === visibleIds.length;
+  const someVisibleSelected = visibleSelectedCount > 0 && visibleSelectedCount < visibleIds.length;
+  const selectAllRef = useRef(null);
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === filteredEmails.length) {
-      setSelectedIds(new Set());
+    if (allVisibleSelected) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        for (const id of visibleIds) {
+          next.delete(id);
+        }
+        return next;
+      });
       return;
     }
-    setSelectedIds(new Set(filteredEmails.map((email) => email.id)));
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      for (const id of visibleIds) {
+        next.add(id);
+      }
+      return next;
+    });
   };
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = someVisibleSelected;
+    }
+  }, [someVisibleSelected]);
 
   const toggleSelectOne = (id) => {
     setSelectedIds((prev) => {
@@ -311,9 +341,10 @@ export default function InboxList() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <input
+            ref={selectAllRef}
             type="checkbox"
             aria-label="Seleccionar todos"
-            checked={filteredEmails.length > 0 && selectedIds.size === filteredEmails.length}
+            checked={allVisibleSelected}
             onChange={toggleSelectAll}
             className="h-4 w-4 rounded border-input"
           />
