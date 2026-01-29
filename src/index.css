@@ -120,3 +120,18 @@
 .animate-collapsible-up {
   animation: collapsible-up 0.2s ease-out;
 }
+
+@keyframes inbox-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.inbox-panel-enter {
+  animation: inbox-panel-enter 180ms ease-out;
+}

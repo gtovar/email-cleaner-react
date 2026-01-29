@@ -7,6 +7,7 @@ export default function ConfirmButton({
   emailId,
   action,
   onSuccess,
+  onError,
   onStart,
   onFinish,
   disabled = false,
@@ -28,6 +29,9 @@ export default function ConfirmButton({
       }
     } catch (err) {
       console.error(err);
+      if (onError) {
+        onError(err);
+      }
     } finally {
       setLoading(false);
       if (onFinish) onFinish();
