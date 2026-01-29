@@ -8,6 +8,7 @@ import HistoryPage from './pages/HistoryPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import InboxPage from './pages/InboxPage.jsx';
+import HomePage from './pages/HomePage.jsx';
 import { API_ORIGIN, getAuthMe, logout, onAuthExpired } from './services/api.js';
 import { Button } from './components/ui/button.jsx';
 import ActivityPanel from './components/activity/ActivityPanel.jsx';
@@ -19,6 +20,13 @@ function App() {
   const [authEmail, setAuthEmail] = useState(null);
   const [activityOpen, setActivityOpen] = useState(false);
   const isAuthenticated = authStatus === 'authenticated';
+  const isHomeView = activeView === 'home';
+
+  const resolvePublicView = (pathname) => {
+    if (pathname === '/') return 'home';
+    if (pathname === '/login') return 'login';
+    return null;
+  };
 
   const syncAuthStatus = useCallback(async () => {
     setAuthStatus('checking');
@@ -31,11 +39,13 @@ function App() {
         setActiveView('suggestions');
       } else {
         setAuthStatus('anonymous');
-        setActiveView('login');
+        const publicView = resolvePublicView(window.location.pathname);
+        setActiveView(publicView || 'login');
       }
     } catch {
       setAuthStatus('anonymous');
-      setActiveView('login');
+      const publicView = resolvePublicView(window.location.pathname);
+      setActiveView(publicView || 'login');
     }
   }, []);
 
@@ -84,6 +94,11 @@ function App() {
   const handleLogin = () => {
     setAuthMessage(null);
     window.location.href = `${API_ORIGIN}/auth/google`;
+  };
+
+  const handleGoToLogin = () => {
+    setActiveView('login');
+    window.history.pushState(null, '', '/login');
   };
 
   const handleLogout = async () => {
@@ -174,10 +189,16 @@ function App() {
             />
           </>
         ) : authStatus !== 'checking' ? (
-          <LoginPage
-            onLogin={handleLogin}
-            message={authMessage?.type === 'error' ? authMessage.text : null}
-          />
+          <>
+            {isHomeView ? (
+              <HomePage onStart={handleGoToLogin} />
+            ) : (
+              <LoginPage
+                onLogin={handleLogin}
+                message={authMessage?.type === 'error' ? authMessage.text : null}
+              />
+            )}
+          </>
         ) : null}
       </main>
     </div>
