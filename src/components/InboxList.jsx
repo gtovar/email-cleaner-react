@@ -205,7 +205,6 @@ export default function InboxList() {
     [emails, selectedEmailId]
   );
   const panelKey = selectedEmailId || 'empty';
-  const hasSelection = Boolean(selectedEmail);
 
   if (loading && emails.length === 0) {
     return (
