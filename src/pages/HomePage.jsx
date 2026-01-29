@@ -12,11 +12,11 @@ import {
 import { Button } from '../components/ui/button.jsx';
 import { Card, CardContent } from '../components/ui/card.jsx';
 
-const BenefitCard = ({ icon: Icon, title, description }) => (
+const BenefitCard = ({ icon, title, description }) => (
   <Card className="border-border/50 bg-card/70">
     <CardContent className="space-y-3 p-6">
       <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-        <Icon className="h-5 w-5" aria-hidden="true" />
+        {icon}
       </div>
       <h3 className="text-base font-semibold text-foreground">{title}</h3>
       <p className="text-sm text-muted-foreground">{description}</p>
@@ -24,11 +24,11 @@ const BenefitCard = ({ icon: Icon, title, description }) => (
   </Card>
 );
 
-const StepCard = ({ step, icon: Icon, title, description }) => (
+const StepCard = ({ step, icon, title, description }) => (
   <div className="text-center space-y-4">
     <div className="relative inline-flex items-center justify-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-        <Icon className="h-5 w-5" aria-hidden="true" />
+        {icon}
       </div>
       <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
         {step}
@@ -116,22 +116,22 @@ export default function HomePage({ onStart }) {
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <BenefitCard
-              icon={Shield}
+              icon={<Shield className="h-5 w-5" aria-hidden="true" />}
               title="You are in control"
               description="Nothing happens without your approval. Every action requires confirmation."
             />
             <BenefitCard
-              icon={Sparkles}
+              icon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
               title="Clear suggestions"
               description="Smart recommendations based on patterns, not guesswork."
             />
             <BenefitCard
-              icon={Clock}
+              icon={<Clock className="h-5 w-5" aria-hidden="true" />}
               title="Save time"
               description="Clean up years of clutter in minutes, not hours."
             />
             <BenefitCard
-              icon={CheckCircle2}
+              icon={<CheckCircle2 className="h-5 w-5" aria-hidden="true" />}
               title="Privacy first"
               description="We only read metadata. Your email content stays private."
             />
@@ -151,19 +151,19 @@ export default function HomePage({ onStart }) {
           <div className="grid gap-8 md:grid-cols-3 md:gap-12">
             <StepCard
               step={1}
-              icon={Search}
+              icon={<Search className="h-5 w-5" aria-hidden="true" />}
               title="Connect & scan"
               description="Sign in with Google. We scan for newsletters, promotions, and old emails."
             />
             <StepCard
               step={2}
-              icon={ThumbsUp}
+              icon={<ThumbsUp className="h-5 w-5" aria-hidden="true" />}
               title="Review suggestions"
               description="See cleanup suggestions one by one. Accept what makes sense."
             />
             <StepCard
               step={3}
-              icon={CheckCircle2}
+              icon={<CheckCircle2 className="h-5 w-5" aria-hidden="true" />}
               title="You decide"
               description="Nothing is deleted until you confirm. Review history anytime."
             />
