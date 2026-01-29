@@ -272,18 +272,25 @@ function SuggestionsList() {
                   )}
                 </div>
               )}
-              {!compactView && email.snippet && (
-                <p className="mb-2 line-clamp-2 text-sm text-foreground/70">
-                  {email.snippet}
-                </p>
+              {!compactView && (
+                <>
+                  {(email.snippet ||
+                    (Array.isArray(email.suggestions) &&
+                      email.suggestions.length > 0)) && (
+                    <p className="mb-2 line-clamp-2 text-sm text-foreground/70">
+                      {email.snippet ||
+                        formatSuggestion(email.suggestions[0])}
+                    </p>
+                  )}
+                  {email.snippet &&
+                    Array.isArray(email.suggestions) &&
+                    email.suggestions.length > 0 && (
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {formatSuggestion(email.suggestions[0])}
+                      </p>
+                    )}
+                </>
               )}
-              {!compactView &&
-                Array.isArray(email.suggestions) &&
-                email.suggestions.length > 0 && (
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {formatSuggestion(email.suggestions[0])}
-                  </p>
-                )}
             </CardContent>
             <CardFooter className="gap-2 pt-0 p-4 sm:p-6 sm:pt-0 flex-col sm:flex-row">
               <ConfirmButton
