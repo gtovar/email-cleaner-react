@@ -22,11 +22,11 @@ function App() {
   const isAuthenticated = authStatus === 'authenticated';
   const isHomeView = activeView === 'home';
 
-  const resolvePublicView = (pathname) => {
+  const resolvePublicView = useCallback((pathname) => {
     if (pathname === '/') return 'home';
     if (pathname === '/login') return 'login';
     return null;
-  };
+  }, []);
 
   const syncAuthStatus = useCallback(async () => {
     setAuthStatus('checking');
@@ -47,7 +47,7 @@ function App() {
       const publicView = resolvePublicView(window.location.pathname);
       setActiveView(publicView || 'login');
     }
-  }, []);
+  }, [resolvePublicView]);
 
   useEffect(() => {
     const { pathname, search } = window.location;
@@ -69,7 +69,7 @@ function App() {
     setAuthMessage(null);
     syncAuthStatus();
     window.history.replaceState(null, '', '/');
-  }, [syncAuthStatus]);
+  }, [syncAuthStatus, resolvePublicView]);
 
   useEffect(() => {
     const { pathname } = window.location;
@@ -90,6 +90,26 @@ function App() {
       setActiveView('login');
     });
   }, []);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const { pathname } = window.location;
+      if (pathname === '/auth/callback') return;
+
+      const publicView = resolvePublicView(pathname);
+      if (authStatus === 'anonymous') {
+        setActiveView(publicView || 'login');
+        return;
+      }
+
+      if (authStatus === 'authenticated' && publicView) {
+        setActiveView('suggestions');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [authStatus, resolvePublicView]);
 
   const handleLogin = () => {
     setAuthMessage(null);
