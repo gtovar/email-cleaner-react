@@ -1,13 +1,13 @@
 # PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-11 00:39 CST — Commit: pending
+Last updated: 2026-03-11 00:45 CST — Commit: pending
 
 ---
 
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-11 00:39 CST
+SNAPSHOT_DATE: 2026-03-11 00:45 CST
 COMMIT: pending
 ENVIRONMENT: local
 
@@ -181,6 +181,7 @@ Notes:
 - `src/services/api.js` now exposes `runInboxAction` for the dedicated Inbox-action path.
 - `tests/InboxList.test.jsx` now covers archive confirmation, direct mark-unread behavior, bulk partial success, and `execution: none`.
 - `tests/e2e/hu19-row-level.spec.js` now contains row-level and bulk browser scenarios against the local fixture Inbox environment.
+- `src/index.css` now applies a localized Inbox-only override for the Radix `ScrollArea` viewport wrapper so row actions remain visible beside the reading panel in real usage.
 
 **Pendientes (reales):**
 - None.
@@ -211,6 +212,7 @@ Notes:
 - Accepted ADR 008 to freeze bulk-result semantics, per-item response detail, and local reconciliation before bulk implementation begins (commit: pending).
 - Backend `/api/v1/inbox/actions` now emits ADR 008 bulk semantics, and `InboxList.jsx` now consumes that contract for multi-select archive, delete, and mark-unread flows with local reconciliation (commit: pending).
 - Added frontend bulk Vitest coverage plus bulk Playwright scenarios; local browser execution now passes for bulk `archive`, `delete`, and `mark_unread`, closing HU19 at the frontend level (commit: pending).
+- Added a localized Inbox-only `ScrollArea` viewport override after real-browser inspection showed Radix's internal `display: table` wrapper was visually hiding row action controls behind the reading pane (commit: pending).
 
 ---
 

@@ -135,3 +135,8 @@
 .inbox-panel-enter {
   animation: inbox-panel-enter 180ms ease-out;
 }
+
+.inbox-list-scroll [data-radix-scroll-area-viewport] > div {
+  display: block !important;
+  min-width: 0 !important;
+}

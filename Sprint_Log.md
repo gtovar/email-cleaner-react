@@ -129,3 +129,6 @@ Frontend: yes
 ## 2026-03-11 — HU19 closed locally
 - Ran the full Playwright Inbox suite locally and validated 6 browser scenarios: 3 row-level and 3 bulk.
 - HU19 is now closed for the current local scope; Gmail side effects remain outside this browser validation path.
+
+## 2026-03-11 — Inbox row-action visibility fixed
+- Added a localized Inbox-only CSS override for the Radix `ScrollArea` viewport wrapper after real-browser inspection showed the internal `display: table` wrapper was visually hiding row action controls behind the reading pane.

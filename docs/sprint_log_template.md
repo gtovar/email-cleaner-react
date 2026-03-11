@@ -23,20 +23,20 @@ Frontend: <yes/no>
 
 # Example entries (delete before using)
 
-### YYYY-MM-DD — HU# <short action>
+## YYYY-MM-DD — HU# <short action>
 - <1–2 bullet points of what was completed>  
 - <optional: name of components touched>
 
-### YYYY-MM-DD — Documentation updated
+## YYYY-MM-DD — Documentation updated
 - <brief fact>
 
-### YYYY-MM-DD — Environment changes
+## YYYY-MM-DD — Environment changes
 - <brief fact>
 
 ---
 
 # Daily entries (append below)
 
-### <YYYY-MM-DD> — <short factual title>  
+## <YYYY-MM-DD> — <short factual title>  
 - <bullet 1>  
 - <bullet 2>

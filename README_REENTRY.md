@@ -48,7 +48,7 @@ npm test -- AppAuthFlow.test.jsx
 - `InboxList` direct state coverage now exists for empty, error, and mobile preview behavior.
 - `SettingsPage` direct render coverage now exists for account, notification, and security sections.
 - `InboxList` row-level actions are now wired at the frontend layer to the dedicated Inbox-action client path.
-- `InboxList` bulk actions are still placeholders.
+- `InboxList` bulk actions are implemented and covered by local browser validation.
 - HU19 is the next tracked cross-repo feature: Inbox direct and bulk actions.
 - The backend contract for `POST /api/v1/inbox/actions` now exists.
 - Before browser automation, HU19 still needs two E2E prerequisites defined: a deterministic Inbox seed and a stable authenticated session strategy that does not depend on live Google OAuth.
@@ -58,6 +58,7 @@ npm test -- AppAuthFlow.test.jsx
 - `npm run session:e2e` provides a local `session_token` without live Google OAuth.
 - Playwright setup now exists, and the row-level browser suite passes locally for `archive`, `delete`, and `mark_unread`.
 - HU19 is now closed at the feature level for the current local scope: row-level and bulk Inbox flows both pass local browser validation.
+- A localized `ScrollArea` viewport override in `src/index.css` keeps row action controls visible beside the reading pane during real-browser usage.
 
 ## 5) Immediate Next Step
 ➡️ Choose the next frontend feature slice after HU19 and update the working checkpoint before opening a new implementation track.
