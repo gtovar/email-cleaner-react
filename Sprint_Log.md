@@ -132,3 +132,6 @@ Frontend: yes
 
 ## 2026-03-11 — Inbox row-action visibility fixed
 - Added a localized Inbox-only CSS override for the Radix `ScrollArea` viewport wrapper after real-browser inspection showed the internal `display: table` wrapper was visually hiding row action controls behind the reading pane.
+
+## 2026-03-11 — Inbox bulk Vitest assertions aligned
+- Updated `tests/InboxList.test.jsx` to match the current bulk toast behavior after CI exposed stale expectations from the removed loading-toast flow.

@@ -248,8 +248,6 @@ describe('InboxList', () => {
         { emailId: 'email-2', status: 'error', reason: 'not_found' },
       ],
     });
-    toastMock.loading.mockReturnValue('toast-loading-id');
-
     render(<InboxList />);
 
     await waitFor(() => {
@@ -280,8 +278,9 @@ describe('InboxList', () => {
       expect(within(screen.getByTestId('inbox-row-email-2')).getByRole('checkbox', { name: 'Seleccionar correo' })).toBeChecked();
     });
 
-    expect(toastMock.dismiss).toHaveBeenCalledWith('toast-loading-id');
-    expect(toastMock.warning).toHaveBeenCalledWith('⚠️ Parcial: 1 exitosos, 1 fallaron.');
+    expect(toastMock).toHaveBeenCalledWith('⚠️ Parcial: 1 exitosos, 1 fallaron.', {
+      duration: 3500,
+    });
   });
 
   test('clears selection and shows error when bulk execution returns none', async () => {
@@ -307,8 +306,6 @@ describe('InboxList', () => {
         { emailId: 'email-1', status: 'error', reason: 'not_found' },
       ],
     });
-    toastMock.loading.mockReturnValue('toast-loading-id');
-
     render(<InboxList />);
 
     await waitFor(() => {
@@ -332,6 +329,8 @@ describe('InboxList', () => {
     });
 
     expect(within(screen.getByTestId('inbox-row-email-1')).getByRole('checkbox', { name: 'Seleccionar correo' })).not.toBeChecked();
-    expect(toastMock.error).toHaveBeenCalledWith('❌ Fallo total en la operación.');
+    expect(toastMock).toHaveBeenCalledWith('❌ Fallo total en la operación.', {
+      duration: 3500,
+    });
   });
 });

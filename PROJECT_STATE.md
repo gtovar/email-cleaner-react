@@ -1,13 +1,13 @@
 # PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-11 00:45 CST — Commit: pending
+Last updated: 2026-03-11 03:15 CST — Commit: pending
 
 ---
 
 # 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-11 00:45 CST
+SNAPSHOT_DATE: 2026-03-11 03:15 CST
 COMMIT: pending
 ENVIRONMENT: local
 
@@ -213,6 +213,7 @@ Notes:
 - Backend `/api/v1/inbox/actions` now emits ADR 008 bulk semantics, and `InboxList.jsx` now consumes that contract for multi-select archive, delete, and mark-unread flows with local reconciliation (commit: pending).
 - Added frontend bulk Vitest coverage plus bulk Playwright scenarios; local browser execution now passes for bulk `archive`, `delete`, and `mark_unread`, closing HU19 at the frontend level (commit: pending).
 - Added a localized Inbox-only `ScrollArea` viewport override after real-browser inspection showed Radix's internal `display: table` wrapper was visually hiding row action controls behind the reading pane (commit: pending).
+- Aligned `tests/InboxList.test.jsx` with the current bulk toast implementation after CI exposed stale assertions tied to the removed loading-toast flow (commit: pending).
 
 ---
 
@@ -250,3 +251,4 @@ Notes:
 - 2026-03-10 21:20 CST — Backend `/api/v1/inbox/actions` now emits ADR 008 bulk semantics, so the next frontend task is multi-select bulk execution and reconciliation (commit: pending)
 - 2026-03-11 00:12 CST — Implemented the HU19 bulk frontend slice in `InboxList.jsx`, added Vitest coverage for partial and none outcomes, and expanded the Playwright spec with bulk archive/delete/mark-unread scenarios (commit: pending)
 - 2026-03-11 00:39 CST — HU19 closed at the frontend level after the full Playwright suite passed locally for 3 row-level and 3 bulk Inbox scenarios (commit: pending)
+- 2026-03-11 03:15 CST — Aligned React Inbox bulk Vitest assertions with the current toast behavior after CI exposed stale expectations from the removed loading-toast flow (commit: pending)
