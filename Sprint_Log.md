@@ -135,3 +135,7 @@ Frontend: yes
 
 ## 2026-03-11 — Inbox bulk Vitest assertions aligned
 - Updated `tests/InboxList.test.jsx` to match the current bulk toast behavior after CI exposed stale expectations from the removed loading-toast flow.
+
+## 2026-03-14 — Inbox row-action visibility guardrail restored
+- Reconnected the `inbox-list-scroll` class on the list `ScrollArea` so the localized Radix viewport override applies to the real Inbox markup.
+- Added a targeted Vitest assertion in `tests/InboxList.test.jsx` to keep the row-action visibility fix from silently detaching again.

@@ -1,15 +1,19 @@
-# PROJECT_STATE.md — Frontend React
+## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-11 03:15 CST — Commit: pending
+Last updated: 2026-03-14 00:39 CST — Commit: pending
 
 ---
 
-# 1. Technical Header (Snapshot Metadata)
+## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-11 03:15 CST
+SNAPSHOT_DATE: 2026-03-14 00:39 CST
 COMMIT: pending
 ENVIRONMENT: local
+REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
+BRANCH: develop
+WORKING_TREE_STATUS: Dirty (modified files present)
+TEST_STATUS: PASS (Vitest targeted Inbox validation)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -17,7 +21,7 @@ Notes:
 
 ---
 
-# 2. Executive Summary
+## 2. Executive Summary
 
 - Summary is shown in a right-side drawer (Sheet) opened from the header.
 - Suggestions load from `/api/v1/suggestions` and render actionable emails.
@@ -31,7 +35,7 @@ Notes:
 
 ---
 
-# 3. Component-by-Component Technical State
+## 3. Component-by-Component Technical State
 
 ## 3.1 React Application
 
@@ -129,52 +133,52 @@ Notes:
 
 ---
 
-# 4. User Story Status (Evidence-Driven)
+## 4. User Story Status (Evidence-Driven)
 
-## HU17 — Suggestions vs Summary alignment (frontend)
+### HU17 — Suggestions vs Summary alignment (frontend)
 
-**Estado:** DONE
+**Status:** DONE
 
-**Evidencia comprobable:**
+**Evidence:**
 - `src/components/SummaryPanel.jsx`
 - `src/components/activity/ActivityPanel.jsx`
 - `src/services/api.js`
 - `tests/SummaryPanel.test.jsx`
 - `tests/ActivityPanel.test.jsx`
 
-**Pendientes (reales):**
+**Open items:**
 - None.
 
-**Riesgos técnicos:**
+**Technical risks:**
 - SummaryPanel drawer flow is covered by automated tests.
 
-**Decisión o cambio reciente:**
+**Recent change:**
 - Summary drawer behavior and SummaryPanel states are now covered by tests; ActivityPanel includes accessible title/description metadata for the drawer (commit: pending).
 
-## HU18 — Google OAuth session flow (frontend)
+### HU18 — Google OAuth session flow (frontend)
 
-**Estado:** DONE
+**Status:** DONE
 
-**Evidencia comprobable:**
+**Evidence:**
 - `src/App.jsx` (login button + callback handling)
 - `src/services/api.js` (`credentials: 'include'`)
 - `tests/AppAuthFlow.test.jsx`
 
-**Pendientes (reales):**
+**Open items:**
 - None.
 
-**Riesgos técnicos:**
+**Technical risks:**
 - Frontend depends on backend cookie settings (SameSite/Secure).
 - Auth callback and session-expiry behavior are covered by direct tests.
 
-**Decisión o cambio reciente:**
+**Recent change:**
 - Added direct coverage for successful callback, callback error routing, and session-expiry behavior; fixed callback error handling so failed OAuth returns to `/login` without losing the error message (commit: pending).
 
-## HU19 — Inbox direct and bulk actions (frontend)
+### HU19 — Inbox direct and bulk actions (frontend)
 
-**Estado:** DONE
+**Status:** DONE
 
-**Evidencia comprobable:**
+**Evidence:**
 - `src/components/InboxList.jsx` renders bulk and row-level controls for `Archivar`, `Marcar no leído`, and `Eliminar`.
 - `src/components/InboxList.jsx` now implements row-level `archive`, `delete`, and `mark_unread` actions.
 - `src/components/InboxList.jsx` now implements multi-select bulk archive, delete, and mark-unread flows with local reconciliation based on ADR 008 `results`.
@@ -183,7 +187,7 @@ Notes:
 - `tests/e2e/hu19-row-level.spec.js` now contains row-level and bulk browser scenarios against the local fixture Inbox environment.
 - `src/index.css` now applies a localized Inbox-only override for the Radix `ScrollArea` viewport wrapper so row actions remain visible beside the reading panel in real usage.
 
-**Pendientes (reales):**
+**Open items:**
 - None.
 
 **E2E Inbox source strategy (frozen):**
@@ -200,10 +204,10 @@ Notes:
 - The preferred source is the backend helper that mints a local `session_token` compatible with the real auth middleware.
 - The goal is to make authentication a controlled prerequisite instead of a moving part inside the HU19 flow itself.
 
-**Riesgos técnicos:**
+**Technical risks:**
 - Gmail side effects remain outside browser validation because Inbox actions still use the stubbed executor path in local test environments.
 
-**Decisión o cambio reciente:**
+**Recent change:**
 - Promoted Inbox placeholder controls into a tracked cross-repo feature candidate, aligned the backend direction with ADR 007, defined the frontend UX contract in ADR 003, and implemented the first row-level slice in `InboxList` (commit: pending).
 - Prepared HU19 for future E2E by adding a stable row-level DOM hook (`data-testid=\"inbox-row-{id}\"`) and by fixing the next design decisions around seed and authenticated session strategy (commit: pending).
 - Froze the HU19 E2E prerequisites and aligned them with backend reality: `INBOX_SOURCE=fixture` for deterministic Inbox data and a local `session_token` helper for authenticated runs without live Google OAuth (commit: pending).
@@ -214,23 +218,24 @@ Notes:
 - Added frontend bulk Vitest coverage plus bulk Playwright scenarios; local browser execution now passes for bulk `archive`, `delete`, and `mark_unread`, closing HU19 at the frontend level (commit: pending).
 - Added a localized Inbox-only `ScrollArea` viewport override after real-browser inspection showed Radix's internal `display: table` wrapper was visually hiding row action controls behind the reading pane (commit: pending).
 - Aligned `tests/InboxList.test.jsx` with the current bulk toast implementation after CI exposed stale assertions tied to the removed loading-toast flow (commit: pending).
+- Reconnected the `inbox-list-scroll` class on the Inbox list `ScrollArea` so the localized Radix viewport override actually applies in production markup, and added a guardrail test to keep the row-action visibility fix anchored (commit: pending).
 
 ---
 
-# 5. Current Technical Risks
+## 5. Current Technical Risks
 
 - Frontend auth still depends on backend cookie settings (SameSite/Secure) in real environments.
 - Gmail side effects remain stubbed, so browser validation still proves UI + contract flow, not Gmail execution.
 
 ---
 
-# 6. Next Immediate Action
+## 6. Next Immediate Action
 
 ➡️ Decide the next user-facing frontend slice after HU19 closure and refresh the checkpoint docs to match that roadmap choice.
 
 ---
 
-# Version log
+## Version log
 
 - 2026-01-11 23:51 CST — Doc alignment and tests verified (commit: pending)
 - 2026-01-12 01:45 CST — Template label alignment for HU sections (commit: pending)
@@ -252,3 +257,4 @@ Notes:
 - 2026-03-11 00:12 CST — Implemented the HU19 bulk frontend slice in `InboxList.jsx`, added Vitest coverage for partial and none outcomes, and expanded the Playwright spec with bulk archive/delete/mark-unread scenarios (commit: pending)
 - 2026-03-11 00:39 CST — HU19 closed at the frontend level after the full Playwright suite passed locally for 3 row-level and 3 bulk Inbox scenarios (commit: pending)
 - 2026-03-11 03:15 CST — Aligned React Inbox bulk Vitest assertions with the current toast behavior after CI exposed stale expectations from the removed loading-toast flow (commit: pending)
+- 2026-03-14 00:39 CST — Reconnected the Inbox-specific `ScrollArea` class so the Radix viewport override for row-action visibility applies again; `npm test -- InboxList.test.jsx` passed locally (commit: pending)

@@ -145,6 +145,23 @@ describe('InboxList', () => {
     });
   });
 
+  test('applies the inbox-specific scroll area class so row actions stay visible', async () => {
+    const { getEmails } = await import('../src/services/api.js');
+    getEmails.mockResolvedValue({
+      emails: [buildEmail({ id: 'email-1', subject: 'Quarterly report' })],
+      total: 1,
+      nextPageToken: null,
+    });
+
+    const { container } = render(<InboxList />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Quarterly report')).toBeInTheDocument();
+    });
+
+    expect(container.querySelector('.inbox-list-scroll')).not.toBeNull();
+  });
+
   test('archives a row email after confirmation and removes it from the list', async () => {
     const { getEmails, runInboxAction } = await import('../src/services/api.js');
     getEmails.mockResolvedValue({

@@ -667,7 +667,7 @@ export default function InboxList() {
               Vista de lectura (sin acciones directas)
             </span>
           </div>
-          <ScrollArea className="flex-1">
+          <ScrollArea className="inbox-list-scroll flex-1">
             <div className="divide-y">
               {filteredEmails.map((email) => {
                 const from = parseFrom(email.from);
