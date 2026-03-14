@@ -284,7 +284,23 @@ export default function InboxList() {
     setProcessingAction({ emailId, action });
 
     try {
-      await runInboxAction([emailId], action);
+      const response = await runInboxAction([emailId], action);
+      const execution = response?.execution;
+      const singleResult = Array.isArray(response?.results) ? response.results[0] : null;
+      const rowSucceeded =
+        singleResult?.status === 'ok' ||
+        (singleResult == null && execution !== 'none');
+
+      if (!rowSucceeded) {
+        const resultReason = singleResult?.reason;
+        const failureCopy =
+          resultReason === 'not_found'
+            ? 'La acción no se pudo aplicar porque el correo ya no está disponible.'
+            : 'No se pudo completar la acción de Inbox.';
+        toast(failureCopy, { duration: 3500 });
+        return;
+      }
+
       reconcileEmailAction(emailId, action);
 
       const successCopy =
@@ -827,7 +843,10 @@ export default function InboxList() {
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
-                              onClick={() => handleRowAction({ emailId: email.id, action: 'archive' })}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'archive' });
+                              }}
                             >
                               <Archive className="h-4 w-4" aria-hidden="true" />
                               Archivar
@@ -835,7 +854,10 @@ export default function InboxList() {
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
-                              onClick={() => handleRowAction({ emailId: email.id, action: 'mark_unread' })}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'mark_unread' });
+                              }}
                             >
                               <Mail className="h-4 w-4" aria-hidden="true" />
                               Marcar no leído
@@ -843,7 +865,10 @@ export default function InboxList() {
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-destructive hover:bg-muted"
-                              onClick={() => handleRowAction({ emailId: email.id, action: 'delete' })}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'delete' });
+                              }}
                             >
                               <Trash2 className="h-4 w-4" aria-hidden="true" />
                               Eliminar

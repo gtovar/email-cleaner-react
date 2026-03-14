@@ -1,19 +1,19 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-14 00:39 CST — Commit: pending
+Last updated: 2026-03-14 02:02 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-14 00:39 CST
+SNAPSHOT_DATE: 2026-03-14 02:02 CST
 COMMIT: pending
 ENVIRONMENT: local
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: develop
 WORKING_TREE_STATUS: Dirty (modified files present)
-TEST_STATUS: PASS (Vitest targeted Inbox validation)
+TEST_STATUS: PASS (Vitest targeted Inbox validation and review follow-ups)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -219,6 +219,7 @@ Notes:
 - Added a localized Inbox-only `ScrollArea` viewport override after real-browser inspection showed Radix's internal `display: table` wrapper was visually hiding row action controls behind the reading pane (commit: pending).
 - Aligned `tests/InboxList.test.jsx` with the current bulk toast implementation after CI exposed stale assertions tied to the removed loading-toast flow (commit: pending).
 - Reconnected the `inbox-list-scroll` class on the Inbox list `ScrollArea` so the localized Radix viewport override actually applies in production markup, and added a guardrail test to keep the row-action visibility fix anchored (commit: pending).
+- Hardened row-level Inbox actions so `execution: none` no longer reconciles local state as success, and stopped mobile overflow actions from triggering the row preview via event bubbling (commit: pending).
 
 ---
 
@@ -258,3 +259,4 @@ Notes:
 - 2026-03-11 00:39 CST — HU19 closed at the frontend level after the full Playwright suite passed locally for 3 row-level and 3 bulk Inbox scenarios (commit: pending)
 - 2026-03-11 03:15 CST — Aligned React Inbox bulk Vitest assertions with the current toast behavior after CI exposed stale expectations from the removed loading-toast flow (commit: pending)
 - 2026-03-14 00:39 CST — Reconnected the Inbox-specific `ScrollArea` class so the Radix viewport override for row-action visibility applies again; `npm test -- InboxList.test.jsx` passed locally (commit: pending)
+- 2026-03-14 02:02 CST — Fixed review follow-ups in `InboxList`: row actions now inspect backend result semantics before local reconciliation, and mobile overflow actions stop row-click propagation; `npm test -- InboxList.test.jsx` passed locally (commit: pending)

@@ -139,3 +139,7 @@ Frontend: yes
 ## 2026-03-14 — Inbox row-action visibility guardrail restored
 - Reconnected the `inbox-list-scroll` class on the list `ScrollArea` so the localized Radix viewport override applies to the real Inbox markup.
 - Added a targeted Vitest assertion in `tests/InboxList.test.jsx` to keep the row-action visibility fix from silently detaching again.
+
+## 2026-03-14 — Inbox review follow-ups fixed
+- Updated row-level Inbox actions to inspect the backend response before reconciling local state, preventing `execution: none` outcomes from being shown as success.
+- Stopped event bubbling from the mobile overflow action menu so tapping `archive`, `delete`, or `mark_unread` no longer opens the preview sheet as a side effect.
