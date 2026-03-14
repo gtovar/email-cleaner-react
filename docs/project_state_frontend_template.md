@@ -112,7 +112,7 @@ No opinions. No plans. No backlog.
 
 Use this exact format for each HU:
 
-### HUXX — <name>
+## HUXX — <name>
 
 **Estado:** <DONE | EN_CURSO | BLOCKED | BACKLOG>
 
@@ -163,4 +163,3 @@ Only one. No lists.
 
 - <YYYY-MM-DD HH:MM CST> — <short description of change> (commit: <hash | pending>)
 - <YYYY-MM-DD HH:MM CST> — <short description of change> (commit: <hash | pending>)
-

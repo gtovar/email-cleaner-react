@@ -1,4 +1,5 @@
 import { LogOut, Settings, X } from 'lucide-react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Sheet, SheetContent, SheetClose } from '../ui/sheet.jsx';
 import { Button } from '../ui/button.jsx';
 import SummaryPanel from '../SummaryPanel.jsx';
@@ -13,6 +14,10 @@ export default function ActivityPanel({
   return (
     <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
       <SheetContent aria-label="Activity panel">
+        <DialogPrimitive.Title className="sr-only">Activity panel</DialogPrimitive.Title>
+        <DialogPrimitive.Description className="sr-only">
+          Summary drawer with recent activity, settings access, and logout action.
+        </DialogPrimitive.Description>
         <div className="flex items-center justify-between border-b px-4 py-3">
           <h3 className="text-sm font-semibold text-foreground">Resumen</h3>
           <SheetClose asChild>

@@ -36,23 +36,23 @@ This ADR documents the decisions regarding:
 ### 2.1 Frontend UI Framework / Library
 
 #### Option A — React 18 + Vite (Current)
-**Pros**
+##### Pros
 - Industry-standard UI library.
 - Excellent DX (Developer Experience) using Vite.
 - Fast startup times and HMR.
 - Tons of learning resources.
 - Perfect fit for an SPA-style admin dashboard consuming a REST API.
 
-**Cons**
+##### Cons
 - Advanced features (SSR, routing) require extra libraries.
 
 ---
 
 #### Option B — Next.js
-**Pros**
+##### Pros
 - Full-featured framework: routing, SSR/SSG, optimizations.
 
-**Cons**
+##### Cons
 - Higher complexity (routing conventions, server components).
 - Overkill for a dashboard consuming an external Fastify backend.
 - Distracts from the project’s main purpose (Node + Python + React integration).
@@ -60,10 +60,10 @@ This ADR documents the decisions regarding:
 ---
 
 #### Option C — Vue / Angular / Svelte / Others
-**Pros**
+##### Pros
 - Technically interesting.
 
-**Cons**
+##### Cons
 - Less aligned with the career goal (React-focused job roles).
 - Fragment learning effort.
 
@@ -72,18 +72,18 @@ This ADR documents the decisions regarding:
 ### 2.2 Frontend Testing Tools
 
 #### Option A — Jest + React Testing Library
-**Pros**
+##### Pros
 - Well-known in the industry.
 - RTL is the standard way of testing React components.
 
-**Cons**
+##### Cons
 - Heavy configuration required in Vite projects (transformers, ESM issues).
 - Slower startup and less smooth DX compared to Vitest.
 
 ---
 
 #### Option B — Vitest + React Testing Library (Preferred)
-**Pros**
+##### Pros
 - Native integration with Vite (uses the same pipeline).
 - Almost zero config.
 - API is nearly identical to Jest (`describe`, `test`, `expect`).
@@ -92,7 +92,7 @@ This ADR documents the decisions regarding:
   - Jest in backend
   - Vitest in frontend
 
-**Cons**
+##### Cons
 - Some recruiters may be more familiar with Jest.
   (Mitigated by explaining Jest is also used in backend.)
 
@@ -101,7 +101,7 @@ This ADR documents the decisions regarding:
 ### 2.3 HTTP Client Strategy
 
 #### Option A — Native `fetch` (Preferred)
-**Pros**
+##### Pros
 - Standard browser API.
 - No additional dependency.
 - Combined with a small wrapper (`httpRequest`/`apiClient`) it supports:
@@ -109,17 +109,17 @@ This ADR documents the decisions regarding:
   - timeouts
   - retries (HU13)
 
-**Cons**
+##### Cons
 - Slightly verbose without a wrapper.
 
 ---
 
 #### Option B — axios
-**Pros**
+##### Pros
 - Cleaner API.
 - Built-in interceptors.
 
-**Cons**
+##### Cons
 - Adds a dependency without strong benefit for this project.
 - Fetch + wrapper already solves the use case well.
 
@@ -128,22 +128,22 @@ This ADR documents the decisions regarding:
 ### 2.4 Routing
 
 #### Option A — Use React Router immediately
-**Pros**
+##### Pros
 - Real URLs (`/suggestions`, `/history`).
 - Better structure for large apps.
 
-**Cons**
+##### Cons
 - Adds complexity not needed yet.
 - The current UI works with simple tab-based navigation.
 
 ---
 
 #### Option B — No React Router for now (Preferred)
-**Pros**
+##### Pros
 - Simpler for the current MVP.
 - Can be added later once more views are introduced.
 
-**Cons**
+##### Cons
 - No direct URL navigation per view (acceptable for now).
 
 ---
@@ -215,4 +215,3 @@ This ADR documents the decisions regarding:
 - **Related Work:**
   - HU14 — Frontend Test Suite
   - T-HU14-01 — Vitest + RTL setup (first test: `StatusMessage`)
-

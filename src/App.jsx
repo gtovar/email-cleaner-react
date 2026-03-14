@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Mail, Menu } from 'lucide-react';
 import { Toaster } from 'sonner';
 import './App.css';
@@ -19,6 +19,7 @@ function App() {
   const [authStatus, setAuthStatus] = useState('checking');
   const [authEmail, setAuthEmail] = useState(null);
   const [activityOpen, setActivityOpen] = useState(false);
+  const callbackHandledRef = useRef(false);
   const isAuthenticated = authStatus === 'authenticated';
   const isHomeView = activeView === 'home';
 
@@ -55,6 +56,8 @@ function App() {
       return;
     }
 
+    callbackHandledRef.current = true;
+
     const params = new URLSearchParams(search);
     const error = params.get('error');
 
@@ -62,7 +65,7 @@ function App() {
       setAuthMessage({ type: 'error', text: 'Google sign-in failed. Please try again.' });
       setAuthStatus('anonymous');
       setActiveView('login');
-      window.history.replaceState(null, '', '/');
+      window.history.replaceState(null, '', '/login');
       return;
     }
 
@@ -72,6 +75,11 @@ function App() {
   }, [syncAuthStatus, resolvePublicView]);
 
   useEffect(() => {
+    if (callbackHandledRef.current) {
+      callbackHandledRef.current = false;
+      return;
+    }
+
     const { pathname } = window.location;
     if (pathname === '/auth/callback') {
       return;

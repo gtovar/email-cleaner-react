@@ -17,7 +17,5 @@
 
 6. Technical Quick Reference
    - One-liners or key files involved.
-
 7. Reentry Status
    - Short statement on whether re-entry is clean, blocked, or mid-work.
-
