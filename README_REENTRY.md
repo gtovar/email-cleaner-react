@@ -16,7 +16,7 @@
 - `InboxList` now has direct coverage for empty, error, and mobile preview states in `tests/InboxList.test.jsx`.
 - `SettingsPage` now has direct coverage for section rendering, labeled inputs, and toggle defaults in `tests/SettingsPage.test.jsx`.
 - `InboxList` now implements bulk controls for `archive`, `delete`, and `mark_unread` against the ADR 008 contract.
-- HU19 is now the tracked follow-up for deciding whether Inbox becomes an actionable surface or stays read-only.
+- HU19 is closed on `develop` for the documented local/browser scope; the next frontend task is no longer a HU19 completion step.
 - ADR 007 now gives HU19 a direction: Inbox actions should use a dedicated contract, not the suggestion-confirm endpoint.
 - ADR 003 now defines the frontend UX contract for confirmations, disabled states, and feedback.
 - ADR 008 now defines bulk-result semantics, including partial success, per-item results, and local reconciliation for the first implementation pass.
@@ -49,7 +49,7 @@ npm test -- AppAuthFlow.test.jsx
 - `SettingsPage` direct render coverage now exists for account, notification, and security sections.
 - `InboxList` row-level actions are now wired at the frontend layer to the dedicated Inbox-action client path.
 - `InboxList` bulk actions are implemented and covered by local browser validation.
-- HU19 is the next tracked cross-repo feature: Inbox direct and bulk actions.
+- HU19 is already closed on `develop`; do not reopen it unless a new defect or scope extension is intentionally declared.
 - The backend contract for `POST /api/v1/inbox/actions` now exists.
 - Before browser automation, HU19 still needs two E2E prerequisites defined: a deterministic Inbox seed and a stable authenticated session strategy that does not depend on live Google OAuth.
 - Those prerequisites are now available in backend form:
@@ -57,7 +57,7 @@ npm test -- AppAuthFlow.test.jsx
 - the fixture dataset exposes the three controlled HU19 emails,
 - `npm run session:e2e` provides a local `session_token` without live Google OAuth.
 - Playwright setup now exists, and the row-level browser suite passes locally for `archive`, `delete`, and `mark_unread`.
-- HU19 is now closed at the feature level for the current local scope: row-level and bulk Inbox flows both pass local browser validation.
+- HU19 is now closed at the feature level on `develop` for the documented local/browser scope: row-level and bulk Inbox flows both pass local browser validation.
 - A localized `ScrollArea` viewport override in `src/index.css` keeps row action controls visible beside the reading pane during real-browser usage.
 
 ## 5) Immediate Next Step

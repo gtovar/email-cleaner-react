@@ -143,3 +143,7 @@ Frontend: yes
 ## 2026-03-14 — Inbox review follow-ups fixed
 - Updated row-level Inbox actions to inspect the backend response before reconciling local state, preventing `execution: none` outcomes from being shown as success.
 - Stopped event bubbling from the mobile overflow action menu so tapping `archive`, `delete`, or `mark_unread` no longer opens the preview sheet as a side effect.
+
+## 2026-03-14 — HU19 frontend merged to develop
+- Merged the HU19 frontend branch into `develop` after the row-action visibility fix, the review follow-up fixes, and the React governance-doc alignment all cleared review and CI.
+- Frontend user-story tracking now treats HU19 as closed on `develop` for the documented local/browser scope; the next frontend step is no longer a HU19 completion task.
