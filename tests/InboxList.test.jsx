@@ -240,6 +240,79 @@ describe('InboxList', () => {
     expect(screen.getByText('Quarterly report')).toBeInTheDocument();
   });
 
+  test('does not reconcile row state when the backend returns execution none', async () => {
+    const { getEmails, runInboxAction } = await import('../src/services/api.js');
+    getEmails.mockResolvedValue({
+      emails: [
+        buildEmail({ id: 'email-1', subject: 'Quarterly report' }),
+      ],
+      total: 1,
+      nextPageToken: null,
+    });
+    runInboxAction.mockResolvedValue({
+      success: true,
+      execution: 'none',
+      action: 'archive',
+      source: 'inbox',
+      summary: {
+        total: 1,
+        processed: 0,
+        failed: 1,
+      },
+      results: [{ emailId: 'email-1', status: 'error', reason: 'not_found' }],
+    });
+
+    render(<InboxList />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Quarterly report')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Archivar' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Archive this email?')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Archive email' }));
+
+    await waitFor(() => {
+      expect(runInboxAction).toHaveBeenCalledWith(['email-1'], 'archive');
+      expect(screen.getByText('Quarterly report')).toBeInTheDocument();
+    });
+
+    expect(toastMock).toHaveBeenCalledWith(
+      'La acción no se pudo aplicar porque el correo ya no está disponible.',
+      { duration: 3500 }
+    );
+  });
+
+  test('mobile overflow actions do not open the preview sheet', async () => {
+    installMatchMedia(true);
+
+    const { getEmails } = await import('../src/services/api.js');
+    getEmails.mockResolvedValue({
+      emails: [buildEmail({ id: 'email-1', subject: 'Quarterly report' })],
+      total: 1,
+      nextPageToken: null,
+    });
+
+    render(<InboxList />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Quarterly report')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mostrar acciones' }));
+    fireEvent.click(screen.getByText('Archivar'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Archive this email?')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument();
+  });
+
   test('runs bulk archive with partial success and keeps failed items selected', async () => {
     const { getEmails, runInboxAction } = await import('../src/services/api.js');
     getEmails.mockResolvedValue({
