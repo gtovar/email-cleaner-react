@@ -189,6 +189,13 @@ export async function confirmAction(emailIds, action) {
     return data;
 }
 
+export async function runInboxAction(emailIds, action) {
+  return httpRequest('/inbox/actions', {
+    method: 'POST',
+    body: { emailIds, action },
+  });
+}
+
 export async function getHistory(page = 1, perPage = 20) {
   const result = await httpRequest(
     `/notifications/history?page=${page}&perPage=${perPage}`

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Archive, Mail, MoreHorizontal, Trash2, Circle, X } from 'lucide-react';
-import { getEmails } from '../services/api.js';
+import { toast } from 'sonner';
+import { getEmails, runInboxAction } from '../services/api.js';
 import { Input } from './ui/input.jsx';
 import { Badge } from './ui/badge.jsx';
 import { Card } from './ui/card.jsx';
@@ -10,6 +11,16 @@ import EmptyState from './State/EmptyState.jsx';
 import { ScrollArea } from './ui/scroll-area.jsx';
 import { Separator } from './ui/separator.jsx';
 import { Sheet, SheetClose, SheetContent } from './ui/sheet.jsx';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from './ui/alert-dialog.jsx';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 
 const formatDate = (value) => {
@@ -65,8 +76,15 @@ export default function InboxList() {
       : false
   );
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [actionDialog, setActionDialog] = useState({ open: false, action: null, emailId: null });
+  const [processingAction, setProcessingAction] = useState({ emailId: null, action: null });
+  const [bulkActionDialog, setBulkActionDialog] = useState({ open: false, action: null });
+  const [isBulkActionInFlight, setIsBulkActionInFlight] = useState(false);
   const mobileMenuRef = useRef(null);
   const mobileButtonRef = useRef(null);
+
+  const isActionPending = (emailId, action) =>
+    processingAction.emailId === emailId && processingAction.action === action;
 
   useEffect(() => {
     let cancelled = false;
@@ -234,7 +252,205 @@ export default function InboxList() {
     () => emails.find((email) => email.id === selectedEmailId) || null,
     [emails, selectedEmailId]
   );
+  const actionTargetEmail = useMemo(
+    () => emails.find((email) => email.id === actionDialog.emailId) || null,
+    [emails, actionDialog.emailId]
+  );
   const panelKey = selectedEmailId || 'empty';
+
+  const reconcileEmailAction = (emailId, action) => {
+    if (action === 'mark_unread') {
+      setEmails((prev) =>
+        prev.map((email) => (email.id === emailId ? { ...email, isRead: false } : email))
+      );
+      return;
+    }
+
+    setEmails((prev) => prev.filter((email) => email.id !== emailId));
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(emailId);
+      return next;
+    });
+    if (selectedEmailId === emailId) {
+      setSelectedEmailId(null);
+      setIsMobileOpen(false);
+    }
+  };
+
+  const executeInboxAction = async ({ emailId, action }) => {
+    if (!emailId || !action || isActionPending(emailId, action)) return;
+
+    setProcessingAction({ emailId, action });
+
+    try {
+      const response = await runInboxAction([emailId], action);
+      const execution = response?.execution;
+      const singleResult = Array.isArray(response?.results) ? response.results[0] : null;
+      const rowSucceeded =
+        singleResult?.status === 'ok' ||
+        (singleResult == null && execution !== 'none');
+
+      if (!rowSucceeded) {
+        const resultReason = singleResult?.reason;
+        const failureCopy =
+          resultReason === 'not_found'
+            ? 'La acción no se pudo aplicar porque el correo ya no está disponible.'
+            : 'No se pudo completar la acción de Inbox.';
+        toast(failureCopy, { duration: 3500 });
+        return;
+      }
+
+      reconcileEmailAction(emailId, action);
+
+      const successCopy =
+        action === 'archive'
+          ? 'Correo archivado.'
+          : action === 'delete'
+            ? 'Correo eliminado.'
+            : 'Correo marcado como no leído.';
+      toast(successCopy, { duration: 2500 });
+    } catch (err) {
+      toast(err.message || 'No se pudo completar la acción de Inbox.', {
+        duration: 3500,
+      });
+    } finally {
+      setProcessingAction({ emailId: null, action: null });
+      setActionDialog({ open: false, action: null, emailId: null });
+      setMobileActionsId(null);
+    }
+  };
+
+  const executeBulkAction = async (action) => {
+    if (selectedIds.size === 0 || isBulkActionInFlight) return;
+
+    setIsBulkActionInFlight(true);
+    const idsArray = Array.from(selectedIds);
+
+    try {
+      const response = await runInboxAction(idsArray, action);
+      const execution = response?.execution || 'none';
+      const results = Array.isArray(response?.results) ? response.results : [];
+      const successfulIds = results
+        .filter((result) => result.status === 'ok')
+        .map((result) => result.emailId);
+
+      if (successfulIds.length > 0) {
+        if (action === 'archive' || action === 'delete') {
+          setEmails((prev) => prev.filter((email) => !successfulIds.includes(email.id)));
+        } else if (action === 'mark_unread') {
+          setEmails((prev) =>
+            prev.map((email) =>
+              successfulIds.includes(email.id) ? { ...email, isRead: false } : email
+            )
+          );
+        }
+
+        setSelectedIds((prev) => {
+          const next = new Set(prev);
+          successfulIds.forEach((id) => next.delete(id));
+          return next;
+        });
+
+        if (
+          selectedEmailId &&
+          successfulIds.includes(selectedEmailId) &&
+          action !== 'mark_unread'
+        ) {
+          setSelectedEmailId(null);
+          setIsMobileOpen(false);
+        }
+      }
+
+      if (execution === 'full') {
+        toast(`✅ ${successfulIds.length} correos procesados.`, { duration: 2500 });
+      } else if (execution === 'partial') {
+        toast(
+          `⚠️ Parcial: ${successfulIds.length} exitosos, ${results.length - successfulIds.length} fallaron.`,
+          { duration: 3500 }
+        );
+      } else {
+        setSelectedIds(new Set());
+        toast('❌ Fallo total en la operación.', { duration: 3500 });
+      }
+    } catch (err) {
+      toast(err.message || '❌ Error de red.', { duration: 3500 });
+    } finally {
+      setIsBulkActionInFlight(false);
+      setBulkActionDialog({ open: false, action: null });
+    }
+  };
+
+  const openActionDialog = ({ emailId, action }) => {
+    setActionDialog({ open: true, action, emailId });
+  };
+
+  const openBulkActionDialog = (action) => {
+    setBulkActionDialog({ open: true, action });
+  };
+
+  const handleRowAction = ({ emailId, action }) => {
+    if (action === 'mark_unread') {
+      void executeInboxAction({ emailId, action });
+      return;
+    }
+    openActionDialog({ emailId, action });
+  };
+
+  const handleBulkAction = (action) => {
+    if (action === 'mark_unread') {
+      void executeBulkAction(action);
+      return;
+    }
+    openBulkActionDialog(action);
+  };
+
+  const buildActionTitle = () => {
+    if (actionDialog.action === 'archive') return 'Archive this email?';
+    if (actionDialog.action === 'delete') return 'Delete this email?';
+    return 'Confirm Inbox action';
+  };
+
+  const buildActionDescription = () => {
+    const subject = actionTargetEmail?.subject || '(Sin asunto)';
+    const sender = parseFrom(actionTargetEmail?.from).name;
+
+    if (actionDialog.action === 'archive') {
+      return `This will archive "${subject}" from ${sender}. You can still find it later in Gmail.`;
+    }
+    if (actionDialog.action === 'delete') {
+      return `This will delete "${subject}" from ${sender}. Use this only when you are sure.`;
+    }
+    return 'Confirm the selected Inbox action.';
+  };
+
+  const buildActionButtonLabel = () => {
+    if (actionDialog.action === 'archive') return 'Archive email';
+    if (actionDialog.action === 'delete') return 'Delete email';
+    return 'Continue';
+  };
+
+  const buildBulkActionTitle = () => {
+    if (bulkActionDialog.action === 'archive') return 'Archive selected emails?';
+    if (bulkActionDialog.action === 'delete') return 'Delete selected emails?';
+    return 'Confirm bulk Inbox action';
+  };
+
+  const buildBulkActionDescription = () => {
+    if (bulkActionDialog.action === 'archive') {
+      return `This will archive ${selectedCount} selected email${selectedCount > 1 ? 's' : ''}.`;
+    }
+    if (bulkActionDialog.action === 'delete') {
+      return `This will delete ${selectedCount} selected email${selectedCount > 1 ? 's' : ''}. Use this only when you are sure.`;
+    }
+    return 'Confirm the selected bulk Inbox action.';
+  };
+
+  const buildBulkActionButtonLabel = () => {
+    if (bulkActionDialog.action === 'archive') return 'Archive selected';
+    if (bulkActionDialog.action === 'delete') return 'Delete selected';
+    return 'Continue';
+  };
 
   if (loading && emails.length === 0) {
     return (
@@ -346,6 +562,7 @@ export default function InboxList() {
             aria-label="Seleccionar todos"
             checked={allVisibleSelected}
             onChange={toggleSelectAll}
+            disabled={isBulkActionInFlight}
             className="h-4 w-4 rounded border-input"
           />
           <span>
@@ -361,37 +578,87 @@ export default function InboxList() {
       </div>
 
       {selectedCount > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-3 py-2 text-sm">
+        <div
+          data-testid="bulk-action-bar"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-3 py-2 text-sm"
+        >
           <span className="text-muted-foreground">
             {selectedCount} seleccionado{selectedCount > 1 ? 's' : ''}
           </span>
           <div className="hidden items-center gap-2 sm:flex">
-            <Button type="button" variant="outline" size="sm">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              data-testid="bulk-archive-button"
+              disabled={isBulkActionInFlight}
+              onClick={() => handleBulkAction('archive')}
+            >
               Archivar
             </Button>
-            <Button type="button" variant="outline" size="sm">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              data-testid="bulk-mark-unread-button"
+              disabled={isBulkActionInFlight}
+              onClick={() => handleBulkAction('mark_unread')}
+            >
               Marcar no leído
             </Button>
-            <Button type="button" variant="destructive" size="sm">
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              data-testid="bulk-delete-button"
+              disabled={isBulkActionInFlight}
+              onClick={() => handleBulkAction('delete')}
+            >
               Eliminar
             </Button>
             <Button
               type="button"
               variant="ghost"
               size="sm"
+              data-testid="bulk-clear-selection-button"
+              disabled={isBulkActionInFlight}
               onClick={() => setSelectedIds(new Set())}
             >
               Limpiar
             </Button>
           </div>
           <div className="flex items-center gap-2 sm:hidden">
-            <Button type="button" variant="outline" size="icon" aria-label="Archivar">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label="Archivar"
+              data-testid="bulk-archive-button"
+              disabled={isBulkActionInFlight}
+              onClick={() => handleBulkAction('archive')}
+            >
               <Archive className="h-4 w-4" />
             </Button>
-            <Button type="button" variant="outline" size="icon" aria-label="Marcar no leído">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label="Marcar no leído"
+              data-testid="bulk-mark-unread-button"
+              disabled={isBulkActionInFlight}
+              onClick={() => handleBulkAction('mark_unread')}
+            >
               <Mail className="h-4 w-4" />
             </Button>
-            <Button type="button" variant="destructive" size="icon" aria-label="Eliminar">
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              aria-label="Eliminar"
+              data-testid="bulk-delete-button"
+              disabled={isBulkActionInFlight}
+              onClick={() => handleBulkAction('delete')}
+            >
               <Trash2 className="h-4 w-4" />
             </Button>
             <Button
@@ -399,6 +666,8 @@ export default function InboxList() {
               variant="ghost"
               size="icon"
               aria-label="Limpiar selección"
+              data-testid="bulk-clear-selection-button"
+              disabled={isBulkActionInFlight}
               onClick={() => setSelectedIds(new Set())}
             >
               <X className="h-4 w-4" />
@@ -414,7 +683,7 @@ export default function InboxList() {
               Vista de lectura (sin acciones directas)
             </span>
           </div>
-          <ScrollArea className="flex-1">
+          <ScrollArea className="inbox-list-scroll flex-1">
             <div className="divide-y">
               {filteredEmails.map((email) => {
                 const from = parseFrom(email.from);
@@ -425,6 +694,7 @@ export default function InboxList() {
                 return (
                   <div
                     key={email.id}
+                    data-testid={`inbox-row-${email.id}`}
                     onClick={() => handleSelectEmail(email)}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter' || event.key === ' ') {
@@ -447,6 +717,7 @@ export default function InboxList() {
                           type="checkbox"
                           aria-label="Seleccionar correo"
                           checked={isChecked}
+                          disabled={isBulkActionInFlight}
                           onChange={(event) => {
                             event.stopPropagation();
                             toggleSelectOne(email.id);
@@ -509,13 +780,43 @@ export default function InboxList() {
                       </div>
 
                       <div className="hidden items-center gap-2 text-muted-foreground sm:flex">
-                        <Button type="button" variant="ghost" size="icon" aria-label="Archivar">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Archivar"
+                          disabled={processingAction.emailId === email.id || isBulkActionInFlight}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleRowAction({ emailId: email.id, action: 'archive' });
+                          }}
+                        >
                           <Archive className="h-4 w-4" aria-hidden="true" />
                         </Button>
-                        <Button type="button" variant="ghost" size="icon" aria-label="Marcar no leído">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Marcar no leído"
+                          disabled={processingAction.emailId === email.id || isBulkActionInFlight}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleRowAction({ emailId: email.id, action: 'mark_unread' });
+                          }}
+                        >
                           <Mail className="h-4 w-4" aria-hidden="true" />
                         </Button>
-                        <Button type="button" variant="ghost" size="icon" aria-label="Eliminar">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Eliminar"
+                          disabled={processingAction.emailId === email.id || isBulkActionInFlight}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleRowAction({ emailId: email.id, action: 'delete' });
+                          }}
+                        >
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </div>
@@ -542,7 +843,10 @@ export default function InboxList() {
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
-                              onClick={() => setMobileActionsId(null)}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'archive' });
+                              }}
                             >
                               <Archive className="h-4 w-4" aria-hidden="true" />
                               Archivar
@@ -550,7 +854,10 @@ export default function InboxList() {
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
-                              onClick={() => setMobileActionsId(null)}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'mark_unread' });
+                              }}
                             >
                               <Mail className="h-4 w-4" aria-hidden="true" />
                               Marcar no leído
@@ -558,7 +865,10 @@ export default function InboxList() {
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-destructive hover:bg-muted"
-                              onClick={() => setMobileActionsId(null)}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'delete' });
+                              }}
                             >
                               <Trash2 className="h-4 w-4" aria-hidden="true" />
                               Eliminar
@@ -607,6 +917,71 @@ export default function InboxList() {
           </SheetContent>
         </Sheet>
       )}
+
+      <AlertDialog
+        open={bulkActionDialog.open}
+        onOpenChange={(open) => {
+          if (!isBulkActionInFlight) {
+            setBulkActionDialog((current) => ({ ...current, open }));
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{buildBulkActionTitle()}</AlertDialogTitle>
+            <AlertDialogDescription>{buildBulkActionDescription()}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isBulkActionInFlight}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isBulkActionInFlight}
+              onClick={(event) => {
+                event.preventDefault();
+                void executeBulkAction(bulkActionDialog.action);
+              }}
+            >
+              {isBulkActionInFlight ? 'Working...' : buildBulkActionButtonLabel()}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={actionDialog.open}
+        onOpenChange={(open) => {
+          if (!processingAction.emailId) {
+            setActionDialog((current) => ({ ...current, open }));
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{buildActionTitle()}</AlertDialogTitle>
+            <AlertDialogDescription>{buildActionDescription()}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={Boolean(processingAction.emailId)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={Boolean(processingAction.emailId)}
+              onClick={(event) => {
+                event.preventDefault();
+                void executeInboxAction({
+                  emailId: actionDialog.emailId,
+                  action: actionDialog.action,
+                });
+              }}
+            >
+              {processingAction.emailId
+                ? 'Working...'
+                : buildActionButtonLabel()}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {!loading && !error && nextPageToken && (
         <div className="flex justify-center">
