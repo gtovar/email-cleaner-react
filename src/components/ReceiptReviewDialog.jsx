@@ -45,6 +45,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
   const phoneInputId = useId();
   const descriptionId = useId();
   const activeRequestIdRef = useRef(0);
+  const activeSendRequestIdRef = useRef(0);
   const latestOpenRef = useRef(open);
   const latestEmailIdRef = useRef(emailId);
   const [contentLoading, setContentLoading] = useState(false);
@@ -99,9 +100,15 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
     latestOpenRef.current &&
     latestEmailIdRef.current === targetEmailId;
 
+  const isActiveSendRequest = (requestId, targetEmailId) =>
+    activeSendRequestIdRef.current === requestId &&
+    latestOpenRef.current &&
+    latestEmailIdRef.current === targetEmailId;
+
   useEffect(() => {
     latestOpenRef.current = open;
     latestEmailIdRef.current = emailId;
+    activeSendRequestIdRef.current += 1;
 
     if (!open || !emailId) {
       activeRequestIdRef.current += 1;
@@ -218,6 +225,9 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
     setPhoneTouched(true);
     if (!canSend || !emailContent || !extractionResult) return;
 
+    const requestId = ++activeSendRequestIdRef.current;
+    const targetEmailId = emailId;
+
     setSendLoading(true);
     setSendError('');
     setSendSuccess('');
@@ -231,6 +241,8 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
         due_date: extractionResult.due_date,
         phone: phone.trim(),
       });
+
+      if (!isActiveSendRequest(requestId, targetEmailId)) return;
 
       if (result?.sent) {
         setSendSuccess('Notificacion enviada por WhatsApp.');
@@ -249,9 +261,13 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
       setSendError('No se pudo enviar la notificacion de WhatsApp.');
     } catch (error) {
+      if (!isActiveSendRequest(requestId, targetEmailId)) return;
+
       setSendError(error.message || 'No se pudo enviar la notificacion de WhatsApp.');
     } finally {
-      setSendLoading(false);
+      if (isActiveSendRequest(requestId, targetEmailId)) {
+        setSendLoading(false);
+      }
     }
   };
 

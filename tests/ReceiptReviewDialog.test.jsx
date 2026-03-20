@@ -294,4 +294,86 @@ describe('ReceiptReviewDialog', () => {
       html: null,
     });
   });
+
+  test('ignores stale send results after switching to another email', async () => {
+    const { getEmailContent, extractReceipt, sendReceiptWhatsApp } = await import('../src/services/api.js');
+    const sendDeferred = createDeferred();
+
+    getEmailContent.mockImplementation((requestedEmailId) =>
+      Promise.resolve(
+        requestedEmailId === 'email-1'
+          ? {
+              id: 'email-1',
+              subject: 'Factura CFE marzo',
+              from: 'CFE <facturas@cfe.mx>',
+              body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+              html: null,
+            }
+          : {
+              id: 'email-2',
+              subject: 'Factura CFE abril',
+              from: 'CFE <facturas@cfe.mx>',
+              body: 'Total a pagar: $410.00. Fecha limite de pago: 2026-04-10.',
+              html: null,
+            }
+      )
+    );
+
+    extractReceipt.mockImplementation(({ subject }) =>
+      Promise.resolve({
+        amount: subject === 'Factura CFE abril' ? 410 : 350.5,
+        due_date: subject === 'Factura CFE abril' ? '2026-04-10' : '2026-03-25',
+      })
+    );
+
+    sendReceiptWhatsApp.mockReturnValue(sendDeferred.promise);
+
+    const onOpenChange = vi.fn();
+    const view = render(
+      <ReceiptReviewDialog
+        open
+        emailId="email-1"
+        onOpenChange={onOpenChange}
+      />
+    );
+
+    const phoneInput = await screen.findByLabelText('Telefono WhatsApp');
+    fireEvent.change(phoneInput, { target: { value: '+52 81 1234 5678' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar por WhatsApp' }));
+
+    await waitFor(() => {
+      expect(sendReceiptWhatsApp).toHaveBeenCalledWith({
+        emailId: 'email-1',
+        sender: 'CFE <facturas@cfe.mx>',
+        subject: 'Factura CFE marzo',
+        amount: 350.5,
+        due_date: '2026-03-25',
+        phone: '+52 81 1234 5678',
+      });
+    });
+
+    view.rerender(
+      <ReceiptReviewDialog
+        open
+        emailId="email-2"
+        onOpenChange={onOpenChange}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Factura CFE abril')).toBeInTheDocument();
+    });
+
+    sendDeferred.resolve({
+      sent: true,
+      provider: 'twilio',
+      status: 'sent',
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Factura CFE abril')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Notificacion enviada por WhatsApp.')).not.toBeInTheDocument();
+  });
 });

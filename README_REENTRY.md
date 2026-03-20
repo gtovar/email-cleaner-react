@@ -33,6 +33,7 @@
 - Added `getEmailContent`, `extractReceipt`, and `sendReceiptWhatsApp` helpers to `src/services/api.js`.
 - Added targeted Vitest coverage in `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx`.
 - Hardened `ReceiptReviewDialog` retry-load handling so stale async results no longer update state after dialog close or `emailId` switch, and added targeted stale-retry coverage in `tests/ReceiptReviewDialog.test.jsx`.
+- Hardened `ReceiptReviewDialog` send-response handling so stale async send results no longer update state after dialog close or `emailId` switch, and added targeted stale-send coverage in `tests/ReceiptReviewDialog.test.jsx`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -51,9 +52,10 @@ npm test -- AppAuthFlow.test.jsx
 - Targeted Vitest coverage for the slice is passing.
 - A non-blocking Radix dialog warning still appears in test output and is currently deferred.
 - The narrow review fix for stale retry-load updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
+- The narrow review fix for stale send-response updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
 
 ## 5) Immediate Next Step
-➡️ Commit and push the narrow `ReceiptReviewDialog` review fix for stale retry-load state updates to `feat/hu05-receipt-review-whatsapp`.
+➡️ Commit and push the narrow `ReceiptReviewDialog` review fix for stale send-response state updates to `feat/hu05-receipt-review-whatsapp`.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -69,4 +71,4 @@ npm test -- AppAuthFlow.test.jsx
 
 ## 7) Reentry Status
 - Reentry: clean
-- Tests: last verified PASS (Vitest targeted `HU_05` slice plus stale retry review-fix coverage: `tests/InboxList.test.jsx`, `tests/ReceiptReviewDialog.test.jsx`) on 2026-03-19
+- Tests: last verified PASS (Vitest targeted `HU_05` slice plus stale retry/send review-fix coverage: `tests/InboxList.test.jsx`, `tests/ReceiptReviewDialog.test.jsx`) on 2026-03-19

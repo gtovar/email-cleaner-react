@@ -159,3 +159,7 @@ Frontend: yes
 ## 2026-03-19 — HU_05 review fix for stale retry-load state
 - Guarded `ReceiptReviewDialog` retry-load state updates so stale async results no longer apply after dialog close or after switching to another `emailId`.
 - Added targeted Vitest coverage for the stale retry scenario in `tests/ReceiptReviewDialog.test.jsx`; `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx` passed locally.
+
+## 2026-03-19 — HU_05 review fix for stale send-response state
+- Guarded `ReceiptReviewDialog` send-response state updates so stale async send results no longer apply after dialog close or after switching to another `emailId`.
+- Added targeted Vitest coverage for the stale send scenario in `tests/ReceiptReviewDialog.test.jsx`; `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx` passed locally.
