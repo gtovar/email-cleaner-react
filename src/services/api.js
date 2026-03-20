@@ -166,6 +166,15 @@ export async function getEmails({
   };
 }
 
+export async function getEmailContent(emailId) {
+  if (!emailId) {
+    throw new Error('Email id is required');
+  }
+
+  return httpRequest(`/emails/${encodeURIComponent(emailId)}/content`, {
+    method: 'GET',
+  });
+}
 
 export async function getSuggestions() {
   const data = await httpRequest('/suggestions', { method: 'GET' });
@@ -193,6 +202,34 @@ export async function runInboxAction(emailIds, action) {
   return httpRequest('/inbox/actions', {
     method: 'POST',
     body: { emailIds, action },
+  });
+}
+
+export async function extractReceipt({ subject, body, html = null }) {
+  return httpRequest('/receipt-detection/extract', {
+    method: 'POST',
+    body: { subject, body, html },
+  });
+}
+
+export async function sendReceiptWhatsApp({
+  emailId,
+  sender,
+  subject,
+  amount,
+  due_date,
+  phone,
+}) {
+  return httpRequest('/notifications/receipt-whatsapp', {
+    method: 'POST',
+    body: {
+      emailId,
+      sender,
+      subject,
+      amount,
+      due_date,
+      phone,
+    },
   });
 }
 

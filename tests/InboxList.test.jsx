@@ -6,6 +6,9 @@ import InboxList from '../src/components/InboxList.jsx';
 vi.mock('../src/services/api.js', () => ({
   getEmails: vi.fn(),
   runInboxAction: vi.fn(),
+  getEmailContent: vi.fn(),
+  extractReceipt: vi.fn(),
+  sendReceiptWhatsApp: vi.fn(),
 }));
 
 const { toastMock } = vi.hoisted(() => {
@@ -68,6 +71,10 @@ describe('InboxList', () => {
     getEmails.mockReset();
     const { runInboxAction } = await import('../src/services/api.js');
     runInboxAction.mockReset();
+    const { getEmailContent, extractReceipt, sendReceiptWhatsApp } = await import('../src/services/api.js');
+    getEmailContent.mockReset();
+    extractReceipt.mockReset();
+    sendReceiptWhatsApp.mockReset();
     toastMock.mockReset();
     toastMock.loading.mockReset();
     toastMock.dismiss.mockReset();
@@ -200,6 +207,47 @@ describe('InboxList', () => {
     await waitFor(() => {
       expect(runInboxAction).toHaveBeenCalledWith(['email-1'], 'archive');
       expect(screen.queryByText('Quarterly report')).not.toBeInTheDocument();
+    });
+  });
+
+  test('opens the receipt review dialog from the row action', async () => {
+    const { getEmails, getEmailContent, extractReceipt } = await import('../src/services/api.js');
+    getEmails.mockResolvedValue({
+      emails: [buildEmail({ id: 'email-1', subject: 'Factura CFE marzo' })],
+      total: 1,
+      nextPageToken: null,
+    });
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+
+    render(<InboxList />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Factura CFE marzo')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Revisar recibo' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Revisar recibo' })).toBeInTheDocument();
+    });
+
+    expect(getEmailContent).toHaveBeenCalledWith('email-1');
+    await waitFor(() => {
+      expect(extractReceipt).toHaveBeenCalledWith({
+        subject: 'Factura CFE marzo',
+        body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+        html: null,
+      });
     });
   });
 

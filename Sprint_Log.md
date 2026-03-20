@@ -147,3 +147,11 @@ Frontend: yes
 ## 2026-03-14 — HU19 frontend merged to develop
 - Merged the HU19 frontend branch into `develop` after the row-action visibility fix, the review follow-up fixes, and the React governance-doc alignment all cleared review and CI.
 - Frontend user-story tracking now treats HU19 as closed on `develop` for the documented local/browser scope; the next frontend step is no longer a HU19 completion task.
+
+## 2026-03-19 — Frontend checkpoint retargeted
+- Updated the frontend checkpoint docs to declare HU_05 as the next active slice.
+- Anchored the next UI work to the backend receipt-extraction and manual WhatsApp routes that are already landed in Fastify.
+
+## 2026-03-19 — HU_05 frontend slice implemented
+- Added the `Revisar recibo` row action in `src/components/InboxList.jsx` and the `src/components/ReceiptReviewDialog.jsx` flow for full-content fetch, receipt extraction, manual phone capture, and manual WhatsApp send.
+- Added targeted Vitest coverage in `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx`; both test files passed locally.
