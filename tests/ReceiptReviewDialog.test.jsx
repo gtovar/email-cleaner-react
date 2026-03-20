@@ -9,6 +9,18 @@ vi.mock('../src/services/api.js', () => ({
   sendReceiptWhatsApp: vi.fn(),
 }));
 
+function createDeferred() {
+  let resolve;
+  let reject;
+
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  return { promise, resolve, reject };
+}
+
 describe('ReceiptReviewDialog', () => {
   beforeEach(async () => {
     const api = await import('../src/services/api.js');
@@ -202,5 +214,84 @@ describe('ReceiptReviewDialog', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Reintentar carga' })).toBeInTheDocument();
+  });
+
+  test('ignores stale retry results after switching to another email', async () => {
+    const { getEmailContent, extractReceipt } = await import('../src/services/api.js');
+    const retryDeferred = createDeferred();
+    let email1Calls = 0;
+
+    getEmailContent.mockImplementation((requestedEmailId) => {
+      if (requestedEmailId === 'email-1') {
+        email1Calls += 1;
+        if (email1Calls === 1) {
+          return Promise.reject(new Error('No se pudo cargar el contenido del correo.'));
+        }
+
+        return retryDeferred.promise;
+      }
+
+      return Promise.resolve({
+        id: 'email-2',
+        subject: 'Factura CFE abril',
+        from: 'CFE <facturas@cfe.mx>',
+        body: 'Total a pagar: $410.00. Fecha limite de pago: 2026-04-10.',
+        html: null,
+      });
+    });
+
+    extractReceipt.mockImplementation(({ subject }) =>
+      Promise.resolve({
+        amount: subject === 'Factura CFE abril' ? 410 : 350.5,
+        due_date: subject === 'Factura CFE abril' ? '2026-04-10' : '2026-03-25',
+      })
+    );
+
+    const onOpenChange = vi.fn();
+    const view = render(
+      <ReceiptReviewDialog
+        open
+        emailId="email-1"
+        onOpenChange={onOpenChange}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('No se pudo cargar el contenido del correo.')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reintentar carga' }));
+
+    view.rerender(
+      <ReceiptReviewDialog
+        open
+        emailId="email-2"
+        onOpenChange={onOpenChange}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Factura CFE abril')).toBeInTheDocument();
+    });
+
+    retryDeferred.resolve({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Factura CFE abril')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Factura CFE marzo')).not.toBeInTheDocument();
+    expect(extractReceipt).toHaveBeenCalledTimes(1);
+    expect(extractReceipt).toHaveBeenCalledWith({
+      subject: 'Factura CFE abril',
+      body: 'Total a pagar: $410.00. Fecha limite de pago: 2026-04-10.',
+      html: null,
+    });
   });
 });

@@ -1,19 +1,19 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-19 19:05 CST — Commit: pending
+Last updated: 2026-03-19 19:39 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-19 19:05 CST
+SNAPSHOT_DATE: 2026-03-19 19:39 CST
 COMMIT: pending
 ENVIRONMENT: local
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: feat/hu05-receipt-review-whatsapp
-WORKING_TREE_STATUS: Dirty (modified files present)
-TEST_STATUS: PASS (Vitest targeted HU_05 receipt review validation; InboxList and ReceiptReviewDialog passing)
+WORKING_TREE_STATUS: Dirty (review-fix checkpoint pending)
+TEST_STATUS: PASS (Vitest targeted HU_05 receipt review validation plus stale retry review-fix coverage)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -249,6 +249,7 @@ Notes:
 
 **Recent change:**
 - Added the `Revisar recibo` Inbox row action plus the receipt-review dialog that fetches `/api/v1/emails/:id/content`, calls the existing extraction route, captures the WhatsApp phone manually, and triggers the existing WhatsApp delivery route (commit: pending).
+- Guarded `ReceiptReviewDialog` retry-load state updates so stale async results no longer apply after the dialog closes or the user switches to another `emailId`; added targeted Vitest coverage for the stale retry scenario (commit: pending).
 
 ---
 
@@ -261,7 +262,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Review the `HU_05` frontend slice for commit readiness and decide whether the non-blocking Radix dialog warning should be deferred or cleaned up in a follow-up
+➡️ Commit and push the narrow `ReceiptReviewDialog` review fix that guards stale retry-load state updates on the active `HU_05` frontend branch.
 
 ---
 
@@ -292,3 +293,4 @@ Notes:
 - 2026-03-14 02:05 CST — Merged the HU19 frontend branch into `develop`, including the row-action visibility fix, review follow-up fixes, and the React governance-doc alignment (commit: pending)
 - 2026-03-19 15:18 CST — Refreshed the frontend checkpoint to declare HU_05 as the next active slice after confirming HU_02 backend and HU_03 backend are already landed in Fastify (commit: pending)
 - 2026-03-19 19:05 CST — Implemented the first `HU_05` frontend slice in `src/components/InboxList.jsx` and `src/components/ReceiptReviewDialog.jsx`, consuming `GET /api/v1/emails/:id/content` plus the existing extraction and WhatsApp routes; targeted Vitest coverage passed for `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx` (commit: pending)
+- 2026-03-19 19:39 CST — Hardened `ReceiptReviewDialog` retry-load behavior so stale async results no longer update state after close or `emailId` change; added targeted coverage for the stale retry case in `tests/ReceiptReviewDialog.test.jsx` (commit: pending)

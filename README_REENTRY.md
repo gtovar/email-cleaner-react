@@ -32,6 +32,7 @@
 - Added `src/components/ReceiptReviewDialog.jsx` to fetch full email content, call receipt extraction, capture phone manually, and trigger manual WhatsApp send.
 - Added `getEmailContent`, `extractReceipt`, and `sendReceiptWhatsApp` helpers to `src/services/api.js`.
 - Added targeted Vitest coverage in `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx`.
+- Hardened `ReceiptReviewDialog` retry-load handling so stale async results no longer update state after dialog close or `emailId` switch, and added targeted stale-retry coverage in `tests/ReceiptReviewDialog.test.jsx`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -49,9 +50,10 @@ npm test -- AppAuthFlow.test.jsx
 - The dialog fetches `/api/v1/emails/:id/content`, calls the existing extraction route, and sends WhatsApp manually with phone input captured inside the dialog only.
 - Targeted Vitest coverage for the slice is passing.
 - A non-blocking Radix dialog warning still appears in test output and is currently deferred.
+- The narrow review fix for stale retry-load updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
 
 ## 5) Immediate Next Step
-➡️ Review the `HU_05` frontend slice for commit readiness, then decide whether to commit with the deferred Radix warning or fix it in a follow-up.
+➡️ Commit and push the narrow `ReceiptReviewDialog` review fix for stale retry-load state updates to `feat/hu05-receipt-review-whatsapp`.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -67,4 +69,4 @@ npm test -- AppAuthFlow.test.jsx
 
 ## 7) Reentry Status
 - Reentry: clean
-- Tests: last verified PASS (Vitest targeted `HU_05` slice: `tests/InboxList.test.jsx`, `tests/ReceiptReviewDialog.test.jsx`) on 2026-03-19
+- Tests: last verified PASS (Vitest targeted `HU_05` slice plus stale retry review-fix coverage: `tests/InboxList.test.jsx`, `tests/ReceiptReviewDialog.test.jsx`) on 2026-03-19

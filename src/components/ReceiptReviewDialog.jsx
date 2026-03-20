@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useId, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Button } from './ui/button.jsx';
 import { Input } from './ui/input.jsx';
@@ -44,6 +44,9 @@ const formatAmount = (amount) => {
 export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
   const phoneInputId = useId();
   const descriptionId = useId();
+  const activeRequestIdRef = useRef(0);
+  const latestOpenRef = useRef(open);
+  const latestEmailIdRef = useRef(emailId);
   const [contentLoading, setContentLoading] = useState(false);
   const [contentError, setContentError] = useState('');
   const [emailContent, setEmailContent] = useState(null);
@@ -91,13 +94,28 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
     setSendSuccess('');
   };
 
+  const isActiveRequest = (requestId, targetEmailId) =>
+    activeRequestIdRef.current === requestId &&
+    latestOpenRef.current &&
+    latestEmailIdRef.current === targetEmailId;
+
+  useEffect(() => {
+    latestOpenRef.current = open;
+    latestEmailIdRef.current = emailId;
+
+    if (!open || !emailId) {
+      activeRequestIdRef.current += 1;
+    }
+  }, [open, emailId]);
+
   useEffect(() => {
     if (!open || !emailId) {
       resetDialogState();
       return;
     }
 
-    let cancelled = false;
+    const requestId = ++activeRequestIdRef.current;
+    const targetEmailId = emailId;
 
     const loadReceiptData = async () => {
       let phase = 'content';
@@ -112,8 +130,8 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
       setSendSuccess('');
 
       try {
-        const content = await getEmailContent(emailId);
-        if (cancelled) return;
+        const content = await getEmailContent(targetEmailId);
+        if (!isActiveRequest(requestId, targetEmailId)) return;
 
         setEmailContent(content);
         setContentLoading(false);
@@ -125,11 +143,11 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
           body: content.body,
           html: content.html,
         });
-        if (cancelled) return;
+        if (!isActiveRequest(requestId, targetEmailId)) return;
 
         setExtractionResult(extraction);
       } catch (error) {
-        if (cancelled) return;
+        if (!isActiveRequest(requestId, targetEmailId)) return;
 
         if (phase === 'content') {
           setContentError(error.message || 'No se pudo cargar el contenido del correo.');
@@ -137,7 +155,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
           setExtractionError(error.message || 'No se pudo extraer la informacion del recibo.');
         }
       } finally {
-        if (!cancelled) {
+        if (isActiveRequest(requestId, targetEmailId)) {
           setContentLoading(false);
           setExtractionLoading(false);
         }
@@ -146,14 +164,13 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
     void loadReceiptData();
 
-    return () => {
-      cancelled = true;
-    };
   }, [open, emailId]);
 
   const handleRetryLoad = async () => {
     if (!emailId) return;
 
+    const requestId = ++activeRequestIdRef.current;
+    const targetEmailId = emailId;
     let phase = 'content';
 
     setContentError('');
@@ -165,7 +182,9 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
     setExtractionResult(null);
 
     try {
-      const content = await getEmailContent(emailId);
+      const content = await getEmailContent(targetEmailId);
+      if (!isActiveRequest(requestId, targetEmailId)) return;
+
       setEmailContent(content);
       setContentLoading(false);
 
@@ -176,16 +195,22 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
         body: content.body,
         html: content.html,
       });
+      if (!isActiveRequest(requestId, targetEmailId)) return;
+
       setExtractionResult(extraction);
     } catch (error) {
+      if (!isActiveRequest(requestId, targetEmailId)) return;
+
       if (phase === 'content') {
         setContentError(error.message || 'No se pudo cargar el contenido del correo.');
       } else {
         setExtractionError(error.message || 'No se pudo extraer la informacion del recibo.');
       }
     } finally {
-      setContentLoading(false);
-      setExtractionLoading(false);
+      if (isActiveRequest(requestId, targetEmailId)) {
+        setContentLoading(false);
+        setExtractionLoading(false);
+      }
     }
   };
 

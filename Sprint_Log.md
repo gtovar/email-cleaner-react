@@ -155,3 +155,7 @@ Frontend: yes
 ## 2026-03-19 — HU_05 frontend slice implemented
 - Added the `Revisar recibo` row action in `src/components/InboxList.jsx` and the `src/components/ReceiptReviewDialog.jsx` flow for full-content fetch, receipt extraction, manual phone capture, and manual WhatsApp send.
 - Added targeted Vitest coverage in `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx`; both test files passed locally.
+
+## 2026-03-19 — HU_05 review fix for stale retry-load state
+- Guarded `ReceiptReviewDialog` retry-load state updates so stale async results no longer apply after dialog close or after switching to another `emailId`.
+- Added targeted Vitest coverage for the stale retry scenario in `tests/ReceiptReviewDialog.test.jsx`; `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx` passed locally.
