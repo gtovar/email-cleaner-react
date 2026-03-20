@@ -2,7 +2,7 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `develop`
+- Branch: `feat/hu05-receipt-review-whatsapp`
 - Latest commit: pending
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
@@ -25,12 +25,15 @@
 - Each Inbox row now exposes `data-testid="inbox-row-{id}"` so future E2E coverage can target rows without relying on DOM position.
 - Playwright is now configured locally in `playwright.config.js`, and the first browser spec lives in `tests/e2e/hu19-row-level.spec.js`.
 - The full HU19 browser suite now passes locally for row-level and bulk Inbox actions (`archive`, `delete`, `mark_unread`) against the fixture Inbox environment.
+- Fastify already exposes the receipt-extraction route, the manual WhatsApp delivery route, and `GET /api/v1/emails/:id/content`, so the current slice consumes existing backend behavior only.
 
 ## 2) What Changed During the Last Session
-- Added SummaryPanel coverage for loading, error, empty-state, and daily/weekly switching.
-- Added ActivityPanel coverage to verify drawer rendering and actions.
-- Added accessible title/description metadata to the drawer.
-- Added App-level auth flow coverage for `/auth/callback` success, `/auth/callback?error=...`, and `onAuthExpired`.
+- Added the `Revisar recibo` row action in `src/components/InboxList.jsx`.
+- Added `src/components/ReceiptReviewDialog.jsx` to fetch full email content, call receipt extraction, capture phone manually, and trigger manual WhatsApp send.
+- Added `getEmailContent`, `extractReceipt`, and `sendReceiptWhatsApp` helpers to `src/services/api.js`.
+- Added targeted Vitest coverage in `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx`.
+- Hardened `ReceiptReviewDialog` retry-load handling so stale async results no longer update state after dialog close or `emailId` switch, and added targeted stale-retry coverage in `tests/ReceiptReviewDialog.test.jsx`.
+- Hardened `ReceiptReviewDialog` send-response handling so stale async send results no longer update state after dialog close or `emailId` switch, and added targeted stale-send coverage in `tests/ReceiptReviewDialog.test.jsx`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -44,24 +47,15 @@ npm test -- AppAuthFlow.test.jsx
 ```
 
 ## 4) Where the Workflow Stopped
-- HU17 and HU18 frontend are closed; app-shell coverage now includes Inbox and Settings mounting from `App.jsx`.
-- `InboxList` direct state coverage now exists for empty, error, and mobile preview behavior.
-- `SettingsPage` direct render coverage now exists for account, notification, and security sections.
-- `InboxList` row-level actions are now wired at the frontend layer to the dedicated Inbox-action client path.
-- `InboxList` bulk actions are implemented and covered by local browser validation.
-- HU19 is already closed on `develop`; do not reopen it unless a new defect or scope extension is intentionally declared.
-- The backend contract for `POST /api/v1/inbox/actions` now exists.
-- Before browser automation, HU19 still needs two E2E prerequisites defined: a deterministic Inbox seed and a stable authenticated session strategy that does not depend on live Google OAuth.
-- Those prerequisites are now available in backend form:
-- `INBOX_SOURCE=fixture` provides the deterministic local Inbox dataset,
-- the fixture dataset exposes the three controlled HU19 emails,
-- `npm run session:e2e` provides a local `session_token` without live Google OAuth.
-- Playwright setup now exists, and the row-level browser suite passes locally for `archive`, `delete`, and `mark_unread`.
-- HU19 is now closed at the feature level on `develop` for the documented local/browser scope: row-level and bulk Inbox flows both pass local browser validation.
-- A localized `ScrollArea` viewport override in `src/index.css` keeps row action controls visible beside the reading pane during real-browser usage.
+- The first `HU_05` frontend slice is implemented in `InboxList.jsx` and `ReceiptReviewDialog.jsx`.
+- The dialog fetches `/api/v1/emails/:id/content`, calls the existing extraction route, and sends WhatsApp manually with phone input captured inside the dialog only.
+- Targeted Vitest coverage for the slice is passing.
+- A non-blocking Radix dialog warning still appears in test output and is currently deferred.
+- The narrow review fix for stale retry-load updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
+- The narrow review fix for stale send-response updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
 
 ## 5) Immediate Next Step
-➡️ Choose the next frontend feature slice after HU19 and update the working checkpoint before opening a new implementation track.
+➡️ Commit and push the narrow `ReceiptReviewDialog` review fix for stale send-response state updates to `feat/hu05-receipt-review-whatsapp`.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -71,9 +65,10 @@ npm test -- AppAuthFlow.test.jsx
 - `src/components/SummaryPanel.jsx`
 - `src/components/SuggestionsList.jsx`
 - `src/components/InboxList.jsx`
+- `src/components/ReceiptReviewDialog.jsx`
 - `src/pages/SettingsPage.jsx`
 - `src/services/api.js`
 
 ## 7) Reentry Status
 - Reentry: clean
-- Tests: last verified PASS (Vitest, 12 files / 40 tests; Playwright, 6 tests) on 2026-03-11
+- Tests: last verified PASS (Vitest targeted `HU_05` slice plus stale retry/send review-fix coverage: `tests/InboxList.test.jsx`, `tests/ReceiptReviewDialog.test.jsx`) on 2026-03-19

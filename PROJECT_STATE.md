@@ -1,19 +1,19 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-14 02:05 CST — Commit: pending
+Last updated: 2026-03-19 19:50 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-14 02:05 CST
+SNAPSHOT_DATE: 2026-03-19 19:50 CST
 COMMIT: pending
 ENVIRONMENT: local
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
-BRANCH: develop
-WORKING_TREE_STATUS: Dirty (modified files present)
-TEST_STATUS: PASS (Vitest targeted Inbox validation and review follow-ups; merged to develop)
+BRANCH: feat/hu05-receipt-review-whatsapp
+WORKING_TREE_STATUS: Dirty (second review-fix checkpoint pending)
+TEST_STATUS: PASS (Vitest targeted HU_05 receipt review validation plus stale retry/send review-fix coverage)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -32,6 +32,8 @@ Notes:
 - Login view handles OAuth redirect and session expiry via `onAuthExpired`.
 - Public Home page renders at `/` for unauthenticated users.
 - Open Graph / Twitter tags are defined in `index.html` with assets in `public/`.
+- `InboxList` now exposes the `Revisar recibo` row action for the first `HU_05` frontend slice.
+- `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
 
 ---
 
@@ -82,6 +84,8 @@ Notes:
   - Centralized success/error/info UI feedback.
 - `src/components/State/EmptyState.jsx`:
   - Empty states for Suggestions and History.
+- `src/components/ReceiptReviewDialog.jsx`:
+  - Handles full-content fetch, receipt extraction, manual phone input, and manual WhatsApp send for one Inbox email.
 
 ## 3.3 API Client (`src/services/api.js`)
 
@@ -95,6 +99,9 @@ Notes:
   - `getHistory`
   - `confirmAction`
   - `runInboxAction`
+  - `getEmailContent`
+  - `extractReceipt`
+  - `sendReceiptWhatsApp`
 - Error handling:
   - Normalized HTTP and network errors with retries and timeout.
 - Auth:
@@ -117,6 +124,7 @@ Notes:
   - `tests/ConfirmButton.test.jsx`
   - `tests/SuggestionsList.test.jsx`
   - `tests/InboxList.test.jsx`
+  - `tests/ReceiptReviewDialog.test.jsx`
   - `tests/SettingsPage.test.jsx`
   - `tests/AppShellViews.test.jsx`
   - `tests/SummaryPanel.test.jsx`
@@ -126,7 +134,7 @@ Notes:
   - `tests/integration/confirmActionFlow.test.jsx`
   - `tests/httpRequest.test.jsx`
 - Status:
-  - Last verified PASS (Vitest, 12 files / 40 tests) on 2026-03-11.
+  - Last verified PASS (Vitest, targeted `HU_05` slice) on 2026-03-19.
   - Last verified PASS (Playwright, 6 tests) on 2026-03-11.
 - CI:
   - GitHub Actions runs lint, test, and build on PRs and pushes to `develop`.
@@ -222,18 +230,40 @@ Notes:
 - Hardened row-level Inbox actions so `execution: none` no longer reconciles local state as success, and stopped mobile overflow actions from triggering the row preview via event bubbling (commit: pending).
 - HU19 frontend changes, ADR 003, the row-action review fixes, and the React governance-doc alignment are now merged into `develop` (commit: pending).
 
+### HU_05 — Review de recibo detectado y disparo manual de notificación WhatsApp (frontend)
+
+**Status:** DONE
+
+**Evidence:**
+- `src/components/InboxList.jsx`
+- `src/components/ReceiptReviewDialog.jsx`
+- `src/services/api.js`
+- `tests/InboxList.test.jsx`
+- `tests/ReceiptReviewDialog.test.jsx`
+
+**Open items:**
+- None for this frontend slice.
+
+**Technical risks:**
+- The current Radix dialog test warning remains non-blocking and is deferred because the slice behavior is green in Vitest.
+
+**Recent change:**
+- Added the `Revisar recibo` Inbox row action plus the receipt-review dialog that fetches `/api/v1/emails/:id/content`, calls the existing extraction route, captures the WhatsApp phone manually, and triggers the existing WhatsApp delivery route (commit: pending).
+- Guarded `ReceiptReviewDialog` retry-load state updates so stale async results no longer apply after the dialog closes or the user switches to another `emailId`; added targeted Vitest coverage for the stale retry scenario (commit: pending).
+- Guarded `ReceiptReviewDialog` send-response state updates so stale async send results no longer apply after the dialog closes or the user switches to another `emailId`; added targeted Vitest coverage for the stale send scenario (commit: pending).
+
 ---
 
 ## 5. Current Technical Risks
 
 - Frontend auth still depends on backend cookie settings (SameSite/Secure) in real environments.
-- Gmail side effects remain stubbed, so browser validation still proves UI + contract flow, not Gmail execution.
+- A Radix dialog accessibility warning still appears in Vitest output for `ReceiptReviewDialog`, but it does not fail the current slice tests.
 
 ---
 
 ## 6. Next Immediate Action
 
-➡️ Choose the next user-facing frontend slice after HU19 merge and refresh the checkpoint docs only once that scope is decided.
+➡️ Commit and push the narrow `ReceiptReviewDialog` review fix that guards stale send-response state updates on the active `HU_05` frontend branch.
 
 ---
 
@@ -262,3 +292,7 @@ Notes:
 - 2026-03-14 00:39 CST — Reconnected the Inbox-specific `ScrollArea` class so the Radix viewport override for row-action visibility applies again; `npm test -- InboxList.test.jsx` passed locally (commit: pending)
 - 2026-03-14 02:02 CST — Fixed review follow-ups in `InboxList`: row actions now inspect backend result semantics before local reconciliation, and mobile overflow actions stop row-click propagation; `npm test -- InboxList.test.jsx` passed locally (commit: pending)
 - 2026-03-14 02:05 CST — Merged the HU19 frontend branch into `develop`, including the row-action visibility fix, review follow-up fixes, and the React governance-doc alignment (commit: pending)
+- 2026-03-19 15:18 CST — Refreshed the frontend checkpoint to declare HU_05 as the next active slice after confirming HU_02 backend and HU_03 backend are already landed in Fastify (commit: pending)
+- 2026-03-19 19:05 CST — Implemented the first `HU_05` frontend slice in `src/components/InboxList.jsx` and `src/components/ReceiptReviewDialog.jsx`, consuming `GET /api/v1/emails/:id/content` plus the existing extraction and WhatsApp routes; targeted Vitest coverage passed for `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx` (commit: pending)
+- 2026-03-19 19:39 CST — Hardened `ReceiptReviewDialog` retry-load behavior so stale async results no longer update state after close or `emailId` change; added targeted coverage for the stale retry case in `tests/ReceiptReviewDialog.test.jsx` (commit: pending)
+- 2026-03-19 19:50 CST — Hardened `ReceiptReviewDialog` send-response behavior so stale async send results no longer update state after close or `emailId` change; added targeted coverage for the stale send case in `tests/ReceiptReviewDialog.test.jsx` (commit: pending)

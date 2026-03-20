@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
 } from './ui/alert-dialog.jsx';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import ReceiptReviewDialog from './ReceiptReviewDialog.jsx';
 
 const formatDate = (value) => {
   if (!value) return '';
@@ -80,6 +81,7 @@ export default function InboxList() {
   const [processingAction, setProcessingAction] = useState({ emailId: null, action: null });
   const [bulkActionDialog, setBulkActionDialog] = useState({ open: false, action: null });
   const [isBulkActionInFlight, setIsBulkActionInFlight] = useState(false);
+  const [receiptReviewTargetId, setReceiptReviewTargetId] = useState(null);
   const mobileMenuRef = useRef(null);
   const mobileButtonRef = useRef(null);
 
@@ -395,6 +397,11 @@ export default function InboxList() {
       return;
     }
     openActionDialog({ emailId, action });
+  };
+
+  const handleReviewReceipt = (emailId) => {
+    setReceiptReviewTargetId(emailId);
+    setMobileActionsId(null);
   };
 
   const handleBulkAction = (action) => {
@@ -783,6 +790,18 @@ export default function InboxList() {
                         <Button
                           type="button"
                           variant="ghost"
+                          size="sm"
+                          disabled={processingAction.emailId === email.id || isBulkActionInFlight}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleReviewReceipt(email.id);
+                          }}
+                        >
+                          Revisar recibo
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
                           size="icon"
                           aria-label="Archivar"
                           disabled={processingAction.emailId === email.id || isBulkActionInFlight}
@@ -840,6 +859,16 @@ export default function InboxList() {
                             ref={mobileMenuRef}
                             className="absolute right-0 top-9 z-10 w-40 rounded-md border bg-card p-2 shadow-lg"
                           >
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleReviewReceipt(email.id);
+                              }}
+                            >
+                              Revisar recibo
+                            </button>
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
@@ -917,6 +946,16 @@ export default function InboxList() {
           </SheetContent>
         </Sheet>
       )}
+
+      <ReceiptReviewDialog
+        open={Boolean(receiptReviewTargetId)}
+        emailId={receiptReviewTargetId}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            setReceiptReviewTargetId(null);
+          }
+        }}
+      />
 
       <AlertDialog
         open={bulkActionDialog.open}
