@@ -37,6 +37,7 @@ Notes:
 - `ReceiptReviewDialog` now shows explicit post-send feedback states that differentiate validation, network, and backend/provider failures while keeping retry and close actions clear.
 - `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow against dedicated HU06 fixture emails for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
 - Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to the workspace cognitive gate.
+- GitHub Actions `ci.yml` now validates PR commit messages with `commitlint` before the usual lint/test/build job.
 
 ---
 
@@ -330,3 +331,4 @@ Notes:
 - 2026-03-22 02:06 CST — Added `tests/e2e/hu06-receipt-review.spec.js`, fixed the Radix dialog warning in Vitest, and passed local browser validation for both the successful manual send flow and a visible provider-error path with retry affordance (commit: pending)
 - 2026-03-22 03:05 CST — Decoupled HU06 browser validation from HU19 fixture rows by targeting dedicated HU06 receipt-review emails and clarified that the provider-error case remains a browser-level controlled override (commit: pending)
 - 2026-03-22 12:19 CST — Added versioned Husky hooks plus `commitlint` so `commit-msg` now validates Conventional Commit syntax while `pre-commit` still routes through the workspace cognitive gate (commit: pending)
+- 2026-03-22 12:19 CST — Extended `ci.yml` so pull requests now validate commit messages with `commitlint` in GitHub Actions in addition to the local Husky hook (commit: pending)

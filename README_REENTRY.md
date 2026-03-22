@@ -39,6 +39,7 @@
 - Switched `tests/e2e/hu06-receipt-review.spec.js` to dedicated HU06 fixture emails so the receipt-review browser flow no longer depends on HU19 row IDs or content.
 - Removed the Radix dialog warning from `tests/ReceiptReviewDialog.test.jsx` by simplifying the dialog description wiring in `src/components/ReceiptReviewDialog.jsx`.
 - Added versioned Husky hooks in `.husky/` so `pre-commit` now routes through `scripts/pre-commit-cognitive.sh` and `commit-msg` validates Conventional Commit syntax with `commitlint`.
+- Extended `.github/workflows/ci.yml` so PRs now validate commit messages with `commitlint` remotely before lint/test/build.
 
 ## 3) Exact Commands to Resume Work
 ```bash

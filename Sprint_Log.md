@@ -180,3 +180,6 @@ Frontend: yes
 ## 2026-03-22 — Husky and commitlint hooks added
 - Added versioned `.husky/pre-commit` and `.husky/commit-msg` hooks plus `.commitlintrc.cjs`.
 - Manual validation confirmed that valid Conventional Commit messages pass, invalid messages are blocked, and the cognitive pre-commit gate still runs.
+
+## 2026-03-22 — CI commitlint check added
+- Extended `.github/workflows/ci.yml` so pull requests now validate commit messages with `commitlint` in GitHub Actions.
