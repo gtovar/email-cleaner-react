@@ -1,13 +1,13 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-22 02:06 CST — Commit: pending
+Last updated: 2026-03-22 02:28 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-22 02:06 CST
+SNAPSHOT_DATE: 2026-03-22 02:28 CST
 COMMIT: pending
 ENVIRONMENT: local
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
@@ -35,7 +35,7 @@ Notes:
 - `InboxList` now exposes the `Revisar recibo` row action for the first `HU_05` frontend slice.
 - `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
 - `ReceiptReviewDialog` now shows explicit post-send feedback states that differentiate validation, network, and backend/provider failures while keeping retry and close actions clear.
-- `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
+- `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow against dedicated HU06 fixture emails for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
 
 ---
 
@@ -203,12 +203,14 @@ Notes:
 - None.
 
 **E2E Inbox source strategy (frozen):**
-- The HU19 browser test will not use a live Gmail inbox.
+- The browser tests will not use a live Gmail inbox.
 - The Inbox dataset now comes from the backend fixture source when `INBOX_SOURCE=fixture`.
-- Each E2E run should see three controlled visible emails:
+- The fixture Inbox now contains dedicated HU19 action rows and separate HU06 receipt-review rows:
   - `email-hu19-archive`,
   - `email-hu19-delete`,
-  - `email-hu19-read`.
+  - `email-hu19-read`,
+  - `email-hu06-success`,
+  - `email-hu06-provider-error`.
 
 **E2E session strategy (frozen):**
 - The HU19 browser test will not execute live Google OAuth.
@@ -267,13 +269,14 @@ Notes:
 - `src/components/InboxList.jsx`
 
 **Open items:**
-- Checkpoint this browser-validation slice on the feature branch and decide whether to keep the backend fixture support in a paired Fastify PR.
+- Checkpoint this browser-validation slice on the feature branch with the paired Fastify fixture support.
 
 **Technical risks:**
-- The error-path browser case uses a controlled response override for `/api/v1/notifications/receipt-whatsapp` to prove visible feedback and retry affordance without changing the backend contract.
+- The visible provider-error browser case uses a controlled response override for `/api/v1/notifications/receipt-whatsapp` to prove feedback and retry affordance without claiming a real full-stack provider failure.
+- The happy path is still local end-to-end only across the controlled fixture/auth environment, not live Gmail or a live WhatsApp provider.
 
 **Recent change:**
-- Added `tests/e2e/hu06-receipt-review.spec.js` with a local happy path for receipt review plus manual WhatsApp send and a visible provider-error path with retry affordance; Playwright passed locally against the controlled fixture/auth environment (commit: pending).
+- Added `tests/e2e/hu06-receipt-review.spec.js` with a local happy path for receipt review plus manual WhatsApp send and a visible provider-error path with retry affordance; the browser spec now targets dedicated HU06 fixture emails instead of reusing HU19 rows (commit: pending).
 - Removed the Radix dialog warning from Vitest by simplifying the `DialogPrimitive.Description` wiring in `src/components/ReceiptReviewDialog.jsx` and keeping stable test hooks for the new browser spec (commit: pending).
 
 ---
@@ -281,7 +284,8 @@ Notes:
 ## 5. Current Technical Risks
 
 - Frontend auth still depends on backend cookie settings (SameSite/Secure) in real environments.
-- HU06 browser validation currently proves the flow only against the local controlled fixture/auth path, not against live Gmail or a live WhatsApp provider.
+- HU06 browser validation currently proves the happy path only against the local controlled fixture/auth path, not against live Gmail or a live WhatsApp provider.
+- HU06 provider-error coverage is browser-level only because the spec uses a controlled route override instead of a real backend/provider failure.
 
 ---
 
@@ -323,3 +327,4 @@ Notes:
 - 2026-03-22 00:06 CST — Clarified the manual WhatsApp send outcome in `ReceiptReviewDialog` with explicit success copy plus differentiated validation, network, and backend/provider error states; `npm test -- ReceiptReviewDialog.test.jsx InboxList.test.jsx` passed locally (commit: pending)
 - 2026-03-22 01:21 CST — Realigned the frontend checkpoint after the merged manual receipt send feedback slice so `develop` is the active baseline and the next action is selecting the next story (commit: pending)
 - 2026-03-22 02:06 CST — Added `tests/e2e/hu06-receipt-review.spec.js`, fixed the Radix dialog warning in Vitest, and passed local browser validation for both the successful manual send flow and a visible provider-error path with retry affordance (commit: pending)
+- 2026-03-22 03:05 CST — Decoupled HU06 browser validation from HU19 fixture rows by targeting dedicated HU06 receipt-review emails and clarified that the provider-error case remains a browser-level controlled override (commit: pending)

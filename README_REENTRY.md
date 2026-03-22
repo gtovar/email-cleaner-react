@@ -36,6 +36,7 @@
 - Hardened `ReceiptReviewDialog` send-response handling so stale async send results no longer update state after dialog close or `emailId` switch, and added targeted stale-send coverage in `tests/ReceiptReviewDialog.test.jsx`.
 - Clarified the manual send outcome so success is explicit and actionable, and send failures now differentiate validation, network, and backend/provider errors in `src/components/ReceiptReviewDialog.jsx`.
 - Added `tests/e2e/hu06-receipt-review.spec.js` to validate the browser happy path for receipt review and a visible provider-error path with retry affordance.
+- Switched `tests/e2e/hu06-receipt-review.spec.js` to dedicated HU06 fixture emails so the receipt-review browser flow no longer depends on HU19 row IDs or content.
 - Removed the Radix dialog warning from `tests/ReceiptReviewDialog.test.jsx` by simplifying the dialog description wiring in `src/components/ReceiptReviewDialog.jsx`.
 
 ## 3) Exact Commands to Resume Work
@@ -50,9 +51,10 @@ npm test -- AppAuthFlow.test.jsx
 ```
 
 ## 4) Where the Workflow Stopped
-- The local browser spec for HU06 now passes for the receipt-review happy path and for a visible provider-error path with retry affordance.
+- The local browser spec for HU06 now passes against dedicated HU06 fixture emails for the receipt-review happy path and for a visible provider-error path with retry affordance.
 - `ReceiptReviewDialog.jsx` now has stable hooks for the browser spec and no longer emits the previous Radix dialog warning in Vitest.
-- The slice still depends on the controlled local fixture/auth path rather than live Gmail or a live WhatsApp provider.
+- The happy path still depends on the controlled local fixture/auth path rather than live Gmail or a live WhatsApp provider.
+- The visible provider-error path still uses a controlled browser override on `/api/v1/notifications/receipt-whatsapp`; it validates feedback and retry affordance, not a real provider failure.
 
 ## 5) Immediate Next Step
 ➡️ Checkpoint the HU06 browser-validation slice on `feat/hu06-receipt-review-browser-validation` after the paired Fastify fixture support is aligned.

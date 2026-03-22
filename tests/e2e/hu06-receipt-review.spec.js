@@ -30,7 +30,7 @@ test.describe('HU06 receipt review browser validation', () => {
     await expect(page.getByRole('button', { name: 'Inbox' })).toBeVisible();
     await page.getByRole('button', { name: 'Inbox' }).click();
 
-    const receiptRow = page.getByTestId('inbox-row-email-hu19-archive');
+    const receiptRow = page.getByTestId('inbox-row-email-hu06-success');
     await expect(receiptRow).toBeVisible();
 
     await receiptRow.getByRole('button', { name: 'Revisar recibo' }).click();
@@ -38,7 +38,7 @@ test.describe('HU06 receipt review browser validation', () => {
     const dialog = page.getByTestId('receipt-review-dialog');
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('heading', { name: 'Revisar recibo' })).toBeVisible();
-    await expect(dialog.getByText('[E2E-HU19] Archive Target')).toBeVisible();
+    await expect(dialog.getByText('[E2E-HU06] Receipt Success Target')).toBeVisible();
     await expect(dialog.getByText('$350.50')).toBeVisible();
     await expect(dialog.getByText('2026-03-25')).toBeVisible();
 
@@ -70,14 +70,14 @@ test.describe('HU06 receipt review browser validation', () => {
     await expect(page.getByRole('button', { name: 'Inbox' })).toBeVisible();
     await page.getByRole('button', { name: 'Inbox' }).click();
 
-    const receiptRow = page.getByTestId('inbox-row-email-hu19-delete');
+    const receiptRow = page.getByTestId('inbox-row-email-hu06-provider-error');
     await expect(receiptRow).toBeVisible();
 
     await receiptRow.getByRole('button', { name: 'Revisar recibo' }).click();
 
     const dialog = page.getByTestId('receipt-review-dialog');
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText('[E2E-HU19] Delete Target')).toBeVisible();
+    await expect(dialog.getByText('[E2E-HU06] Receipt Provider Error Target')).toBeVisible();
     await expect(dialog.getByText('$900.00')).toBeVisible();
     await expect(dialog.getByText('2026-03-28')).toBeVisible();
 
