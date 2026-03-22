@@ -167,3 +167,12 @@ Frontend: yes
 ## 2026-03-22 — Manual receipt send feedback clarified
 - Updated `src/components/ReceiptReviewDialog.jsx` so a successful manual WhatsApp send now shows explicit actionable feedback, and send failures now differentiate validation, network, and backend/provider outcomes.
 - Added targeted Vitest coverage in `tests/ReceiptReviewDialog.test.jsx` for the new post-send feedback states; `npm test -- ReceiptReviewDialog.test.jsx InboxList.test.jsx` passed locally.
+
+## 2026-03-22 — HU06 browser receipt-review validation
+- Added `tests/e2e/hu06-receipt-review.spec.js` to validate the local browser happy path for receipt review plus manual WhatsApp send and a visible provider-error path with retry affordance.
+- Simplified the dialog description wiring in `src/components/ReceiptReviewDialog.jsx`, removing the prior Radix warning from `tests/ReceiptReviewDialog.test.jsx` while adding stable browser-test hooks for feedback and send actions.
+- Local evidence passed with `npm test -- ReceiptReviewDialog.test.jsx`, `npm test -- emailsFixtureRoutes.integration.test.js`, and `npm run test:e2e -- tests/e2e/hu06-receipt-review.spec.js`.
+
+## 2026-03-22 — HU06 fixture decoupling and risk clarification
+- Switched `tests/e2e/hu06-receipt-review.spec.js` to dedicated HU06 fixture emails instead of reusing HU19 row IDs.
+- Updated the frontend checkpoint to state explicitly that the HU06 provider-error scenario is a browser-level controlled override, not a real provider failure.

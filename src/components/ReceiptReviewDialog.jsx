@@ -101,7 +101,6 @@ const getSendFeedbackFromError = (error) => {
 
 export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
   const phoneInputId = useId();
-  const descriptionId = useId();
   const activeRequestIdRef = useRef(0);
   const activeSendRequestIdRef = useRef(0);
   const latestOpenRef = useRef(open);
@@ -323,13 +322,13 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleClose}>
-      <DialogContent aria-describedby={descriptionId}>
+      <DialogContent data-testid="receipt-review-dialog">
         <div className="space-y-5">
           <div className="space-y-1">
             <DialogPrimitive.Title className="text-lg font-semibold text-foreground">
               Revisar recibo
             </DialogPrimitive.Title>
-            <DialogPrimitive.Description id={descriptionId} className="text-sm text-muted-foreground">
+            <DialogPrimitive.Description className="text-sm text-muted-foreground">
               Revisa los datos extraidos, captura el telefono y dispara el WhatsApp manualmente.
             </DialogPrimitive.Description>
           </div>
@@ -413,14 +412,20 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
           </div>
 
           {sendError ? (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+            <div
+              data-testid="receipt-review-feedback"
+              className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
+            >
               <p className="font-medium">{sendError.title}</p>
               <p className="mt-1">{sendError.message}</p>
             </div>
           ) : null}
 
           {sendSuccess ? (
-            <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
+            <div
+              data-testid="receipt-review-feedback"
+              className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900"
+            >
               <p className="font-medium">{sendSuccess.title}</p>
               <p className="mt-1">{sendSuccess.message}</p>
             </div>
@@ -436,7 +441,12 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
                 Reintentar carga
               </Button>
             ) : (
-              <Button type="button" onClick={handleSend} disabled={!canSend}>
+              <Button
+                type="button"
+                onClick={handleSend}
+                disabled={!canSend}
+                data-testid="receipt-review-send-button"
+              >
                 {sendLoading ? 'Enviando...' : sendError ? 'Reintentar envio' : 'Enviar por WhatsApp'}
               </Button>
             )}
