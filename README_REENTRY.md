@@ -2,7 +2,7 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `feat/hu05-receipt-review-whatsapp`
+- Branch: `develop`
 - Latest commit: pending
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
@@ -51,11 +51,11 @@ npm test -- AppAuthFlow.test.jsx
 - The dialog fetches `/api/v1/emails/:id/content`, calls the existing extraction route, and sends WhatsApp manually with phone input captured inside the dialog only.
 - Targeted Vitest coverage for the slice is passing.
 - A non-blocking Radix dialog warning still appears in test output and is currently deferred.
-- The narrow review fix for stale retry-load updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
-- The narrow review fix for stale send-response updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
+- The narrow review fix for stale retry-load updates is already part of the merged frontend baseline on `develop`.
+- The narrow review fix for stale send-response updates is already part of the merged frontend baseline on `develop`.
 
 ## 5) Immediate Next Step
-➡️ Commit and push the narrow `ReceiptReviewDialog` review fix for stale send-response state updates to `feat/hu05-receipt-review-whatsapp`.
+➡️ Start a new story in the next session after re-entry, with backend PR #37 and frontend PR #39 treated as merged baseline.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`

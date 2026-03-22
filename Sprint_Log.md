@@ -163,3 +163,11 @@ Frontend: yes
 ## 2026-03-19 — HU_05 review fix for stale send-response state
 - Guarded `ReceiptReviewDialog` send-response state updates so stale async send results no longer apply after dialog close or after switching to another `emailId`.
 - Added targeted Vitest coverage for the stale send scenario in `tests/ReceiptReviewDialog.test.jsx`; `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx` passed locally.
+
+### [2026-03-20] Session Close
+- **Done:** Verified backend PR #37 and frontend PR #39 were merged.
+- **Done:** Cleaned feature branches and synchronized both repos to develop.
+- **Done:** Closed HU_05 review follow-up fixes and confirmed both repos are clean.
+- **Learned:** Async UI flows in ReceiptReviewDialog need per-operation stale-response guards for both retry-load and send paths; small targeted review fixes plus minimal checkpoint docs keep PR scope clean and mergeable.
+- **Status:** DONE
+- **Next:** Start a new story in the next session after re-entry, with backend PR #37 and frontend PR #39 treated as merged baseline.
