@@ -34,6 +34,7 @@
 - Added targeted Vitest coverage in `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx`.
 - Hardened `ReceiptReviewDialog` retry-load handling so stale async results no longer update state after dialog close or `emailId` switch, and added targeted stale-retry coverage in `tests/ReceiptReviewDialog.test.jsx`.
 - Hardened `ReceiptReviewDialog` send-response handling so stale async send results no longer update state after dialog close or `emailId` switch, and added targeted stale-send coverage in `tests/ReceiptReviewDialog.test.jsx`.
+- Clarified the manual send outcome so success is explicit and actionable, and send failures now differentiate validation, network, and backend/provider errors in `src/components/ReceiptReviewDialog.jsx`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -49,13 +50,12 @@ npm test -- AppAuthFlow.test.jsx
 ## 4) Where the Workflow Stopped
 - The first `HU_05` frontend slice is implemented in `InboxList.jsx` and `ReceiptReviewDialog.jsx`.
 - The dialog fetches `/api/v1/emails/:id/content`, calls the existing extraction route, and sends WhatsApp manually with phone input captured inside the dialog only.
-- Targeted Vitest coverage for the slice is passing.
+- Targeted Vitest coverage for the slice is passing, including the explicit post-send feedback states.
 - A non-blocking Radix dialog warning still appears in test output and is currently deferred.
-- The narrow review fix for stale retry-load updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
-- The narrow review fix for stale send-response updates is implemented and validated locally; the next step is to commit and push it to the active frontend PR branch.
+- The dialog now stays explicit after send attempts: success copy is actionable, and failures distinguish validation, network, and backend/provider issues while keeping retry available.
 
 ## 5) Immediate Next Step
-➡️ Commit and push the narrow `ReceiptReviewDialog` review fix for stale send-response state updates to `feat/hu05-receipt-review-whatsapp`.
+➡️ Checkpoint the manual receipt send feedback slice on `feat/manual-receipt-send-feedback` and decide whether browser coverage is needed before opening the PR.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -71,4 +71,4 @@ npm test -- AppAuthFlow.test.jsx
 
 ## 7) Reentry Status
 - Reentry: clean
-- Tests: last verified PASS (Vitest targeted `HU_05` slice plus stale retry/send review-fix coverage: `tests/InboxList.test.jsx`, `tests/ReceiptReviewDialog.test.jsx`) on 2026-03-19
+- Tests: last verified PASS (`npm test -- ReceiptReviewDialog.test.jsx InboxList.test.jsx`) on 2026-03-22

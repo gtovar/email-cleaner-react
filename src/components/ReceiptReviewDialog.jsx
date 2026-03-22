@@ -41,6 +41,64 @@ const formatAmount = (amount) => {
   }).format(value);
 };
 
+const getSendFeedbackFromResult = (result, phone) => {
+  if (result?.sent) {
+    return {
+      tone: 'success',
+      title: 'WhatsApp enviado',
+      message: `La notificacion se envio correctamente a ${phone.trim()}. Puedes cerrar este dialogo.`,
+    };
+  }
+
+  if (result?.reason === 'missing_extracted_fields') {
+    return {
+      tone: 'error',
+      title: 'Error de validacion',
+      message: 'Faltan datos extraidos para enviar la notificacion. Revisa monto y fecha limite antes de reintentar.',
+    };
+  }
+
+  if (result?.reason === 'provider_error') {
+    return {
+      tone: 'error',
+      title: 'Error del backend',
+      message: 'El backend no pudo completar el envio de WhatsApp con el proveedor. Intenta de nuevo.',
+    };
+  }
+
+  return {
+    tone: 'error',
+    title: 'Error del backend',
+    message: 'No se pudo enviar la notificacion de WhatsApp.',
+  };
+};
+
+const getSendFeedbackFromError = (error) => {
+  const message = error?.message || '';
+
+  if (message === 'Network error' || message === 'Timeout') {
+    return {
+      tone: 'error',
+      title: 'Error de red',
+      message: 'No hubo respuesta de la red durante el envio. Verifica la conexion e intenta de nuevo.',
+    };
+  }
+
+  if (message.startsWith('Request failed 4')) {
+    return {
+      tone: 'error',
+      title: 'Error de validacion',
+      message: 'El backend rechazo la solicitud. Revisa el telefono y los datos del recibo antes de reintentar.',
+    };
+  }
+
+  return {
+    tone: 'error',
+    title: 'Error del backend',
+    message: 'El backend no pudo completar el envio de WhatsApp. Intenta de nuevo.',
+  };
+};
+
 export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
   const phoneInputId = useId();
   const descriptionId = useId();
@@ -57,8 +115,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
   const [phone, setPhone] = useState('');
   const [phoneTouched, setPhoneTouched] = useState(false);
   const [sendLoading, setSendLoading] = useState(false);
-  const [sendError, setSendError] = useState('');
-  const [sendSuccess, setSendSuccess] = useState('');
+  const [sendFeedback, setSendFeedback] = useState(null);
 
   const hasExtractionData = useMemo(
     () =>
@@ -77,7 +134,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
     !sendLoading &&
     !contentError &&
     !extractionError &&
-    !sendSuccess &&
+    sendFeedback?.tone !== 'success' &&
     hasExtractionData &&
     hasPhone;
 
@@ -91,8 +148,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
     setPhone('');
     setPhoneTouched(false);
     setSendLoading(false);
-    setSendError('');
-    setSendSuccess('');
+    setSendFeedback(null);
   };
 
   const isActiveRequest = (requestId, targetEmailId) =>
@@ -133,8 +189,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
       setExtractionLoading(false);
       setExtractionError('');
       setExtractionResult(null);
-      setSendError('');
-      setSendSuccess('');
+      setSendFeedback(null);
 
       try {
         const content = await getEmailContent(targetEmailId);
@@ -182,8 +237,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
     setContentError('');
     setExtractionError('');
-    setSendError('');
-    setSendSuccess('');
+    setSendFeedback(null);
     setContentLoading(true);
     setEmailContent(null);
     setExtractionResult(null);
@@ -229,8 +283,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
     const targetEmailId = emailId;
 
     setSendLoading(true);
-    setSendError('');
-    setSendSuccess('');
+    setSendFeedback(null);
 
     try {
       const result = await sendReceiptWhatsApp({
@@ -244,26 +297,11 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
       if (!isActiveSendRequest(requestId, targetEmailId)) return;
 
-      if (result?.sent) {
-        setSendSuccess('Notificacion enviada por WhatsApp.');
-        return;
-      }
-
-      if (result?.reason === 'provider_error') {
-        setSendError('No se pudo enviar la notificacion de WhatsApp. Intenta de nuevo.');
-        return;
-      }
-
-      if (result?.reason === 'missing_extracted_fields') {
-        setSendError('Faltan datos extraidos para enviar la notificacion.');
-        return;
-      }
-
-      setSendError('No se pudo enviar la notificacion de WhatsApp.');
+      setSendFeedback(getSendFeedbackFromResult(result, phone));
     } catch (error) {
       if (!isActiveSendRequest(requestId, targetEmailId)) return;
 
-      setSendError(error.message || 'No se pudo enviar la notificacion de WhatsApp.');
+      setSendFeedback(getSendFeedbackFromError(error));
     } finally {
       if (isActiveSendRequest(requestId, targetEmailId)) {
         setSendLoading(false);
@@ -280,6 +318,8 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
   const showLoadRetry = Boolean(contentError || extractionError);
   const phoneError = phoneTouched && !hasPhone ? 'El telefono es obligatorio para enviar WhatsApp.' : '';
+  const sendError = sendFeedback?.tone === 'error' ? sendFeedback : null;
+  const sendSuccess = sendFeedback?.tone === 'success' ? sendFeedback : null;
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleClose}>
@@ -374,13 +414,15 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
           {sendError ? (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-              {sendError}
+              <p className="font-medium">{sendError.title}</p>
+              <p className="mt-1">{sendError.message}</p>
             </div>
           ) : null}
 
           {sendSuccess ? (
             <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
-              {sendSuccess}
+              <p className="font-medium">{sendSuccess.title}</p>
+              <p className="mt-1">{sendSuccess.message}</p>
             </div>
           ) : null}
 

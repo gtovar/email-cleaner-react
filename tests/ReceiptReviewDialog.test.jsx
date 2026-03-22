@@ -166,11 +166,14 @@ describe('ReceiptReviewDialog', () => {
       });
     });
 
-    expect(await screen.findByText('Notificacion enviada por WhatsApp.')).toBeInTheDocument();
+    expect(await screen.findByText('WhatsApp enviado')).toBeInTheDocument();
+    expect(
+      screen.getByText('La notificacion se envio correctamente a +52 81 1234 5678. Puedes cerrar este dialogo.')
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
   });
 
-  test('stays open on send error and allows retry or cancel', async () => {
+  test('stays open on backend send error and allows retry or cancel', async () => {
     const { getEmailContent, extractReceipt, sendReceiptWhatsApp } = await import('../src/services/api.js');
     getEmailContent.mockResolvedValue({
       id: 'email-1',
@@ -195,12 +198,77 @@ describe('ReceiptReviewDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Enviar por WhatsApp' }));
 
     await waitFor(() => {
-      expect(screen.getByText('No se pudo enviar la notificacion de WhatsApp. Intenta de nuevo.')).toBeInTheDocument();
+      expect(screen.getByText('Error del backend')).toBeInTheDocument();
     });
 
+    expect(
+      screen.getByText('El backend no pudo completar el envio de WhatsApp con el proveedor. Intenta de nuevo.')
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reintentar envio' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  test('shows a validation error when the backend rejects the send request', async () => {
+    const { getEmailContent, extractReceipt, sendReceiptWhatsApp } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    sendReceiptWhatsApp.mockRejectedValue(new Error('Request failed 400'));
+
+    renderDialog();
+
+    const phoneInput = await screen.findByLabelText('Telefono WhatsApp');
+    fireEvent.change(phoneInput, { target: { value: '+52 81 1234 5678' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar por WhatsApp' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Error de validacion')).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByText('El backend rechazo la solicitud. Revisa el telefono y los datos del recibo antes de reintentar.')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reintentar envio' })).toBeInTheDocument();
+  });
+
+  test('shows a network error when the send request times out or loses connectivity', async () => {
+    const { getEmailContent, extractReceipt, sendReceiptWhatsApp } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    sendReceiptWhatsApp.mockRejectedValue(new Error('Network error'));
+
+    renderDialog();
+
+    const phoneInput = await screen.findByLabelText('Telefono WhatsApp');
+    fireEvent.change(phoneInput, { target: { value: '+52 81 1234 5678' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar por WhatsApp' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Error de red')).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByText('No hubo respuesta de la red durante el envio. Verifica la conexion e intenta de nuevo.')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reintentar envio' })).toBeInTheDocument();
   });
 
   test('shows a retry action when content loading fails', async () => {
