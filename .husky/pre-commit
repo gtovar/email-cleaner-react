@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
 set -eu
 
-WORKSPACE_ROOT="$(cd -- "$(dirname "$0")/../.." && pwd)"
-
-exec "$WORKSPACE_ROOT/scripts/pre-commit-cognitive.sh" "$(pwd)"
+exec "$(dirname "$0")/../scripts/git-hooks/pre-commit.sh"

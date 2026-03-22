@@ -36,8 +36,9 @@ Notes:
 - `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
 - `ReceiptReviewDialog` now shows explicit post-send feedback states that differentiate validation, network, and backend/provider failures while keeping retry and close actions clear.
 - `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow against dedicated HU06 fixture emails for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
-- Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to the workspace cognitive gate.
+- Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to repo-local scripts under `scripts/git-hooks/`.
 - GitHub Actions `ci.yml` now validates PR commit messages with `commitlint` before the usual lint/test/build job.
+- The Husky `prepare` step now uses a guarded repo-local installer, so production-style installs that omit devDependencies skip hook installation cleanly instead of failing.
 
 ---
 

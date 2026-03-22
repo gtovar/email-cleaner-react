@@ -183,3 +183,7 @@ Frontend: yes
 
 ## 2026-03-22 — CI commitlint check added
 - Extended `.github/workflows/ci.yml` so pull requests now validate commit messages with `commitlint` in GitHub Actions.
+
+## 2026-03-22 — Husky hook portability fix
+- Replaced the workspace-root `pre-commit` dependency with repo-local scripts under `scripts/git-hooks/`, so the versioned hook now works in a clean standalone clone of `email-cleaner-react`.
+- Replaced `prepare: "husky"` with a guarded installer so installs that omit devDependencies skip hook installation cleanly while normal dev installs still configure `.husky/_`.
