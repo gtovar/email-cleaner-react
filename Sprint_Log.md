@@ -163,3 +163,7 @@ Frontend: yes
 ## 2026-03-19 — HU_05 review fix for stale send-response state
 - Guarded `ReceiptReviewDialog` send-response state updates so stale async send results no longer apply after dialog close or after switching to another `emailId`.
 - Added targeted Vitest coverage for the stale send scenario in `tests/ReceiptReviewDialog.test.jsx`; `tests/InboxList.test.jsx` and `tests/ReceiptReviewDialog.test.jsx` passed locally.
+
+## 2026-03-22 — Manual receipt send feedback clarified
+- Updated `src/components/ReceiptReviewDialog.jsx` so a successful manual WhatsApp send now shows explicit actionable feedback, and send failures now differentiate validation, network, and backend/provider outcomes.
+- Added targeted Vitest coverage in `tests/ReceiptReviewDialog.test.jsx` for the new post-send feedback states; `npm test -- ReceiptReviewDialog.test.jsx InboxList.test.jsx` passed locally.
