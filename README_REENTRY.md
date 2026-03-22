@@ -2,7 +2,7 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `feat/hu05-receipt-review-whatsapp`
+- Branch: `develop`
 - Latest commit: pending
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
@@ -55,7 +55,7 @@ npm test -- AppAuthFlow.test.jsx
 - The dialog now stays explicit after send attempts: success copy is actionable, and failures distinguish validation, network, and backend/provider issues while keeping retry available.
 
 ## 5) Immediate Next Step
-➡️ Checkpoint the manual receipt send feedback slice on `feat/manual-receipt-send-feedback` and decide whether browser coverage is needed before opening the PR.
+➡️ Start the next frontend story from the merged `develop` baseline.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`

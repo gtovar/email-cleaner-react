@@ -1,18 +1,18 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-22 00:06 CST — Commit: pending
+Last updated: 2026-03-22 01:21 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-22 00:06 CST
+SNAPSHOT_DATE: 2026-03-22 01:21 CST
 COMMIT: pending
 ENVIRONMENT: local
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
-BRANCH: feat/manual-receipt-send-feedback
-WORKING_TREE_STATUS: Dirty (manual receipt send feedback slice in progress)
+BRANCH: develop
+WORKING_TREE_STATUS: Clean
 TEST_STATUS: PASS (Vitest targeted manual receipt send feedback validation in `tests/ReceiptReviewDialog.test.jsx` and `tests/InboxList.test.jsx`)
 
 Notes:
@@ -265,7 +265,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Checkpoint the manual receipt send feedback slice on `feat/manual-receipt-send-feedback` and decide whether browser coverage is needed before opening the PR.
+➡️ Start the next frontend story from the merged `develop` baseline.
 
 ---
 
@@ -299,3 +299,4 @@ Notes:
 - 2026-03-19 19:39 CST — Hardened `ReceiptReviewDialog` retry-load behavior so stale async results no longer update state after close or `emailId` change; added targeted coverage for the stale retry case in `tests/ReceiptReviewDialog.test.jsx` (commit: pending)
 - 2026-03-19 19:50 CST — Hardened `ReceiptReviewDialog` send-response behavior so stale async send results no longer update state after close or `emailId` change; added targeted coverage for the stale send case in `tests/ReceiptReviewDialog.test.jsx` (commit: pending)
 - 2026-03-22 00:06 CST — Clarified the manual WhatsApp send outcome in `ReceiptReviewDialog` with explicit success copy plus differentiated validation, network, and backend/provider error states; `npm test -- ReceiptReviewDialog.test.jsx InboxList.test.jsx` passed locally (commit: pending)
+- 2026-03-22 01:21 CST — Realigned the frontend checkpoint after the merged manual receipt send feedback slice so `develop` is the active baseline and the next action is selecting the next story (commit: pending)
