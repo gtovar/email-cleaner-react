@@ -1,19 +1,19 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-22 01:21 CST — Commit: pending
+Last updated: 2026-03-22 02:06 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-22 01:21 CST
+SNAPSHOT_DATE: 2026-03-22 02:06 CST
 COMMIT: pending
 ENVIRONMENT: local
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
-BRANCH: develop
-WORKING_TREE_STATUS: Clean
-TEST_STATUS: PASS (Vitest targeted manual receipt send feedback validation in `tests/ReceiptReviewDialog.test.jsx` and `tests/InboxList.test.jsx`)
+BRANCH: feat/hu06-receipt-review-browser-validation
+WORKING_TREE_STATUS: Dirty (HU06 browser validation slice in progress)
+TEST_STATUS: PASS (Vitest `tests/ReceiptReviewDialog.test.jsx`; Playwright `tests/e2e/hu06-receipt-review.spec.js`)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -35,6 +35,7 @@ Notes:
 - `InboxList` now exposes the `Revisar recibo` row action for the first `HU_05` frontend slice.
 - `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
 - `ReceiptReviewDialog` now shows explicit post-send feedback states that differentiate validation, network, and backend/provider failures while keeping retry and close actions clear.
+- `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
 
 ---
 
@@ -134,9 +135,11 @@ Notes:
   - `tests/AppAuthFlow.test.jsx`
   - `tests/integration/confirmActionFlow.test.jsx`
   - `tests/httpRequest.test.jsx`
+  - `tests/e2e/hu19-row-level.spec.js`
+  - `tests/e2e/hu06-receipt-review.spec.js`
 - Status:
-  - Last verified PASS (Vitest, targeted manual send feedback slice) on 2026-03-22.
-  - Last verified PASS (Playwright, 6 tests) on 2026-03-11.
+  - Last verified PASS (Vitest, `tests/ReceiptReviewDialog.test.jsx`) on 2026-03-22.
+  - Last verified PASS (Playwright, `tests/e2e/hu06-receipt-review.spec.js`) on 2026-03-22.
 - CI:
   - GitHub Actions runs lint, test, and build on PRs and pushes to `develop`.
 
@@ -246,7 +249,7 @@ Notes:
 - None for this frontend slice.
 
 **Technical risks:**
-- The current Radix dialog test warning remains non-blocking and is deferred because the slice behavior is green in Vitest.
+- The browser flow still depends on the controlled local fixture/auth setup used by Playwright; no live Gmail or live WhatsApp provider validation is part of this slice.
 
 **Recent change:**
 - Added the `Revisar recibo` Inbox row action plus the receipt-review dialog that fetches `/api/v1/emails/:id/content`, calls the existing extraction route, captures the WhatsApp phone manually, and triggers the existing WhatsApp delivery route (commit: pending).
@@ -254,18 +257,37 @@ Notes:
 - Guarded `ReceiptReviewDialog` send-response state updates so stale async send results no longer apply after the dialog closes or the user switches to another `emailId`; added targeted Vitest coverage for the stale send scenario (commit: pending).
 - Clarified the manual WhatsApp send outcome in `ReceiptReviewDialog` so success is explicit and actionable, while send failures now differentiate validation, network, and backend/provider errors with retry guidance; targeted Vitest coverage passed for `tests/ReceiptReviewDialog.test.jsx` and `tests/InboxList.test.jsx` (commit: pending).
 
+### HU_06 — Browser validation of receipt review and manual WhatsApp send flow
+
+**Status:** IN_PROGRESS
+
+**Evidence:**
+- `tests/e2e/hu06-receipt-review.spec.js`
+- `src/components/ReceiptReviewDialog.jsx`
+- `src/components/InboxList.jsx`
+
+**Open items:**
+- Checkpoint this browser-validation slice on the feature branch and decide whether to keep the backend fixture support in a paired Fastify PR.
+
+**Technical risks:**
+- The error-path browser case uses a controlled response override for `/api/v1/notifications/receipt-whatsapp` to prove visible feedback and retry affordance without changing the backend contract.
+
+**Recent change:**
+- Added `tests/e2e/hu06-receipt-review.spec.js` with a local happy path for receipt review plus manual WhatsApp send and a visible provider-error path with retry affordance; Playwright passed locally against the controlled fixture/auth environment (commit: pending).
+- Removed the Radix dialog warning from Vitest by simplifying the `DialogPrimitive.Description` wiring in `src/components/ReceiptReviewDialog.jsx` and keeping stable test hooks for the new browser spec (commit: pending).
+
 ---
 
 ## 5. Current Technical Risks
 
 - Frontend auth still depends on backend cookie settings (SameSite/Secure) in real environments.
-- A Radix dialog accessibility warning still appears in Vitest output for `ReceiptReviewDialog`, but it does not fail the current slice tests.
+- HU06 browser validation currently proves the flow only against the local controlled fixture/auth path, not against live Gmail or a live WhatsApp provider.
 
 ---
 
 ## 6. Next Immediate Action
 
-➡️ Start the next frontend story from the merged `develop` baseline.
+➡️ Checkpoint the HU06 browser-validation slice on `feat/hu06-receipt-review-browser-validation` after the cross-repo fixture support is aligned.
 
 ---
 
@@ -300,3 +322,4 @@ Notes:
 - 2026-03-19 19:50 CST — Hardened `ReceiptReviewDialog` send-response behavior so stale async send results no longer update state after close or `emailId` change; added targeted coverage for the stale send case in `tests/ReceiptReviewDialog.test.jsx` (commit: pending)
 - 2026-03-22 00:06 CST — Clarified the manual WhatsApp send outcome in `ReceiptReviewDialog` with explicit success copy plus differentiated validation, network, and backend/provider error states; `npm test -- ReceiptReviewDialog.test.jsx InboxList.test.jsx` passed locally (commit: pending)
 - 2026-03-22 01:21 CST — Realigned the frontend checkpoint after the merged manual receipt send feedback slice so `develop` is the active baseline and the next action is selecting the next story (commit: pending)
+- 2026-03-22 02:06 CST — Added `tests/e2e/hu06-receipt-review.spec.js`, fixed the Radix dialog warning in Vitest, and passed local browser validation for both the successful manual send flow and a visible provider-error path with retry affordance (commit: pending)

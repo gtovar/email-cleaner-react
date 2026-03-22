@@ -2,7 +2,7 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `develop`
+- Branch: `feat/hu06-receipt-review-browser-validation`
 - Latest commit: pending
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
@@ -35,6 +35,8 @@
 - Hardened `ReceiptReviewDialog` retry-load handling so stale async results no longer update state after dialog close or `emailId` switch, and added targeted stale-retry coverage in `tests/ReceiptReviewDialog.test.jsx`.
 - Hardened `ReceiptReviewDialog` send-response handling so stale async send results no longer update state after dialog close or `emailId` switch, and added targeted stale-send coverage in `tests/ReceiptReviewDialog.test.jsx`.
 - Clarified the manual send outcome so success is explicit and actionable, and send failures now differentiate validation, network, and backend/provider errors in `src/components/ReceiptReviewDialog.jsx`.
+- Added `tests/e2e/hu06-receipt-review.spec.js` to validate the browser happy path for receipt review and a visible provider-error path with retry affordance.
+- Removed the Radix dialog warning from `tests/ReceiptReviewDialog.test.jsx` by simplifying the dialog description wiring in `src/components/ReceiptReviewDialog.jsx`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -48,14 +50,12 @@ npm test -- AppAuthFlow.test.jsx
 ```
 
 ## 4) Where the Workflow Stopped
-- The first `HU_05` frontend slice is implemented in `InboxList.jsx` and `ReceiptReviewDialog.jsx`.
-- The dialog fetches `/api/v1/emails/:id/content`, calls the existing extraction route, and sends WhatsApp manually with phone input captured inside the dialog only.
-- Targeted Vitest coverage for the slice is passing, including the explicit post-send feedback states.
-- A non-blocking Radix dialog warning still appears in test output and is currently deferred.
-- The dialog now stays explicit after send attempts: success copy is actionable, and failures distinguish validation, network, and backend/provider issues while keeping retry available.
+- The local browser spec for HU06 now passes for the receipt-review happy path and for a visible provider-error path with retry affordance.
+- `ReceiptReviewDialog.jsx` now has stable hooks for the browser spec and no longer emits the previous Radix dialog warning in Vitest.
+- The slice still depends on the controlled local fixture/auth path rather than live Gmail or a live WhatsApp provider.
 
 ## 5) Immediate Next Step
-➡️ Start the next frontend story from the merged `develop` baseline.
+➡️ Checkpoint the HU06 browser-validation slice on `feat/hu06-receipt-review-browser-validation` after the paired Fastify fixture support is aligned.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -71,4 +71,4 @@ npm test -- AppAuthFlow.test.jsx
 
 ## 7) Reentry Status
 - Reentry: clean
-- Tests: last verified PASS (`npm test -- ReceiptReviewDialog.test.jsx InboxList.test.jsx`) on 2026-03-22
+- Tests: last verified PASS (`npm test -- ReceiptReviewDialog.test.jsx`; `npm run test:e2e -- tests/e2e/hu06-receipt-review.spec.js`) on 2026-03-22
