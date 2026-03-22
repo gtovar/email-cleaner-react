@@ -176,3 +176,14 @@ Frontend: yes
 ## 2026-03-22 — HU06 fixture decoupling and risk clarification
 - Switched `tests/e2e/hu06-receipt-review.spec.js` to dedicated HU06 fixture emails instead of reusing HU19 row IDs.
 - Updated the frontend checkpoint to state explicitly that the HU06 provider-error scenario is a browser-level controlled override, not a real provider failure.
+
+## 2026-03-22 — Husky and commitlint hooks added
+- Added versioned `.husky/pre-commit` and `.husky/commit-msg` hooks plus `.commitlintrc.cjs`.
+- Manual validation confirmed that valid Conventional Commit messages pass, invalid messages are blocked, and the cognitive pre-commit gate still runs.
+
+## 2026-03-22 — CI commitlint check added
+- Extended `.github/workflows/ci.yml` so pull requests now validate commit messages with `commitlint` in GitHub Actions.
+
+## 2026-03-22 — Husky hook portability fix
+- Replaced the workspace-root `pre-commit` dependency with repo-local scripts under `scripts/git-hooks/`, so the versioned hook now works in a clean standalone clone of `email-cleaner-react`.
+- Replaced `prepare: "husky"` with a guarded installer so installs that omit devDependencies skip hook installation cleanly while normal dev installs still configure `.husky/_`.

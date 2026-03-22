@@ -2,7 +2,7 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `feat/hu06-receipt-review-browser-validation`
+- Branch: `chore/husky-commit-hooks`
 - Latest commit: pending
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
@@ -38,6 +38,9 @@
 - Added `tests/e2e/hu06-receipt-review.spec.js` to validate the browser happy path for receipt review and a visible provider-error path with retry affordance.
 - Switched `tests/e2e/hu06-receipt-review.spec.js` to dedicated HU06 fixture emails so the receipt-review browser flow no longer depends on HU19 row IDs or content.
 - Removed the Radix dialog warning from `tests/ReceiptReviewDialog.test.jsx` by simplifying the dialog description wiring in `src/components/ReceiptReviewDialog.jsx`.
+- Added versioned Husky hooks in `.husky/` so `pre-commit` now delegates to repo-local scripts under `scripts/git-hooks/`, while `commit-msg` validates Conventional Commit syntax with `commitlint`.
+- Extended `.github/workflows/ci.yml` so PRs now validate commit messages with `commitlint` remotely before lint/test/build.
+- Replaced `prepare: "husky"` with a guarded repo-local installer so production-style installs that omit devDependencies do not fail.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -55,9 +58,10 @@ npm test -- AppAuthFlow.test.jsx
 - `ReceiptReviewDialog.jsx` now has stable hooks for the browser spec and no longer emits the previous Radix dialog warning in Vitest.
 - The happy path still depends on the controlled local fixture/auth path rather than live Gmail or a live WhatsApp provider.
 - The visible provider-error path still uses a controlled browser override on `/api/v1/notifications/receipt-whatsapp`; it validates feedback and retry affordance, not a real provider failure.
+- Husky now owns the versioned hook entry point for this repo; manual validation confirmed that valid commit messages pass, invalid ones are blocked, the repo-local pre-commit gate still runs, and `prepare` no longer depends on workspace-only paths.
 
 ## 5) Immediate Next Step
-➡️ Checkpoint the HU06 browser-validation slice on `feat/hu06-receipt-review-browser-validation` after the paired Fastify fixture support is aligned.
+➡️ Checkpoint the Husky + commitlint hook migration on `chore/husky-commit-hooks`.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`

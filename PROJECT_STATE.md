@@ -1,19 +1,19 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-22 02:28 CST — Commit: pending
+Last updated: 2026-03-22 12:19 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-22 02:28 CST
+SNAPSHOT_DATE: 2026-03-22 12:19 CST
 COMMIT: pending
 ENVIRONMENT: local
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
-BRANCH: feat/hu06-receipt-review-browser-validation
-WORKING_TREE_STATUS: Dirty (HU06 browser validation slice in progress)
-TEST_STATUS: PASS (Vitest `tests/ReceiptReviewDialog.test.jsx`; Playwright `tests/e2e/hu06-receipt-review.spec.js`)
+BRANCH: chore/husky-commit-hooks
+WORKING_TREE_STATUS: Dirty (Husky + commitlint hook migration in progress)
+TEST_STATUS: PASS (manual Husky validation via `.husky/_/commit-msg` and `.husky/_/pre-commit`)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -36,6 +36,9 @@ Notes:
 - `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
 - `ReceiptReviewDialog` now shows explicit post-send feedback states that differentiate validation, network, and backend/provider failures while keeping retry and close actions clear.
 - `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow against dedicated HU06 fixture emails for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
+- Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to repo-local scripts under `scripts/git-hooks/`.
+- GitHub Actions `ci.yml` now validates PR commit messages with `commitlint` before the usual lint/test/build job.
+- The Husky `prepare` step now uses a guarded repo-local installer, so production-style installs that omit devDependencies skip hook installation cleanly instead of failing.
 
 ---
 
@@ -291,7 +294,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Checkpoint the HU06 browser-validation slice on `feat/hu06-receipt-review-browser-validation` after the cross-repo fixture support is aligned.
+➡️ Checkpoint the Husky + commitlint hook migration on `chore/husky-commit-hooks`.
 
 ---
 
@@ -328,3 +331,5 @@ Notes:
 - 2026-03-22 01:21 CST — Realigned the frontend checkpoint after the merged manual receipt send feedback slice so `develop` is the active baseline and the next action is selecting the next story (commit: pending)
 - 2026-03-22 02:06 CST — Added `tests/e2e/hu06-receipt-review.spec.js`, fixed the Radix dialog warning in Vitest, and passed local browser validation for both the successful manual send flow and a visible provider-error path with retry affordance (commit: pending)
 - 2026-03-22 03:05 CST — Decoupled HU06 browser validation from HU19 fixture rows by targeting dedicated HU06 receipt-review emails and clarified that the provider-error case remains a browser-level controlled override (commit: pending)
+- 2026-03-22 12:19 CST — Added versioned Husky hooks plus `commitlint` so `commit-msg` now validates Conventional Commit syntax while `pre-commit` still routes through the workspace cognitive gate (commit: pending)
+- 2026-03-22 12:19 CST — Extended `ci.yml` so pull requests now validate commit messages with `commitlint` in GitHub Actions in addition to the local Husky hook (commit: pending)
