@@ -39,6 +39,7 @@ Notes:
 - Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to repo-local scripts under `scripts/git-hooks/`.
 - GitHub Actions `ci.yml` now validates PR commit messages with `commitlint` before the usual lint/test/build job.
 - The Husky `prepare` step now uses a guarded repo-local installer, so production-style installs that omit devDependencies skip hook installation cleanly instead of failing.
+- The repo-local Husky `pre-commit` flow now includes `scripts/git-hooks/check-comment-hygiene.sh`, blocking empty comments plus vague `TODO` / `FIXME` markers before commit.
 
 ---
 
@@ -294,7 +295,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Checkpoint the Husky + commitlint hook migration on `chore/husky-commit-hooks`.
+➡️ Checkpoint the repo-local comment-hygiene pre-commit enforcement on `chore/comment-hygiene-precommit`.
 
 ---
 
