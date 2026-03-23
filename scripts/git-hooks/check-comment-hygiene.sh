@@ -37,8 +37,25 @@ collect_staged_matches() {
       }
 
       {
-        if (mode == "todo" && has_marker($0) && !is_actionable($0)) {
-          printf "%s:%d:%s\n", path, NR, $0
+        if (mode == "todo") {
+          comment = ""
+
+          if (path ~ /\.md$/) {
+            comment = $0
+          } else if ($0 ~ /\/\/[[:space:]]*/) {
+            comment = $0
+            sub(/^.*\/\/[[:space:]]*/, "", comment)
+          } else if ($0 ~ /\/\*[[:space:]]*/) {
+            comment = $0
+            sub(/^.*\/\*[[:space:]]*/, "", comment)
+          } else if ($0 ~ /^[[:space:]]*\*[[:space:]]*/) {
+            comment = $0
+            sub(/^[[:space:]]*\*[[:space:]]*/, "", comment)
+          }
+
+          if (comment != "" && has_marker(comment) && !is_actionable(comment)) {
+            printf "%s:%d:%s\n", path, NR, $0
+          }
         }
 
         if (mode == "empty-slash" && $0 ~ /^[[:space:]]*\/\/[[:space:]]*$/) {
