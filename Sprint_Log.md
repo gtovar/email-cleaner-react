@@ -187,3 +187,7 @@ Frontend: yes
 ## 2026-03-22 — Husky hook portability fix
 - Replaced the workspace-root `pre-commit` dependency with repo-local scripts under `scripts/git-hooks/`, so the versioned hook now works in a clean standalone clone of `email-cleaner-react`.
 - Replaced `prepare: "husky"` with a guarded installer so installs that omit devDependencies skip hook installation cleanly while normal dev installs still configure `.husky/_`.
+
+## 2026-03-22 — Comment hygiene wired into React pre-commit
+- Added `scripts/git-hooks/check-comment-hygiene.sh` and wired it into the repo-local Husky `pre-commit` flow.
+- The React hook now blocks empty comments and vague `TODO` / `FIXME` markers before commit without depending on the workspace-root helper script.
