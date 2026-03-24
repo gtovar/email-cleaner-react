@@ -6,6 +6,8 @@ import ReceiptReviewDialog from '../src/components/ReceiptReviewDialog.jsx';
 vi.mock('../src/services/api.js', () => ({
   getEmailContent: vi.fn(),
   extractReceipt: vi.fn(),
+  getReceiptResponse: vi.fn(),
+  saveReceiptResponse: vi.fn(),
   sendReceiptWhatsApp: vi.fn(),
 }));
 
@@ -26,6 +28,8 @@ describe('ReceiptReviewDialog', () => {
     const api = await import('../src/services/api.js');
     api.getEmailContent.mockReset();
     api.extractReceipt.mockReset();
+    api.getReceiptResponse.mockReset();
+    api.saveReceiptResponse.mockReset();
     api.sendReceiptWhatsApp.mockReset();
   });
 
@@ -443,5 +447,183 @@ describe('ReceiptReviewDialog', () => {
     });
 
     expect(screen.queryByText('Notificacion enviada por WhatsApp.')).not.toBeInTheDocument();
+  });
+
+  test('shows an existing paid receipt response when the dialog opens', async () => {
+    const { getEmailContent, extractReceipt, getReceiptResponse } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    getReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: 'paid',
+      updatedAt: '2026-03-24T18:00:00.000Z',
+    });
+
+    renderDialog();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('receipt-response-status')).toHaveTextContent('Pagado');
+    });
+
+    expect(screen.getByText(/Actualizado:/)).toBeInTheDocument();
+  });
+
+  test('saves a paid receipt response and refreshes the visible state', async () => {
+    const { getEmailContent, extractReceipt, getReceiptResponse, saveReceiptResponse } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    getReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: null,
+      updatedAt: null,
+    });
+    saveReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: 'paid',
+      updatedAt: '2026-03-24T18:30:00.000Z',
+    });
+
+    renderDialog();
+
+    const paidButton = await screen.findByRole('button', { name: 'Marcar como pagado' });
+    fireEvent.click(paidButton);
+
+    await waitFor(() => {
+      expect(saveReceiptResponse).toHaveBeenCalledWith({
+        targetId: 'email-1',
+        response: 'paid',
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('receipt-response-status')).toHaveTextContent('Pagado');
+    });
+
+    expect(screen.getByText('Recibo marcado como pagado.')).toBeInTheDocument();
+  });
+
+  test('saves an ignored receipt response and refreshes the visible state', async () => {
+    const { getEmailContent, extractReceipt, getReceiptResponse, saveReceiptResponse } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    getReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: null,
+      updatedAt: null,
+    });
+    saveReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: 'ignore',
+      updatedAt: '2026-03-24T18:31:00.000Z',
+    });
+
+    renderDialog();
+
+    const ignoreButton = await screen.findByRole('button', { name: 'Marcar como ignorado' });
+    fireEvent.click(ignoreButton);
+
+    await waitFor(() => {
+      expect(saveReceiptResponse).toHaveBeenCalledWith({
+        targetId: 'email-1',
+        response: 'ignore',
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('receipt-response-status')).toHaveTextContent('Ignorado');
+    });
+
+    expect(screen.getByText('Recibo marcado como ignorado.')).toBeInTheDocument();
+  });
+
+  test('shows a load error and blocks response actions when the receipt status cannot be read', async () => {
+    const { getEmailContent, extractReceipt, getReceiptResponse } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    getReceiptResponse.mockRejectedValue(new Error('No se pudo cargar el estado del recibo.'));
+
+    renderDialog();
+
+    await waitFor(() => {
+      expect(screen.getByText('No se pudo cargar el estado del recibo.')).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: 'Marcar como pagado' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Marcar como ignorado' })).toBeDisabled();
+  });
+
+  test('shows a save error when persisting the receipt response fails', async () => {
+    const { getEmailContent, extractReceipt, getReceiptResponse, saveReceiptResponse } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    getReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: null,
+      updatedAt: null,
+    });
+    saveReceiptResponse.mockRejectedValue(new Error('No se pudo guardar la respuesta del recibo.'));
+
+    renderDialog();
+
+    const ignoreButton = await screen.findByRole('button', { name: 'Marcar como ignorado' });
+    fireEvent.click(ignoreButton);
+
+    await waitFor(() => {
+      expect(saveReceiptResponse).toHaveBeenCalledWith({
+        targetId: 'email-1',
+        response: 'ignore',
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('No se pudo guardar la respuesta del recibo.')).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId('receipt-response-status')).toHaveTextContent('Sin respuesta registrada');
   });
 });

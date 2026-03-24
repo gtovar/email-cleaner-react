@@ -212,6 +212,31 @@ export async function extractReceipt({ subject, body, html = null }) {
   });
 }
 
+export async function getReceiptResponse(targetId) {
+  if (!targetId) {
+    throw new Error('Target id is required');
+  }
+
+  return httpRequest(`/receipt-responses/${encodeURIComponent(targetId)}`, {
+    method: 'GET',
+  });
+}
+
+export async function saveReceiptResponse({ targetId, response }) {
+  if (!targetId) {
+    throw new Error('Target id is required');
+  }
+
+  if (response !== 'paid' && response !== 'ignore') {
+    throw new Error('Receipt response must be paid or ignore');
+  }
+
+  return httpRequest('/receipt-responses', {
+    method: 'POST',
+    body: { targetId, response },
+  });
+}
+
 export async function sendReceiptWhatsApp({
   emailId,
   sender,
