@@ -130,8 +130,40 @@ describe('ReceiptReviewDialog', () => {
     expect(screen.getByRole('button', { name: 'Enviar por WhatsApp' })).toBeDisabled();
   });
 
+  test('keeps send disabled when extraction returns blank strings', async () => {
+    const { getEmailContent, extractReceipt, getReceiptResponse } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      id: 'email-1',
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: pendiente.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: '',
+      due_date: '   ',
+    });
+    getReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: null,
+      updatedAt: null,
+    });
+
+    renderDialog();
+
+    await waitFor(() => {
+      expect(screen.getByText('El recibo no esta listo para envio porque falta monto o fecha limite.')).toBeInTheDocument();
+    });
+
+    const phoneInput = screen.getByLabelText('Telefono WhatsApp');
+    fireEvent.change(phoneInput, { target: { value: '+52 81 1234 5678' } });
+
+    expect(screen.getByText('No disponible')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Enviar por WhatsApp' })).toBeDisabled();
+  });
+
   test('sends WhatsApp manually when extraction data and phone are ready', async () => {
-    const { getEmailContent, extractReceipt, sendReceiptWhatsApp } = await import('../src/services/api.js');
+    const { getEmailContent, extractReceipt, getReceiptResponse, sendReceiptWhatsApp } = await import('../src/services/api.js');
     getEmailContent.mockResolvedValue({
       id: 'email-1',
       subject: 'Factura CFE marzo',
@@ -147,6 +179,11 @@ describe('ReceiptReviewDialog', () => {
       sent: true,
       provider: 'twilio',
       status: 'sent',
+    });
+    getReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: null,
+      updatedAt: null,
     });
 
     renderDialog();
@@ -175,6 +212,47 @@ describe('ReceiptReviewDialog', () => {
       screen.getByText('La notificacion se envio correctamente a +52 81 1234 5678. Puedes cerrar este dialogo.')
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
+  });
+
+  test('sends WhatsApp with the dialog email id even when content payload omits id', async () => {
+    const { getEmailContent, extractReceipt, getReceiptResponse, sendReceiptWhatsApp } = await import('../src/services/api.js');
+    getEmailContent.mockResolvedValue({
+      subject: 'Factura CFE marzo',
+      from: 'CFE <facturas@cfe.mx>',
+      body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
+      html: null,
+    });
+    extractReceipt.mockResolvedValue({
+      amount: 350.5,
+      due_date: '2026-03-25',
+    });
+    getReceiptResponse.mockResolvedValue({
+      targetId: 'email-1',
+      response: null,
+      updatedAt: null,
+    });
+    sendReceiptWhatsApp.mockResolvedValue({
+      sent: true,
+      provider: 'twilio',
+      status: 'sent',
+    });
+
+    renderDialog();
+
+    const phoneInput = await screen.findByLabelText('Telefono WhatsApp');
+    fireEvent.change(phoneInput, { target: { value: '+52 81 1234 5678' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar por WhatsApp' }));
+
+    await waitFor(() => {
+      expect(sendReceiptWhatsApp).toHaveBeenCalledWith({
+        emailId: 'email-1',
+        sender: 'CFE <facturas@cfe.mx>',
+        subject: 'Factura CFE marzo',
+        amount: 350.5,
+        due_date: '2026-03-25',
+        phone: '+52 81 1234 5678',
+      });
+    });
   });
 
   test('stays open on backend send error and allows retry or cancel', async () => {

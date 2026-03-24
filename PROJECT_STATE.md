@@ -1,19 +1,19 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-24 13:48 CST — Commit: pending
+Last updated: 2026-03-24 14:33 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-24 13:48 CST
+SNAPSHOT_DATE: 2026-03-24 14:33 CST
 COMMIT: pending
 ENVIRONMENT: feature/hu07b-receipt-response-ui
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: feat/hu07b-receipt-response-ui
 WORKING_TREE_STATUS: Dirty (modified files present)
-TEST_STATUS: PASS (`npm test -- --run tests/ReceiptReviewDialog.test.jsx`)
+TEST_STATUS: PASS (`npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx`)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -306,6 +306,7 @@ Notes:
 - Added `getReceiptResponse` and `saveReceiptResponse` to `src/services/api.js`, reusing the canonical `/api/v1/receipt-responses` backend contract without introducing a parallel payload shape (commit: pending).
 - Extended `ReceiptReviewDialog.jsx` so the existing review flow now reads the current receipt state, lets the user mark it as paid or ignored, reflects `paid | ignore | null`, and guards stale async state around the new response requests (commit: pending).
 - Expanded `tests/ReceiptReviewDialog.test.jsx` with targeted coverage for response-state load, `paid` success, `ignore` success, load failure, and save failure; `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally (commit: pending).
+- Hardened the WhatsApp send gate so blank extraction fields no longer enable submission, switched the send payload to use the dialog `emailId` instead of `emailContent.id`, and added regression coverage for both review findings (commit: pending).
 
 ---
 
@@ -364,3 +365,4 @@ Notes:
 - 2026-03-23 15:51 CST — Realigned the Phase 2 backlog with the code-backed baseline, registered HU_06 explicitly in the story canon, and added HU_07, HU_08, and HU_09 as the next candidate slices (commit: pending)
 - 2026-03-23 17:08 CST — Split `HU_07` into `HU_07A` backend-first and `HU_07B` frontend follow-up, and anchored the frontend next step to wait for the stabilized backend contract (commit: pending)
 - 2026-03-24 13:48 CST — Implemented `HU_07B` in `ReceiptReviewDialog.jsx` by consuming `GET/POST /api/v1/receipt-responses`, reflecting `paid | ignore | null`, and adding targeted Vitest coverage for load/save success and failure states; `npm test -- --run tests/ReceiptReviewDialog.test.jsx` passed locally (commit: pending)
+- 2026-03-24 14:33 CST — Addressed PR review follow-ups in `ReceiptReviewDialog.jsx` by rejecting blank extraction fields before WhatsApp send and by sending the canonical dialog `emailId`; `npm run lint` plus `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally (commit: pending)

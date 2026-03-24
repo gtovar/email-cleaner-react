@@ -45,6 +45,7 @@
 - Extended the repo-local Husky `pre-commit` flow with `scripts/git-hooks/check-comment-hygiene.sh` so empty comments and vague follow-up markers are blocked before commit.
 - Added `getReceiptResponse` and `saveReceiptResponse` to `src/services/api.js`, then extended `ReceiptReviewDialog.jsx` so the existing receipt review flow now reads and writes `paid | ignore | null` against the merged backend contract.
 - Expanded `tests/ReceiptReviewDialog.test.jsx` with targeted HU_07B coverage for receipt-response load, `paid` success, `ignore` success, save failure, and load failure; `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally.
+- Addressed the PR review follow-ups in `ReceiptReviewDialog.jsx`: blank extraction fields now keep WhatsApp send disabled, and the send payload now uses the dialog `emailId` instead of depending on `emailContent.id`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -55,7 +56,7 @@ npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- HU_07B is now implemented locally on `feat/hu07b-receipt-response-ui` inside the existing `ReceiptReviewDialog.jsx` flow.
+- HU_07B is now implemented locally on `feat/hu07b-receipt-response-ui` inside the existing `ReceiptReviewDialog.jsx` flow, and the follow-up review bugs on the WhatsApp send gate/payload are already fixed on the branch.
 - The dialog now reads the current receipt-response state and allows `paid` / `ignore` writes without introducing a new screen or a parallel frontend contract.
 - Targeted Vitest coverage for the new receipt-response states and actions passed locally.
 - Browser validation still exists only for HU06 manual WhatsApp send; adding Playwright for HU_07B remains an optional future improvement, not a blocker for this slice.

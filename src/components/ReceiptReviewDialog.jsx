@@ -83,6 +83,11 @@ const getReceiptResponseTone = (response) => {
   return 'border-border bg-muted/30 text-muted-foreground';
 };
 
+const hasNonEmptyValue = (value) =>
+  value !== null &&
+  value !== undefined &&
+  String(value).trim() !== '';
+
 const getSendFeedbackFromResult = (result, phone) => {
   if (result?.sent) {
     return {
@@ -168,10 +173,8 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
   const hasExtractionData = useMemo(
     () =>
-      extractionResult?.amount !== null &&
-      extractionResult?.amount !== undefined &&
-      extractionResult?.due_date !== null &&
-      extractionResult?.due_date !== undefined,
+      hasNonEmptyValue(extractionResult?.amount) &&
+      hasNonEmptyValue(extractionResult?.due_date),
     [extractionResult]
   );
 
@@ -405,7 +408,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
 
     try {
       const result = await sendReceiptWhatsApp({
-        emailId: emailContent.id,
+        emailId: targetEmailId,
         sender: emailContent.from,
         subject: emailContent.subject,
         amount: extractionResult.amount,
