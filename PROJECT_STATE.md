@@ -296,7 +296,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Keep the frontend on hold until `HU_07A` freezes the backend response identity and contract; then open `HU_07B` against the stabilized backend slice.
+➡️ Open `HU_07B` from `develop` and implement the frontend follow-up against the merged `/api/v1/receipt-responses` backend contract.
 
 ---
 

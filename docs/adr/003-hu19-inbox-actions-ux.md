@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-03-10
-- Commit hash: pending
+- Commit hash: a40c28d
 
 ## Context
 

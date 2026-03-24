@@ -64,7 +64,7 @@ npm test -- AppAuthFlow.test.jsx
 - There is no pending hook-migration checkpoint left in this repo; HU06 browser validation is already captured in the merged baseline.
 
 ## 5) Immediate Next Step
-➡️ Wait for `HU_07A` to freeze the backend response identity and contract, then open `HU_07B` from `develop`; do not reopen the merged hook-migration work.
+➡️ Open `HU_07B` from `develop` against the merged `/api/v1/receipt-responses` backend contract; do not reopen the merged hook-migration work.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
