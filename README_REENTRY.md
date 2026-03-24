@@ -3,7 +3,7 @@
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
 - Branch: `feat/hu07b-receipt-response-ui`
-- Latest commit: pending
+- Latest commit: `0138a5e`
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
 - Session expiry triggers a Login screen via `onAuthExpired`.
@@ -56,14 +56,15 @@ npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- HU_07B is now implemented locally on `feat/hu07b-receipt-response-ui` inside the existing `ReceiptReviewDialog.jsx` flow, and the follow-up review bugs on the WhatsApp send gate/payload are already fixed on the branch.
+- HU_07B is implemented on `feat/hu07b-receipt-response-ui`, the WhatsApp send follow-up fixes are already committed, and PR 47 is open against `develop`.
+- The only local edits right now are this metadata-sync follow-up for the React checkpoint docs.
 - The dialog now reads the current receipt-response state and allows `paid` / `ignore` writes without introducing a new screen or a parallel frontend contract.
 - Targeted Vitest coverage for the new receipt-response states and actions passed locally.
 - Browser validation still exists only for HU06 manual WhatsApp send; adding Playwright for HU_07B remains an optional future improvement, not a blocker for this slice.
 - `ReceiptReviewDialog.jsx` now carries both manual WhatsApp send state and manual receipt-response state; keep that under watch for the next large dialog change, but do not split it preemptively.
 
 ## 5) Immediate Next Step
-➡️ Run the repo-local readiness checks for `HU_07B` and cut the frontend checkpoint/commit before opening another slice.
+➡️ Review PR 47, then decide whether to keep this small metadata-sync doc update as a final follow-up before merge.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -79,5 +80,5 @@ npm run dev
 - `tests/ReceiptReviewDialog.test.jsx`
 
 ## 7) Reentry Status
-- Reentry: clean, slice complete and pending commit-readiness
+- Reentry: dirty only by metadata-sync doc edits; code slice already committed and PR open
 - Tests: last verified PASS (`npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx`) on 2026-03-24
