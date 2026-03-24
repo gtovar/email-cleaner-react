@@ -190,4 +190,12 @@ Frontend: yes
 
 ## 2026-03-22 — Comment hygiene wired into React pre-commit
 - Added `scripts/git-hooks/check-comment-hygiene.sh` and wired it into the repo-local Husky `pre-commit` flow.
-- The React hook now blocks empty comments and vague `TODO` / `FIXME` markers before commit without depending on the workspace-root helper script.
+- The React hook now blocks empty comments and vague follow-up markers before commit without depending on the workspace-root helper script.
+
+## 2026-03-23 — Phase 2 backlog realigned
+- Updated the canonical Phase 2 story docs so HU_05 and HU06 match the implemented frontend state.
+- Registered HU_07, HU_08, and HU_09 as the next backlog candidates and synchronized the frontend checkpoint next step.
+
+## 2026-03-23 — HU_07 execution slices defined
+- Split `HU_07` into `HU_07A` backend-first and `HU_07B` frontend follow-up.
+- Anchored the frontend next step to wait for the stabilized backend contract before opening the UI slice.

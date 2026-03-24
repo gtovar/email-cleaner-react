@@ -1,23 +1,24 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-22 12:19 CST — Commit: pending
+Last updated: 2026-03-23 17:08 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-22 12:19 CST
+SNAPSHOT_DATE: 2026-03-23 17:08 CST
 COMMIT: pending
-ENVIRONMENT: local
+ENVIRONMENT: develop
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
-BRANCH: chore/husky-commit-hooks
-WORKING_TREE_STATUS: Dirty (Husky + commitlint hook migration in progress)
+BRANCH: develop
+WORKING_TREE_STATUS: Clean
 TEST_STATUS: PASS (manual Husky validation via `.husky/_/commit-msg` and `.husky/_/pre-commit`)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
 - Fastify backend and ML service are external dependencies.
+- The Husky/comment-hygiene slice is already merged into `develop`; there is no pending hook-migration branch to resume.
 
 ---
 
@@ -39,7 +40,7 @@ Notes:
 - Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to repo-local scripts under `scripts/git-hooks/`.
 - GitHub Actions `ci.yml` now validates PR commit messages with `commitlint` before the usual lint/test/build job.
 - The Husky `prepare` step now uses a guarded repo-local installer, so production-style installs that omit devDependencies skip hook installation cleanly instead of failing.
-- The repo-local Husky `pre-commit` flow now includes `scripts/git-hooks/check-comment-hygiene.sh`, blocking empty comments plus vague `TODO` / `FIXME` markers before commit.
+- The repo-local Husky `pre-commit` flow now includes `scripts/git-hooks/check-comment-hygiene.sh`, blocking empty comments plus vague follow-up markers before commit.
 
 ---
 
@@ -265,7 +266,7 @@ Notes:
 
 ### HU_06 — Browser validation of receipt review and manual WhatsApp send flow
 
-**Status:** IN_PROGRESS
+**Status:** DONE
 
 **Evidence:**
 - `tests/e2e/hu06-receipt-review.spec.js`
@@ -273,7 +274,7 @@ Notes:
 - `src/components/InboxList.jsx`
 
 **Open items:**
-- Checkpoint this browser-validation slice on the feature branch with the paired Fastify fixture support.
+- None for this frontend browser-validation slice.
 
 **Technical risks:**
 - The visible provider-error browser case uses a controlled response override for `/api/v1/notifications/receipt-whatsapp` to prove feedback and retry affordance without claiming a real full-stack provider failure.
@@ -295,7 +296,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Checkpoint the repo-local comment-hygiene pre-commit enforcement on `chore/comment-hygiene-precommit`.
+➡️ Open `HU_07B` from `develop` and implement the frontend follow-up against the merged `/api/v1/receipt-responses` backend contract.
 
 ---
 
@@ -334,3 +335,6 @@ Notes:
 - 2026-03-22 03:05 CST — Decoupled HU06 browser validation from HU19 fixture rows by targeting dedicated HU06 receipt-review emails and clarified that the provider-error case remains a browser-level controlled override (commit: pending)
 - 2026-03-22 12:19 CST — Added versioned Husky hooks plus `commitlint` so `commit-msg` now validates Conventional Commit syntax while `pre-commit` still routes through the workspace cognitive gate (commit: pending)
 - 2026-03-22 12:19 CST — Extended `ci.yml` so pull requests now validate commit messages with `commitlint` in GitHub Actions in addition to the local Husky hook (commit: pending)
+- 2026-03-23 01:30 CST — Reconciled the frontend operational checkpoint with the real clean `develop` baseline and closed HU06 from the existing browser evidence (commit: pending)
+- 2026-03-23 15:51 CST — Realigned the Phase 2 backlog with the code-backed baseline, registered HU_06 explicitly in the story canon, and added HU_07, HU_08, and HU_09 as the next candidate slices (commit: pending)
+- 2026-03-23 17:08 CST — Split `HU_07` into `HU_07A` backend-first and `HU_07B` frontend follow-up, and anchored the frontend next step to wait for the stabilized backend contract (commit: pending)

@@ -1,7 +1,8 @@
 # ADR 003: HU19 Inbox direct actions UX
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-03-10
+- Commit hash: a40c28d
 
 ## Context
 

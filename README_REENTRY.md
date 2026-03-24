@@ -2,7 +2,7 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `chore/husky-commit-hooks`
+- Branch: `develop`
 - Latest commit: pending
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
@@ -41,7 +41,8 @@
 - Added versioned Husky hooks in `.husky/` so `pre-commit` now delegates to repo-local scripts under `scripts/git-hooks/`, while `commit-msg` validates Conventional Commit syntax with `commitlint`.
 - Extended `.github/workflows/ci.yml` so PRs now validate commit messages with `commitlint` remotely before lint/test/build.
 - Replaced `prepare: "husky"` with a guarded repo-local installer so production-style installs that omit devDependencies do not fail.
-- Extended the repo-local Husky `pre-commit` flow with `scripts/git-hooks/check-comment-hygiene.sh` so empty comments and vague `TODO` / `FIXME` markers are blocked before commit.
+- Extended the repo-local Husky `pre-commit` flow with `scripts/git-hooks/check-comment-hygiene.sh` so empty comments and vague follow-up markers are blocked before commit.
+- The hook-migration work is already merged; the repo is now clean on `develop`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -60,9 +61,10 @@ npm test -- AppAuthFlow.test.jsx
 - The happy path still depends on the controlled local fixture/auth path rather than live Gmail or a live WhatsApp provider.
 - The visible provider-error path still uses a controlled browser override on `/api/v1/notifications/receipt-whatsapp`; it validates feedback and retry affordance, not a real provider failure.
 - Husky now owns the versioned hook entry point for this repo; manual validation confirmed that valid commit messages pass, invalid ones are blocked, the repo-local pre-commit gate now includes basic comment hygiene checks, and `prepare` no longer depends on workspace-only paths.
+- There is no pending hook-migration checkpoint left in this repo; HU06 browser validation is already captured in the merged baseline.
 
 ## 5) Immediate Next Step
-➡️ Checkpoint the repo-local comment-hygiene pre-commit enforcement on `chore/comment-hygiene-precommit`.
+➡️ Open `HU_07B` from `develop` against the merged `/api/v1/receipt-responses` backend contract; do not reopen the merged hook-migration work.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
