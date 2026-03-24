@@ -2,8 +2,8 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `develop`
-- Latest commit: pending
+- Branch: `feat/hu07b-receipt-response-ui`
+- Latest commit: `0138a5e`
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
 - Session expiry triggers a Login screen via `onAuthExpired`.
@@ -26,6 +26,7 @@
 - Playwright is now configured locally in `playwright.config.js`, and the first browser spec lives in `tests/e2e/hu19-row-level.spec.js`.
 - The full HU19 browser suite now passes locally for row-level and bulk Inbox actions (`archive`, `delete`, `mark_unread`) against the fixture Inbox environment.
 - Fastify already exposes the receipt-extraction route, the manual WhatsApp delivery route, and `GET /api/v1/emails/:id/content`, so the current slice consumes existing backend behavior only.
+- `ReceiptReviewDialog.jsx` now consumes `GET /api/v1/receipt-responses/:targetId` plus `POST /api/v1/receipt-responses` to read and update the manual receipt state inside the existing review dialog.
 
 ## 2) What Changed During the Last Session
 - Added the `Revisar recibo` row action in `src/components/InboxList.jsx`.
@@ -42,29 +43,28 @@
 - Extended `.github/workflows/ci.yml` so PRs now validate commit messages with `commitlint` remotely before lint/test/build.
 - Replaced `prepare: "husky"` with a guarded repo-local installer so production-style installs that omit devDependencies do not fail.
 - Extended the repo-local Husky `pre-commit` flow with `scripts/git-hooks/check-comment-hygiene.sh` so empty comments and vague follow-up markers are blocked before commit.
-- The hook-migration work is already merged; the repo is now clean on `develop`.
+- Added `getReceiptResponse` and `saveReceiptResponse` to `src/services/api.js`, then extended `ReceiptReviewDialog.jsx` so the existing receipt review flow now reads and writes `paid | ignore | null` against the merged backend contract.
+- Expanded `tests/ReceiptReviewDialog.test.jsx` with targeted HU_07B coverage for receipt-response load, `paid` success, `ignore` success, save failure, and load failure; `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally.
+- Addressed the PR review follow-ups in `ReceiptReviewDialog.jsx`: blank extraction fields now keep WhatsApp send disabled, and the send payload now uses the dialog `emailId` instead of depending on `emailContent.id`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
+git switch feat/hu07b-receipt-response-ui
 npm install
-npm test
+npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx
 npm run dev
-npm run test:e2e
-npm run test:e2e -- --list
-npm test -- SummaryPanel.test.jsx ActivityPanel.test.jsx
-npm test -- AppAuthFlow.test.jsx
 ```
 
 ## 4) Where the Workflow Stopped
-- The local browser spec for HU06 now passes against dedicated HU06 fixture emails for the receipt-review happy path and for a visible provider-error path with retry affordance.
-- `ReceiptReviewDialog.jsx` now has stable hooks for the browser spec and no longer emits the previous Radix dialog warning in Vitest.
-- The happy path still depends on the controlled local fixture/auth path rather than live Gmail or a live WhatsApp provider.
-- The visible provider-error path still uses a controlled browser override on `/api/v1/notifications/receipt-whatsapp`; it validates feedback and retry affordance, not a real provider failure.
-- Husky now owns the versioned hook entry point for this repo; manual validation confirmed that valid commit messages pass, invalid ones are blocked, the repo-local pre-commit gate now includes basic comment hygiene checks, and `prepare` no longer depends on workspace-only paths.
-- There is no pending hook-migration checkpoint left in this repo; HU06 browser validation is already captured in the merged baseline.
+- HU_07B is implemented on `feat/hu07b-receipt-response-ui`, the WhatsApp send follow-up fixes are already committed, and PR 47 is open against `develop`.
+- The only local edits right now are this metadata-sync follow-up for the React checkpoint docs.
+- The dialog now reads the current receipt-response state and allows `paid` / `ignore` writes without introducing a new screen or a parallel frontend contract.
+- Targeted Vitest coverage for the new receipt-response states and actions passed locally.
+- Browser validation still exists only for HU06 manual WhatsApp send; adding Playwright for HU_07B remains an optional future improvement, not a blocker for this slice.
+- `ReceiptReviewDialog.jsx` now carries both manual WhatsApp send state and manual receipt-response state; keep that under watch for the next large dialog change, but do not split it preemptively.
 
 ## 5) Immediate Next Step
-➡️ Open `HU_07B` from `develop` against the merged `/api/v1/receipt-responses` backend contract; do not reopen the merged hook-migration work.
+➡️ Review PR 47, then decide whether to keep this small metadata-sync doc update as a final follow-up before merge.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -77,7 +77,8 @@ npm test -- AppAuthFlow.test.jsx
 - `src/components/ReceiptReviewDialog.jsx`
 - `src/pages/SettingsPage.jsx`
 - `src/services/api.js`
+- `tests/ReceiptReviewDialog.test.jsx`
 
 ## 7) Reentry Status
-- Reentry: clean
-- Tests: last verified PASS (`npm test -- ReceiptReviewDialog.test.jsx`; `npm run test:e2e -- tests/e2e/hu06-receipt-review.spec.js`) on 2026-03-22
+- Reentry: dirty only by metadata-sync doc edits; code slice already committed and PR open
+- Tests: last verified PASS (`npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx`) on 2026-03-24
