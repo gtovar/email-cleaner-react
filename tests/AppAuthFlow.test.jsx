@@ -122,8 +122,32 @@ describe('App auth callback and session expiry flow', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Sesión expirada. Inicia sesión de nuevo.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Your previous session ended. Continue with Google to reopen your workspace.')
+      ).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Continue with Google/i })).toBeInTheDocument();
     });
+  });
+
+  test('ignores auth expiry callbacks before a real authenticated session exists', async () => {
+    const { getAuthMe, onAuthExpired } = await import('../src/services/api.js');
+    getAuthMe.mockResolvedValue({ authenticated: false });
+
+    window.history.pushState(null, '', '/login');
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(onAuthExpired).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('button', { name: /Continue with Google/i })).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      authExpiredHandler();
+    });
+
+    expect(
+      screen.queryByText('Your previous session ended. Continue with Google to reopen your workspace.')
+    ).not.toBeInTheDocument();
   });
 });

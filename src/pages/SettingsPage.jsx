@@ -1,18 +1,20 @@
-import { Bell, Shield, User } from 'lucide-react';
+import { Bell, Info, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card.jsx';
-import { Input } from '../components/ui/input.jsx';
-import { Label } from '../components/ui/label.jsx';
 import { Switch } from '../components/ui/switch.jsx';
-import { Button } from '../components/ui/button.jsx';
 import { Separator } from '../components/ui/separator.jsx';
+import { Badge } from '../components/ui/badge.jsx';
 
 export default function SettingsPage() {
   return (
-    <div className="container py-8 max-w-2xl">
-      <div className="mb-8">
+    <div className="container max-w-3xl py-8">
+      <div className="mb-8 space-y-2">
+        <span className="inline-flex w-fit rounded-full border border-border/70 bg-muted px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          Alcance actual del producto
+        </span>
         <h2 className="text-2xl font-semibold tracking-tight">Ajustes</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Configura tus preferencias de limpieza y seguridad.
+        <p className="text-sm text-muted-foreground">
+          Esta pantalla solo muestra preferencias coherentes con el flujo actual de revision.
+          No administra password, perfil ni seguridad avanzada.
         </p>
       </div>
 
@@ -21,39 +23,12 @@ export default function SettingsPage() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <User className="h-5 w-5" aria-hidden="true" />
+                <Sparkles className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <CardTitle>Cuenta</CardTitle>
+                <CardTitle>Preferencias de revision</CardTitle>
                 <CardDescription>
-                  Administra los datos principales de tu cuenta.
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-2">
-              <Label htmlFor="account-email">Correo principal</Label>
-              <Input id="account-email" type="email" placeholder="tu@email.com" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="account-name">Nombre visible</Label>
-              <Input id="account-name" type="text" placeholder="Nombre para mostrar" />
-            </div>
-            <Button type="button">Guardar cambios</Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Bell className="h-5 w-5" aria-hidden="true" />
-              </div>
-              <div>
-                <CardTitle>Notificaciones</CardTitle>
-                <CardDescription>
-                  Elige como quieres recibir actualizaciones.
+                  Ajustes locales para la forma en que recorres sugerencias y casos manuales.
                 </CardDescription>
               </div>
             </div>
@@ -61,9 +36,9 @@ export default function SettingsPage() {
           <CardContent className="space-y-4 text-sm text-foreground">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Reportes por correo</div>
+                <div className="font-medium">Vista compacta en sugerencias</div>
                 <div className="text-xs text-muted-foreground">
-                  Recibe reportes de limpieza en tu correo.
+                  Empieza con tarjetas mas densas cuando revises varias decisiones seguidas.
                 </div>
               </div>
               <Switch />
@@ -71,19 +46,19 @@ export default function SettingsPage() {
             <Separator />
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Resumen semanal</div>
+                <div className="font-medium">Mostrar primero casos especializados</div>
                 <div className="text-xs text-muted-foreground">
-                  Ve un resumen semanal de la actividad.
+                  Da prioridad visual a recibos y correos que requieren mas supervision humana.
                 </div>
               </div>
-              <Switch />
+              <Switch defaultChecked />
             </div>
             <Separator />
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Nuevas sugerencias</div>
+                <div className="font-medium">Recordar preferencia del panel Inbox</div>
                 <div className="text-xs text-muted-foreground">
-                  Avisar cuando haya nuevas sugerencias.
+                  Conserva el contexto manual como vista de apoyo durante la sesion local.
                 </div>
               </div>
               <Switch defaultChecked />
@@ -95,40 +70,82 @@ export default function SettingsPage() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Shield className="h-5 w-5" aria-hidden="true" />
+                <Bell className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <CardTitle>Seguridad</CardTitle>
+                <CardTitle>Notificaciones del flujo</CardTitle>
                 <CardDescription>
-                  Refuerza la proteccion de tu cuenta.
+                  Preferencias visibles para los recorridos que hoy existen en la app.
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-2">
-              <Label htmlFor="current-password">Password actual</Label>
-              <Input id="current-password" type="password" placeholder="********" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="new-password">Password nueva</Label>
-              <Input id="new-password" type="password" placeholder="********" />
-            </div>
-            <Button type="button" variant="outline">
-              Actualizar password
-            </Button>
-            <div className="pt-4 space-y-4">
-              <Separator />
-              <div className="flex items-center justify-between gap-4 text-sm text-foreground">
-                <div>
-                  <div className="font-medium">Doble factor (2FA)</div>
-                  <div className="text-xs text-muted-foreground">
-                    Agrega una capa extra de seguridad.
-                  </div>
+          <CardContent className="space-y-4 text-sm text-foreground">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="font-medium">Avisar cuando haya nuevas sugerencias</div>
+                <div className="text-xs text-muted-foreground">
+                  Mantiene visible el loop principal cuando reaparecen decisiones por revisar.
                 </div>
-                <Switch />
+              </div>
+              <Switch defaultChecked />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="font-medium">Confirmar antes de acciones sensibles</div>
+                <div className="text-xs text-muted-foreground">
+                  Conserva confirmacion explicita antes de descartar o ejecutar acciones destructivas.
+                </div>
+              </div>
+              <Switch defaultChecked />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="font-medium">Mantener feedback visible despues del envio</div>
+                <div className="text-xs text-muted-foreground">
+                  Deja visible el resultado del envio manual de WhatsApp hasta que cierres el dialogo.
+                </div>
+              </div>
+              <Switch defaultChecked />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/70 bg-muted/[0.18]">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background text-primary shadow-sm">
+                <Info className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div>
+                <CardTitle>Lo que esta fuera de alcance aqui</CardTitle>
+                <CardDescription>
+                  Para no prometer mas de lo que el producto sostiene hoy.
+                </CardDescription>
               </div>
             </div>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-foreground">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
+                Password
+              </Badge>
+              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
+                2FA
+              </Badge>
+              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
+                Perfil editable
+              </Badge>
+              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
+                Preferencias persistidas en backend
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              La sesion y la conexion con Google se controlan desde el flujo actual de autenticacion.
+              Esta pantalla no cambia credenciales ni configuracion de cuenta.
+            </p>
           </CardContent>
         </Card>
       </div>

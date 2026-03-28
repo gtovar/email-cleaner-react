@@ -20,8 +20,13 @@ function App() {
   const [authEmail, setAuthEmail] = useState(null);
   const [activityOpen, setActivityOpen] = useState(false);
   const callbackHandledRef = useRef(false);
+  const authStatusRef = useRef('checking');
   const isAuthenticated = authStatus === 'authenticated';
   const isHomeView = activeView === 'home';
+
+  useEffect(() => {
+    authStatusRef.current = authStatus;
+  }, [authStatus]);
 
   const resolvePublicView = useCallback((pathname) => {
     if (pathname === '/') return 'home';
@@ -89,11 +94,14 @@ function App() {
 
   useEffect(() => {
     onAuthExpired(() => {
+      if (authStatusRef.current !== 'authenticated') {
+        return;
+      }
       setAuthStatus('anonymous');
       setAuthEmail(null);
       setAuthMessage({
-        type: 'error',
-        text: 'Sesión expirada. Inicia sesión de nuevo.',
+        type: 'info',
+        text: 'Your previous session ended. Continue with Google to reopen your workspace.',
       });
       setActiveView('login');
     });
@@ -139,8 +147,8 @@ function App() {
       setAuthEmail(null);
       setActiveView('login');
       setAuthMessage({
-        type: 'error',
-        text: 'Sesión cerrada. Inicia sesión de nuevo.',
+        type: 'info',
+        text: 'You signed out. Continue with Google when you are ready to review again.',
       });
     }
   };
@@ -223,7 +231,7 @@ function App() {
             ) : (
               <LoginPage
                 onLogin={handleLogin}
-                message={authMessage?.type === 'error' ? authMessage.text : null}
+                message={authMessage}
               />
             )}
           </>

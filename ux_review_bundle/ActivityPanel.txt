@@ -1,0 +1,45 @@
+Nombre: ActivityPanel
+Tipo: drawer lateral / surface secundaria autenticada
+
+Qué hace:
+- Abre un panel lateral con resumen, acceso a ajustes y cierre de sesión.
+- Aloja `SummaryPanel` como contenido principal.
+
+Para qué sirve:
+- Concentrar acciones globales y contexto de actividad sin sacar al usuario de la vista principal.
+
+Propósito de producto:
+- Añadir una capa de navegación utilitaria y de resumen.
+- Mantener el shell principal limpio sin perder funciones secundarias.
+
+Qué resuelve:
+- El problema de dónde poner resumen, ajustes y logout sin sobrecargar la cabecera.
+
+Cómo parece pensada:
+- Como un drawer utilitario, no como pantalla completa.
+- Pensada para complementar Sugerencias/Inbox/Historial con metadatos y accesos secundarios.
+
+Acciones principales:
+- Consultar resumen.
+- Ir a ajustes.
+- Cerrar sesión.
+
+Flujo:
+- Se abre desde el botón de menú del header autenticado.
+- Puede redirigir a `SettingsPage`.
+
+Dependencias:
+- `SummaryPanel`
+- `onNavigate('settings')`
+- `onLogout`
+
+Estados relevantes:
+- Drawer cerrado.
+- Drawer abierto.
+- Resumen cargando.
+- Resumen con datos.
+- Resumen con error.
+
+Observaciones UX para experto:
+- Esta surface es importante porque mezcla navegación secundaria, métricas y sesión.
+- Conviene revisar si la combinación de resumen + navegación + logout compite visualmente.

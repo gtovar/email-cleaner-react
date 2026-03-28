@@ -63,7 +63,7 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
         id: 'email-1',
         subject: 'Prueba HU14',
         snippet: 'Demo de flujo integrado',
-        suggestedAction: 'accept',
+        suggestions: [{ action: 'archive', reason: 'Patrón repetido detectado' }],
       },
     ]);
 
@@ -97,8 +97,7 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       { timeout: 2500 }
     );
 
-    // Paso B: el usuario hace clic en "Aceptar"
-    const acceptButton = screen.getByRole('button', { name: 'Aceptar' });
+    const acceptButton = screen.getByRole('button', { name: 'Aprobar archivar' });
     fireEvent.click(acceptButton);
 
     // Confirmamos que se llamó confirmAction
@@ -126,7 +125,6 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       expect(screen.getByText('email-1')).toBeInTheDocument();
     });
 
-    // Paso D: el usuario hace clic en "Repetir acción" desde el historial
     confirmAction.mockResolvedValueOnce({
       success: true,
       processed: 1,
@@ -134,15 +132,20 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       action: 'accept',
     });
 
-    const repeatButton = screen.getByRole('button', { name: 'Repetir acción' });
+    const repeatButton = screen.getByRole('button', { name: 'Volver a aplicar aceptación' });
     fireEvent.click(repeatButton);
 
     await waitFor(() => {
-      expect(confirmAction).toHaveBeenCalledTimes(2);
+      expect(screen.getByText('¿Volver a aplicar esta decisión?')).toBeInTheDocument();
+    });
 
-      // HistoryList usa: `✅ Acción "accept" repetida para email-1`
+    const dialog = screen.getByRole('alertdialog');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Volver a aplicar aceptación' }));
+
+    await waitFor(() => {
+      expect(confirmAction).toHaveBeenCalledTimes(2);
       expect(
-        screen.getByText(/Acción "accept" repetida para email-1/)
+        screen.getByText(/Se volvió a aplicar "Aceptar sugerencia" para email-1\./)
       ).toBeInTheDocument();
     });
   });

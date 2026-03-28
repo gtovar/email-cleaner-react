@@ -1,0 +1,46 @@
+Nombre: SuggestionsPage
+Tipo: pantalla principal de sugerencias de limpieza
+
+Qué hace:
+- Muestra correos sugeridos para limpieza.
+- Permite aceptar o rechazar acciones sugeridas.
+- Ofrece progreso de revisión y vista compacta.
+
+Para qué sirve:
+- Convertir recomendaciones del sistema en decisiones revisadas por el usuario.
+- Hacer visible el valor principal del producto.
+
+Propósito de producto:
+- Ser la superficie central de “inbox cleanup with approval”.
+- Poner al usuario a revisar sugerencias en lugar de ejecutar acciones automáticas.
+
+Qué resuelve:
+- El problema de tener demasiados correos repetitivos o promocionales.
+- La necesidad de revisar antes de actuar.
+
+Cómo parece pensada:
+- Como la vista core del producto autenticado.
+- Con tarjetas que combinan legibilidad, contexto mínimo y acciones rápidas.
+
+Acción principal:
+- Aceptar o rechazar la sugerencia por correo.
+
+Flujo:
+- Vista por defecto al entrar autenticado.
+- Desde aquí se alimenta el historial y el progreso de limpieza.
+
+Dependencias:
+- `getSuggestions()`
+- `confirmAction()`
+- Feedback visual vía toasts y `StatusMessage`.
+
+Estados relevantes:
+- Loading con skeletons.
+- Empty state.
+- Error de carga.
+- Estado normal con tarjetas.
+- Confirmación/rechazo y retirada del item.
+
+Observaciones UX para experto:
+- Es la superficie donde más importa claridad entre sugerencia del sistema y acción del usuario.
+- La relación entre confianza del modelo, contexto visible y decisión humana merece revisión profunda.

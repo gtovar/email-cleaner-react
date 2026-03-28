@@ -31,7 +31,7 @@ describe('SummaryPanel', () => {
 
     render(<SummaryPanel />);
 
-    expect(screen.getByText('Loading summary...')).toBeInTheDocument();
+    expect(screen.getByText('Cargando actividad guiada...')).toBeInTheDocument();
 
     resolveSummary({
       totalSuggestions: 4,
@@ -43,7 +43,7 @@ describe('SummaryPanel', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Total suggestions')).toBeInTheDocument();
+      expect(screen.getByText('Sugerencias generadas')).toBeInTheDocument();
       expect(screen.getByText('4')).toBeInTheDocument();
       expect(screen.getByText('archive: 3')).toBeInTheDocument();
       expect(screen.getByText('accept: 1')).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('SummaryPanel', () => {
     });
 
     expect(getSummary).toHaveBeenCalledWith('daily');
-    expect(screen.getByText('Window: 24 hours')).toBeInTheDocument();
+    expect(screen.getByText('Ventana: ultimas 24 horas')).toBeInTheDocument();
   });
 
   test('switches to weekly and reloads summary', async () => {
@@ -81,11 +81,11 @@ describe('SummaryPanel', () => {
       expect(screen.getByText('archive: 2')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getAllByRole('button', { name: 'Weekly' })[0]);
+    fireEvent.click(screen.getByRole('button', { name: '7 dias' }));
 
     await waitFor(() => {
       expect(getSummary).toHaveBeenLastCalledWith('weekly');
-      expect(screen.getByText('Window: 7 days')).toBeInTheDocument();
+      expect(screen.getByText('Ventana: ultimos 7 dias')).toBeInTheDocument();
       expect(screen.getByText('delete: 7')).toBeInTheDocument();
       expect(screen.getByText('accept: 3')).toBeInTheDocument();
       expect(screen.getByText('stale_unread: 7')).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('SummaryPanel', () => {
     render(<SummaryPanel />);
 
     await waitFor(() => {
-      expect(screen.getAllByText('No data').length).toBeGreaterThanOrEqual(3);
+      expect(screen.getAllByText('Sin actividad en esta ventana').length).toBeGreaterThanOrEqual(3);
     });
   });
 });

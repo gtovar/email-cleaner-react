@@ -87,23 +87,23 @@ export default function HomePage({ onStart }) {
           </div>
 
           <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            A calmer inbox starts here
+            Review your inbox with more clarity and control
           </h1>
 
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Email Cleaner helps you find and remove clutter safely and on your terms.
-            No surprises, no forced deletions, just helpful suggestions.
+            Email Cleaner helps you review, organize, and act on emails without
+            losing control of important decisions.
           </p>
 
           <div className="pt-4">
             <Button onClick={onStart} size="lg" className="h-12 gap-2 px-8 text-base">
-              <span>Get started</span>
+              <span>Continue to sign in</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
 
           <p className="pt-2 text-sm text-muted-foreground">
-            Free to use • No credit card required
+            Review first, act with control, and connect Google only when ready
           </p>
         </div>
       </section>
@@ -111,29 +111,29 @@ export default function HomePage({ onStart }) {
       <section className="bg-muted/30 px-4 py-16">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-12 text-center text-2xl font-semibold text-foreground md:text-3xl">
-            Why people trust Email Cleaner
+            How the review stays under your control
           </h2>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <BenefitCard
               icon={<Shield className="h-5 w-5" aria-hidden="true" />}
-              title="You are in control"
-              description="Nothing happens without your approval. Every action requires confirmation."
+              title="You stay in control"
+              description="Sensitive actions stay in your hands. The app helps you review before acting."
             />
             <BenefitCard
               icon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
-              title="Clear suggestions"
-              description="Smart recommendations based on patterns, not guesswork."
+              title="Guided review"
+              description="See suggestions, check context, and decide what makes sense for your inbox."
             />
             <BenefitCard
               icon={<Clock className="h-5 w-5" aria-hidden="true" />}
-              title="Save time"
-              description="Clean up years of clutter in minutes, not hours."
+              title="Less clutter, less effort"
+              description="Organize repeated email noise faster without treating every message the same way."
             />
             <BenefitCard
               icon={<CheckCircle2 className="h-5 w-5" aria-hidden="true" />}
-              title="Privacy first"
-              description="We only read metadata. Your email content stays private."
+              title="More detail only when needed"
+              description="Some flows show additional context when you open a specific case for review."
             />
           </div>
         </div>
@@ -145,33 +145,33 @@ export default function HomePage({ onStart }) {
             How it works
           </h2>
           <p className="mx-auto mb-12 mt-4 max-w-xl text-center text-muted-foreground">
-            Three simple steps to a cleaner inbox
+            A guided review flow that explains what happens before you connect your inbox
           </p>
 
           <div className="grid gap-8 md:grid-cols-3 md:gap-12">
             <StepCard
               step={1}
               icon={<Search className="h-5 w-5" aria-hidden="true" />}
-              title="Connect & scan"
-              description="Sign in with Google. We scan for newsletters, promotions, and old emails."
+              title="Connect your account"
+              description="Sign in with Google to review your inbox inside a safer, guided workspace."
             />
             <StepCard
               step={2}
               icon={<ThumbsUp className="h-5 w-5" aria-hidden="true" />}
-              title="Review suggestions"
-              description="See cleanup suggestions one by one. Accept what makes sense."
+              title="Review suggestions and emails"
+              description="See suggestions, inspect context, and decide what deserves action."
             />
             <StepCard
               step={3}
               icon={<CheckCircle2 className="h-5 w-5" aria-hidden="true" />}
-              title="You decide"
-              description="Nothing is deleted until you confirm. Review history anytime."
+              title="Act with control"
+              description="Approve sensitive actions, review outcomes, and keep track of what happened."
             />
           </div>
 
           <div className="mt-10 text-center">
             <Button variant="outline" size="lg" onClick={() => handleScroll('preview')}>
-              Ver acceso seguro
+              See the review flow first
             </Button>
           </div>
         </div>
@@ -180,10 +180,10 @@ export default function HomePage({ onStart }) {
       <section id="preview" className="bg-muted/30 px-4 py-16">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-4 text-center text-2xl font-semibold text-foreground md:text-3xl">
-            See it in action
+            See the review experience
           </h2>
           <p className="mx-auto mb-10 max-w-xl text-center text-muted-foreground">
-            A clean interface that puts you in control
+            A focused interface that helps you review email before taking action
           </p>
 
           <Card className="overflow-hidden border-border/60 shadow-lg">
@@ -219,13 +219,14 @@ export default function HomePage({ onStart }) {
       <section className="px-4 py-20 md:py-28">
         <div className="mx-auto max-w-2xl space-y-6 text-center">
           <h2 className="text-2xl font-semibold text-foreground md:text-3xl">
-            Ready to clean up?
+            Start with a clearer inbox
           </h2>
           <p className="text-lg text-muted-foreground">
-            Join thousands of people who reclaimed their inbox.
+            Review email with more context, keep control of sensitive actions, and
+            reduce inbox noise without guessing.
           </p>
           <Button onClick={onStart} size="lg" className="h-12 gap-2 px-8 text-base">
-            <span>Continue with Google</span>
+            <span>Continue to sign in</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>

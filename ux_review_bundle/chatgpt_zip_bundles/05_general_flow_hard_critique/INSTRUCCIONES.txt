@@ -1,0 +1,5 @@
+Abre este paquete y ejecuta las instrucciones que vienen en `PROMPT.md`.
+
+Usa las imágenes incluidas como evidencia visual para responder.
+
+No asumas contexto adicional fuera de este paquete.

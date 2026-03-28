@@ -38,7 +38,7 @@ test.describe('HU06 receipt review browser validation', () => {
     const dialog = page.getByTestId('receipt-review-dialog');
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('heading', { name: 'Revisar recibo' })).toBeVisible();
-    await expect(dialog.getByText('[E2E-HU06] Receipt Success Target')).toBeVisible();
+    await expect(dialog.getByText('Recibo de luz de marzo')).toBeVisible();
     await expect(dialog.getByText('$350.50')).toBeVisible();
     await expect(dialog.getByText('2026-03-25')).toBeVisible();
 
@@ -77,7 +77,7 @@ test.describe('HU06 receipt review browser validation', () => {
 
     const dialog = page.getByTestId('receipt-review-dialog');
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText('[E2E-HU06] Receipt Provider Error Target')).toBeVisible();
+    await expect(dialog.getByText('Recordatorio de pago de agua')).toBeVisible();
     await expect(dialog.getByText('$900.00')).toBeVisible();
     await expect(dialog.getByText('2026-03-28')).toBeVisible();
 

@@ -1,26 +1,16 @@
 import { useState } from 'react';
-import {
-  AlertCircle,
-  ChevronDown,
-  Eye,
-  Loader2,
-  LogOut,
-  Mail,
-  Shield,
-  Trash2,
-} from 'lucide-react';
+import { AlertCircle, Eye, Loader2, Mail, Shield } from 'lucide-react';
 import { Button } from '../components/ui/button.jsx';
 import { Card, CardContent } from '../components/ui/card.jsx';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '../components/ui/collapsible.jsx';
-import { cn } from '../lib/utils.js';
 
 export default function LoginPage({ onLogin, message }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
+  const messageType = typeof message === 'object' ? message?.type : message ? 'error' : null;
+  const messageText = typeof message === 'object' ? message?.text : message;
+  const messageStyles =
+    messageType === 'error'
+      ? 'border-destructive/20 bg-destructive/10 text-destructive'
+      : 'border-primary/20 bg-primary/10 text-foreground';
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
@@ -37,20 +27,31 @@ export default function LoginPage({ onLogin, message }) {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Email Cleaner
           </h1>
-          <p className="mx-auto max-w-xs text-base text-muted-foreground">
-            Reclaim your inbox. We'll help you find emails to clean up - safely.
+          <p className="mx-auto max-w-sm text-base text-muted-foreground">
+            Connect your inbox with more clarity and control.
           </p>
         </div>
 
         <Card className="border-border/60 shadow-sm">
           <CardContent className="space-y-6 p-6">
+            <div className="rounded-xl border border-border/70 bg-muted/30 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
+                What happens when you connect Google
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-foreground">
+                <li>Review suggestions and inbox context inside one workspace.</li>
+                <li>Sensitive actions stay under your control before they are applied.</li>
+                <li>The app does not silently clean your inbox without your review.</li>
+              </ul>
+            </div>
+
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 flex-shrink-0">
                   <Eye className="h-4 w-4 text-primary" aria-hidden="true" />
                 </div>
                 <p className="text-sm text-foreground">
-                  We only read email metadata to suggest cleanup actions
+                  Review emails with context before acting.
                 </p>
               </div>
               <div className="flex items-start gap-3">
@@ -58,23 +59,18 @@ export default function LoginPage({ onLogin, message }) {
                   <Shield className="h-4 w-4 text-primary" aria-hidden="true" />
                 </div>
                 <p className="text-sm text-foreground">
-                  Nothing is deleted without your confirmation
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex-shrink-0">
-                  <LogOut className="h-4 w-4 text-primary" aria-hidden="true" />
-                </div>
-                <p className="text-sm text-foreground">
-                  You can disconnect at any time
+                  Sensitive actions stay under your control.
                 </p>
               </div>
             </div>
 
-            {message && (
-              <div className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-3">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" aria-hidden="true" />
-                <p className="text-sm text-destructive">{message}</p>
+            {messageText && (
+              <div className={`flex items-start gap-3 rounded-lg border p-3 ${messageStyles}`}>
+                <AlertCircle
+                  className={`mt-0.5 h-4 w-4 flex-shrink-0 ${messageType === 'error' ? 'text-destructive' : 'text-primary'}`}
+                  aria-hidden="true"
+                />
+                <p className="text-sm">{messageText}</p>
               </div>
             )}
 
@@ -114,59 +110,9 @@ export default function LoginPage({ onLogin, message }) {
               )}
             </Button>
 
-            <Collapsible open={showDetails} onOpenChange={setShowDetails}>
-              <CollapsibleTrigger asChild>
-                <button className="mx-auto flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                  <span>How it works</span>
-                  <ChevronDown
-                    className={cn(
-                      'h-4 w-4 transition-transform duration-200',
-                      showDetails && 'rotate-180'
-                    )}
-                    aria-hidden="true"
-                  />
-                </button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-4">
-                <div className="space-y-4 rounded-lg border border-border/40 bg-muted/50 p-4">
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-medium text-foreground">What we do</h3>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <span className="mt-1 text-primary">•</span>
-                        <span>Scan your inbox for newsletters, promotions, and old emails</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="mt-1 text-primary">•</span>
-                        <span>Show you suggestions based on sender patterns</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="mt-1 text-primary">•</span>
-                        <span>Let you approve or reject each suggestion individually</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-medium text-foreground">What we never do</h3>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <Trash2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-destructive/70" aria-hidden="true" />
-                        <span>Delete emails without your explicit approval</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <Trash2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-destructive/70" aria-hidden="true" />
-                        <span>Read the content of your emails - only metadata</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <Trash2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-destructive/70" aria-hidden="true" />
-                        <span>Share or sell your data to anyone</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
+            <p className="text-center text-sm text-muted-foreground">
+              Connect with Google to review your inbox with context before taking action.
+            </p>
           </CardContent>
         </Card>
 

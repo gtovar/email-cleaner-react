@@ -32,8 +32,9 @@ test.describe('HU19 row-level Inbox actions', () => {
 
     const archiveRow = page.getByTestId('inbox-row-email-hu19-archive');
     await expect(archiveRow).toBeVisible();
-    await expect(page.getByText('[E2E-HU19] Archive Target')).toBeVisible();
+    await expect(page.getByText('Boletin semanal de Atlas Studio')).toBeVisible();
 
+    await archiveRow.getByRole('button', { name: 'Mostrar acciones' }).click();
     await archiveRow.getByRole('button', { name: 'Archivar' }).click();
 
     await expect(page.getByText('Archive this email?')).toBeVisible();
@@ -51,8 +52,9 @@ test.describe('HU19 row-level Inbox actions', () => {
 
     const deleteRow = page.getByTestId('inbox-row-email-hu19-delete');
     await expect(deleteRow).toBeVisible();
-    await expect(page.getByText('[E2E-HU19] Delete Target')).toBeVisible();
+    await expect(page.getByText('Promocion de temporada de Tienda Nube')).toBeVisible();
 
+    await deleteRow.getByRole('button', { name: 'Mostrar acciones' }).click();
     await deleteRow.getByRole('button', { name: 'Eliminar' }).click();
 
     await expect(page.getByText('Delete this email?')).toBeVisible();
@@ -70,8 +72,9 @@ test.describe('HU19 row-level Inbox actions', () => {
 
     const unreadRow = page.getByTestId('inbox-row-email-hu19-read');
     await expect(unreadRow).toBeVisible();
-    await expect(page.getByText('[E2E-HU19] Mark Unread Target')).toBeVisible();
+    await expect(page.getByText('Seguimiento pendiente de renovacion')).toBeVisible();
 
+    await unreadRow.getByRole('button', { name: 'Mostrar acciones' }).click();
     await unreadRow.getByRole('button', { name: 'Marcar no leído' }).click();
 
     await expect(page.getByText('Correo marcado como no leído.')).toBeVisible();

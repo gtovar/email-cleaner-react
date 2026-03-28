@@ -1,0 +1,419 @@
+EXECUTION PLAN FEEDBACK V2
+Archivo operativo del experimento UX
+No es documento canónico del repo. Es una guía de ejecución local basada en evidence_pack_v2, feedback_pack_v2 y validación con decision-expander.
+
+==================================================
+1. PROPOSITO
+==================================================
+
+Este archivo convierte el feedback de la segunda ronda UX en una estrategia ejecutable.
+
+Objetivo:
+- separar hechos de inferencias
+- evitar reaccionar a opiniones aisladas
+- priorizar cambios por impacto vs esfuerzo
+- decidir qué sí conviene mover en código después del experimento
+
+Fuentes base:
+- ux_review_bundle/evidence_pack_v2/README.md
+- ux_review_bundle/feedback_pack_v2/
+- síntesis analítica posterior
+- validación con decision-expander
+
+==================================================
+2. BASE VALIDADA CON DECISION-EXPANDER
+==================================================
+
+2.1 Qué existe realmente
+
+Hecho:
+- La segunda ronda ya no evaluó una pantalla central rota.
+- Los reviewers sí reconocen mejoras en orden visual, framing de control humano y separación entre flujo principal y flujo especializado.
+- Las críticas repetidas se concentran en:
+  - Suggestions
+  - Inbox
+  - History
+  - ActivityPanel
+  - ReceiptReviewDialog
+  - Home/Login
+  - Settings
+- Settings sigue leyéndose como fuera del alcance real.
+- History y ActivityPanel generan desconfianza porque muestran actividad visible y contadores/resúmenes en cero.
+- Los fixtures visibles siguen dañando la percepción de madurez.
+
+2.2 Qué parece que queremos decir
+
+Inferencia:
+- No se busca un rediseño total.
+- Se busca una base rigurosa para decidir qué sí vale implementar y qué sería sobre-reaccionar al feedback.
+- La prioridad real es distinguir:
+  - problemas estructurales
+  - problemas de verdad de producto
+  - problemas de superficie
+
+2.3 Qué estaba mal asumido
+
+Corrección de supuestos:
+- No era cierto que todo el problema viniera de screenshots pobres o dummy data.
+- Tampoco es correcto decir que el producto “ya quedó bien” solo porque la UI se ve más limpia.
+- ReceiptReviewDialog no está rechazado como idea; está criticado por mezclar decisiones.
+- El problema de confianza no es uniforme en todas las pantallas; es más fuerte en:
+  - Suggestions
+  - History / ActivityPanel
+  - Home / Login
+  - Settings
+
+2.4 Variables omitidas
+
+Variables que afectan la decisión:
+- si History y ActivityPanel usan ventanas temporales distintas
+- si Suggestions o Inbox es el loop primario real
+- si Settings tiene backend real o es superficie placeholder
+- si ReceiptReviewDialog es excepción importante o simple subflujo secundario
+- qué tan realistas y coherentes son los fixtures visibles
+
+2.5 Capacidades no consideradas
+
+Capacidad real del sistema:
+- varias críticas se pueden resolver sin reescribir toda la app:
+  - mejorar fixtures
+  - mejorar copy
+  - mejorar jerarquía
+  - mostrar contexto inline
+  - aclarar reglas de decisión
+- varias inferencias se pueden validar antes de rehacer diseño:
+  - verificar por qué History y ActivityPanel no cuadran
+  - verificar qué partes de Settings tienen soporte real
+
+2.6 Límites reales
+
+Hecho:
+- screenshots no prueban toda la UX operativa
+- pero cuando muchos reviewers repiten lo mismo, ya no es ruido menor
+- no conviene rehacer todo
+- sí conviene actuar donde hay:
+  - repetición alta
+  - impacto fuerte en confianza
+  - cambio relativamente acotado
+
+2.7 Alternativas no obvias
+
+Recomendación:
+- no empezar por pulir estética
+- no empezar por ReceiptReviewDialog
+- no invertir primero en Settings como si fuera producto maduro
+- no fusionar pantallas todavía
+- atacar primero verdad operativa visible y claridad del loop principal
+
+2.8 Riesgos
+
+Riesgo:
+- sobre-reaccionar y rehacer demasiado
+- esconder problemas reales con puro polish
+- gastar tiempo en Settings sin validar alcance
+- tocar el subflujo de recibos antes de aclarar el core
+
+2.9 Recomendación final derivada
+
+Orden correcto:
+1. corregir verdad operativa visible
+2. aclarar loop principal
+3. subir la calidad de decisión en Suggestions
+4. luego ajustar subflujos y superficies secundarias
+
+==================================================
+3. ESTRATEGIA
+==================================================
+
+Principio rector:
+No optimizar primero “que se vea más bonito”.
+Optimizar primero “que el producto se vea verdadero, entendible y confiable”.
+
+Ejes de trabajo:
+
+EJE A. Verdad operativa
+- Lo que la UI muestra debe cuadrar con la actividad real.
+- Si la métrica no explica nada o parece falsa, hace más daño que beneficio.
+
+EJE B. Loop principal
+- El producto debe dejar claro cuál es el camino principal de valor.
+- Hoy Suggestions, Inbox, History y el subflujo de recibos compiten entre sí.
+
+EJE C. Calidad de decisión
+- Una sugerencia no basta con verse ordenada.
+- Tiene que dar contexto suficiente para decidir con confianza.
+
+EJE D. Alcance real
+- Settings no debe prometer capacidades que el producto no sostiene end-to-end.
+
+EJE E. Confianza previa a OAuth
+- Home y Login deben explicar mejor qué pasa al conectar Google.
+
+==================================================
+4. BREAKDOWN EJECUTABLE
+==================================================
+
+FASE 1. Arreglar lo que hoy rompe confianza sin rediseño grande
+
+Objetivo:
+- eliminar señales de falsedad o inmadurez visibles
+
+Acciones:
+- corregir inconsistencia entre History y ActivityPanel
+- revisar ventanas temporales, labels y fuente de métricas
+- limpiar fixtures visibles y strings de desarrollo
+- corregir el error de “Sesión expirada” en Login cuando aparece impropiamente
+
+Salida esperada:
+- el producto deja de parecer internamente inconsistente
+- baja el ruido de “esto parece demo o test”
+
+FASE 2. Aclarar el loop principal
+
+Objetivo:
+- decidir si el flujo principal vive en Suggestions o en Inbox
+
+Acciones:
+- definir pantalla de entrada principal del flujo autenticado
+- convertir la pantalla secundaria en soporte claro, no competidor conceptual
+- hacer explícita la relación entre:
+  - Suggestions
+  - Inbox
+  - History
+
+Salida esperada:
+- el usuario entiende por dónde empezar y qué valor esperar
+
+FASE 3. Subir la calidad de decisión en Suggestions
+
+Objetivo:
+- que aprobar o descartar no se sienta ciego
+
+Acciones:
+- agregar snippet o preview
+- agregar razón específica
+- agregar señal de riesgo o confianza
+- agregar acceso al contexto sin romper el flujo
+- diferenciar mejor acciones por sensibilidad
+
+Salida esperada:
+- Suggestions pasa de “cards limpias” a “decisiones guiadas creíbles”
+
+FASE 4. Mejorar Inbox sin rehacerlo completo
+
+Objetivo:
+- que Inbox ayude a actuar en lugar de esperar pasivamente
+
+Acciones:
+- usar el panel derecho para estado inicial útil
+- priorizar o preseleccionar el primer correo relevante
+- marcar mejor correos con sugerencias o revisión recomendada
+
+Salida esperada:
+- Inbox se siente guiado y menos incompleto
+
+FASE 5. Reordenar ReceiptReviewDialog
+
+Objetivo:
+- mantener el subflujo especializado, pero con secuencia entendible
+
+Acciones:
+- separar visualmente:
+  - revisar contexto
+  - registrar estado
+  - enviar WhatsApp
+- aclarar la relación entre estado y envío
+- mejorar el copy técnico
+- si es posible, agregar más evidencia para revisar con confianza
+
+Salida esperada:
+- el modal se entiende como herramienta especializada útil, no como interrupción confusa
+
+FASE 6. Reducir o replantear Settings
+
+Objetivo:
+- eliminar promesas de alcance falso
+
+Acciones:
+- validar qué capacidades tienen soporte real
+- recortar password, 2FA o correo principal editable si no están sostenidos
+- dejar solo preferencias que sí tengan sentido dentro del caso de uso real
+
+Salida esperada:
+- Settings deja de inflar el alcance percibido del producto
+
+==================================================
+5. MATRIZ ACCIONABLE
+==================================================
+
+Ordenada por impacto vs esfuerzo. Arriba primero.
+
+1.
+Hallazgo repetido: métricas y actividad no cuadran con el historial visible
+Pantalla afectada: History, ActivityPanel
+Tipo de problema: verdad de producto / confianza operativa
+Cambio concreto recomendado: alinear fuente, ventana temporal y labels de métricas; si las ventanas son distintas, explicarlo en UI; no mostrar contadores en cero sin contexto
+
+2.
+Hallazgo repetido: strings de fixture y desarrollo degradan madurez
+Pantalla afectada: Suggestions, Inbox, History
+Tipo de problema: percepción / calidad de evidencia
+Cambio concreto recomendado: reemplazar fixtures visibles por contenido realista y coherente, sin etiquetas E2E/HU ni mezcla accidental de idiomas
+
+3.
+Hallazgo repetido: Login muestra un error de sesión expirada en contexto público
+Pantalla afectada: Login
+Tipo de problema: confianza / bug de estado
+Cambio concreto recomendado: renderizar ese error solo cuando exista contexto real de sesión vencida
+
+4.
+Hallazgo repetido: falta puente de confianza antes de OAuth
+Pantalla afectada: Home, Login
+Tipo de problema: verdad de producto / conversión
+Cambio concreto recomendado: agregar bloque explícito sobre acceso, control humano y qué no se hace automáticamente al conectar Google
+
+5.
+Hallazgo repetido: Suggestions no da contexto suficiente para aprobar con confianza
+Pantalla afectada: Suggestions
+Tipo de problema: arquitectura de decisión
+Cambio concreto recomendado: agregar snippet, razón más específica, badge de riesgo/confianza y acceso inline al contexto
+
+6.
+Hallazgo repetido: Inbox no indica por dónde empezar
+Pantalla afectada: Inbox
+Tipo de problema: priorización / arquitectura de decisión
+Cambio concreto recomendado: preseleccionar o recomendar el primer correo relevante al entrar
+
+7.
+Hallazgo repetido: panel derecho vacío da sensación de producto incompleto
+Pantalla afectada: Inbox
+Tipo de problema: jerarquía / uso de espacio
+Cambio concreto recomendado: convertir el panel inicial en preview guiado, ayuda operativa o contexto del primer correo recomendado
+
+8.
+Hallazgo repetido: loop principal ambiguo entre Suggestions e Inbox
+Pantalla afectada: Suggestions, Inbox, History
+Tipo de problema: arquitectura de producto
+Cambio concreto recomendado: definir un loop primario visible y dejar la otra vista como soporte claro
+
+9.
+Hallazgo repetido: Suggestions no comunica prioridad ni seguridad relativa entre correos
+Pantalla afectada: Suggestions
+Tipo de problema: calidad de decisión / jerarquía
+Cambio concreto recomendado: ordenar y marcar tarjetas por prioridad, riesgo o sensibilidad
+
+10.
+Hallazgo repetido: ReceiptReviewDialog mezcla revisar, clasificar y enviar
+Pantalla afectada: ReceiptReviewDialog
+Tipo de problema: arquitectura de decisión
+Cambio concreto recomendado: reordenar el modal en secuencia explícita de revisión, estado y envío
+
+11.
+Hallazgo repetido: no está clara la relación entre estado del recibo y envío
+Pantalla afectada: ReceiptReviewDialog
+Tipo de problema: ambigüedad de flujo
+Cambio concreto recomendado: añadir copy explícito sobre qué hace cada acción y qué no cambia automáticamente
+
+12.
+Hallazgo repetido: revisar recibo ofrece poco contexto para revisar con confianza
+Pantalla afectada: ReceiptReviewDialog
+Tipo de problema: calidad de decisión
+Cambio concreto recomendado: agregar preview del correo o fuente de extracción y acceso a más contexto
+
+13.
+Hallazgo repetido: Volver a aplicar parece riesgoso sin suficiente contexto
+Pantalla afectada: History
+Tipo de problema: acción sensible / confianza
+Cambio concreto recomendado: degradar o reencuadrar esa acción y exigir contexto o validación previa antes de repetirla
+
+14.
+Hallazgo repetido: Settings sugiere capacidades fuera de alcance real
+Pantalla afectada: Settings
+Tipo de problema: verdad de producto / scope
+Cambio concreto recomendado: reducir la pantalla al alcance real y esconder capacidades no sostenidas
+
+15.
+Hallazgo repetido: Settings parece plantilla SaaS genérica, no decisión de producto
+Pantalla afectada: Settings
+Tipo de problema: alcance / priorización
+Cambio concreto recomendado: redefinir Settings como preferencias mínimas útiles o sacarla temporalmente de navegación
+
+16.
+Hallazgo repetido: el copy de acciones todavía explica poco la consecuencia real
+Pantalla afectada: Suggestions, Inbox, History
+Tipo de problema: copy / confianza
+Cambio concreto recomendado: reescribir labels y microcopy para expresar efecto real, registro y reversibilidad
+
+17.
+Hallazgo repetido: falta señal visible de reversibilidad y protección ante errores
+Pantalla afectada: Suggestions, History, ReceiptReviewDialog
+Tipo de problema: confianza operativa
+Cambio concreto recomendado: agregar undo, mensajes de reversibilidad o reglas visibles de cambio posterior
+
+18.
+Hallazgo repetido: la jerarquía visual es demasiado plana
+Pantalla afectada: Suggestions, History
+Tipo de problema: UI / escaneo
+Cambio concreto recomendado: aumentar contraste entre acción principal, contexto y metadata secundaria
+
+19.
+Hallazgo repetido: ReceiptReviewDialog usa lenguaje técnico o interno
+Pantalla afectada: ReceiptReviewDialog
+Tipo de problema: copy
+Cambio concreto recomendado: reescribir textos como “dispara el WhatsApp” y “sin respuesta registrada”
+
+==================================================
+6. ORDEN DE EJECUCION RECOMENDADO
+==================================================
+
+TANDA 1
+- History / ActivityPanel
+- fixtures visibles
+- Login trust bug
+- Home / Login trust bridge
+
+TANDA 2
+- Suggestions contexto y jerarquía
+- Inbox estado inicial y priorización
+- definición visible del loop principal
+
+TANDA 3
+- ReceiptReviewDialog
+- Settings
+
+==================================================
+7. QUE NO HACER
+==================================================
+
+No hacer:
+- rediseñar todo antes de validar métricas y alcance real
+- invertir primero en Settings
+- rehacer ReceiptReviewDialog antes de aclarar el core
+- confundir polish visual con resolución de producto
+- fusionar todas las críticas en un solo “la UX está mal”
+
+==================================================
+8. CRITERIO DE EXITO
+==================================================
+
+La siguiente iteración será mejor si logra esto:
+
+- las métricas visibles ya no contradicen la actividad observada
+- el flujo principal se entiende sin explicación externa
+- Suggestions permite decidir con más confianza
+- Inbox deja de sentirse vacío al entrar
+- ReceiptReviewDialog se entiende como subflujo útil y no como mezcla confusa
+- Settings deja de prometer más de lo que el producto puede sostener
+- Home/Login explican mejor por qué conectar Google es razonable
+
+==================================================
+9. USO DE ESTE ARCHIVO
+==================================================
+
+Este archivo debe usarse como base de ejecución para:
+- decidir el siguiente slice de cambios
+- elegir qué sí vale tocar en código
+- evitar scope creep
+- comparar futuras iteraciones UX contra una estrategia defendible
+
+Si se abre una nueva ronda de trabajo, empezar aquí y no desde cero.

@@ -207,3 +207,7 @@ Frontend: yes
 ## 2026-03-24 — HU_07B review follow-ups fixed
 - Hardened `ReceiptReviewDialog.jsx` so blank extraction fields no longer enable WhatsApp send, and the send payload now uses the canonical dialog `emailId`.
 - Added regression coverage in `tests/ReceiptReviewDialog.test.jsx`; `npm run lint` and `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally.
+
+## 2026-03-28 — Experimental UX remediation checkpoint
+- Reframed the authenticated loop so Suggestions is the primary review queue, Inbox is manual context, and Settings is limited to scope-true workflow preferences.
+- Reworked `ReceiptReviewDialog.jsx` into an explicit four-step sequence and revalidated the affected frontend slices with targeted Vitest and local Playwright visual checks.

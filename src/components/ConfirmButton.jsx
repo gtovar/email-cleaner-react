@@ -6,6 +6,7 @@ import { Button } from './ui/button.jsx';
 export default function ConfirmButton({
   emailId,
   action,
+  label,
   onSuccess,
   onError,
   onStart,
@@ -39,7 +40,7 @@ export default function ConfirmButton({
   };
 
   const isAccept = action === 'accept';
-  const label = isAccept ? 'Aceptar' : 'Rechazar';
+  const buttonLabel = label || (isAccept ? 'Aceptar' : 'Rechazar');
 
   return (
     <Button
@@ -54,7 +55,7 @@ export default function ConfirmButton({
       ) : (
         icon
       )}
-      {label}
+      {buttonLabel}
     </Button>
   );
 }

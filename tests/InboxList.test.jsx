@@ -196,13 +196,15 @@ describe('InboxList', () => {
       expect(screen.getByText('Quarterly report')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Archivar' }));
+    const row = screen.getByTestId('inbox-row-email-1');
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Mostrar acciones' })[0]);
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Archivar' })[0]);
 
     await waitFor(() => {
-      expect(screen.getByText('Archive this email?')).toBeInTheDocument();
+      expect(screen.getByText('¿Archivar este correo?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Archive email' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Archivar correo' }));
 
     await waitFor(() => {
       expect(runInboxAction).toHaveBeenCalledWith(['email-1'], 'archive');
@@ -278,13 +280,15 @@ describe('InboxList', () => {
       expect(screen.getByText('Quarterly report')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Marcar no leído' }));
+    const row = screen.getByTestId('inbox-row-email-1');
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Mostrar acciones' })[0]);
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Marcar no leído' })[0]);
 
     await waitFor(() => {
       expect(runInboxAction).toHaveBeenCalledWith(['email-1'], 'mark_unread');
     });
 
-    expect(screen.queryByText('Archive this email?')).not.toBeInTheDocument();
+    expect(screen.queryByText('¿Archivar este correo?')).not.toBeInTheDocument();
     expect(screen.getByText('Quarterly report')).toBeInTheDocument();
   });
 
@@ -316,13 +320,15 @@ describe('InboxList', () => {
       expect(screen.getByText('Quarterly report')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Archivar' }));
+    const row = screen.getByTestId('inbox-row-email-1');
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Mostrar acciones' })[0]);
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Archivar' })[0]);
 
     await waitFor(() => {
-      expect(screen.getByText('Archive this email?')).toBeInTheDocument();
+      expect(screen.getByText('¿Archivar este correo?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Archive email' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Archivar correo' }));
 
     await waitFor(() => {
       expect(runInboxAction).toHaveBeenCalledWith(['email-1'], 'archive');
@@ -351,11 +357,12 @@ describe('InboxList', () => {
       expect(screen.getByText('Quarterly report')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Mostrar acciones' }));
-    fireEvent.click(screen.getByText('Archivar'));
+    const row = screen.getByTestId('inbox-row-email-1');
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Mostrar acciones' })[0]);
+    fireEvent.click(within(row).getAllByRole('button', { name: 'Archivar' })[0]);
 
     await waitFor(() => {
-      expect(screen.getByText('Archive this email?')).toBeInTheDocument();
+      expect(screen.getByText('¿Archivar este correo?')).toBeInTheDocument();
     });
 
     expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument();
@@ -404,10 +411,10 @@ describe('InboxList', () => {
     fireEvent.click(screen.getAllByRole('button', { name: 'Archivar' })[0]);
 
     await waitFor(() => {
-      expect(screen.getByText('Archive selected emails?')).toBeInTheDocument();
+      expect(screen.getByText('¿Archivar correos seleccionados?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Archive selected' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Archivar seleccionados' }));
 
     await waitFor(() => {
       expect(runInboxAction).toHaveBeenCalledWith(['email-1', 'email-2'], 'archive');
@@ -456,10 +463,10 @@ describe('InboxList', () => {
     fireEvent.click(screen.getAllByRole('button', { name: 'Archivar' })[0]);
 
     await waitFor(() => {
-      expect(screen.getByText('Archive selected emails?')).toBeInTheDocument();
+      expect(screen.getByText('¿Archivar correos seleccionados?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Archive selected' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Archivar seleccionados' }));
 
     await waitFor(() => {
       expect(runInboxAction).toHaveBeenCalledWith(['email-1'], 'archive');

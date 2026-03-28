@@ -1,7 +1,7 @@
 // src/components/Navigation.jsx
 import React from 'react';
 
-import { History, Inbox, Mail } from 'lucide-react';
+import { History, Inbox, Sparkles } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -23,6 +23,23 @@ export default function Navigation({ currentView, setView }) {
             <button
               type="button"
               className={`${baseClasses} ${
+                currentView === 'suggestions' ? activeClasses : idleClasses
+              }`}
+              onClick={() => setView('suggestions')}
+            >
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden sm:inline">Sugerencias</span>
+              </span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Loop principal</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              className={`${baseClasses} ${
                 currentView === 'inbox' ? activeClasses : idleClasses
               }`}
               onClick={() => setView('inbox')}
@@ -33,24 +50,7 @@ export default function Navigation({ currentView, setView }) {
               </span>
             </button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">Inbox</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              className={`${baseClasses} ${
-                currentView === 'suggestions' ? activeClasses : idleClasses
-              }`}
-              onClick={() => setView('suggestions')}
-            >
-              <span className="flex items-center gap-2">
-                <Mail className="h-4 w-4" aria-hidden="true" />
-                <span className="hidden sm:inline">Sugerencias</span>
-              </span>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Sugerencias</TooltipContent>
+          <TooltipContent side="bottom">Revision manual</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>

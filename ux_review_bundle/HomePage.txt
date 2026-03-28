@@ -1,0 +1,43 @@
+Nombre: HomePage
+Tipo: pantalla pública de entrada
+
+Qué hace:
+- Presenta el producto antes de autenticación.
+- Explica beneficios, promesa de valor y flujo general en tres pasos.
+- Empuja a la acción principal: iniciar el flujo de acceso con Google.
+
+Para qué sirve:
+- Dar contexto al usuario anónimo antes de pedir login.
+- Reducir fricción de primera visita.
+- Comunicar confianza, control y privacidad.
+
+Propósito de producto:
+- Vender la propuesta de valor de Email Cleaner antes del onboarding.
+- Preparar la transición hacia el login sin mostrar todavía el producto autenticado.
+
+Qué resuelve:
+- El problema de entrar “en frío” a una app que toca correo personal.
+- La necesidad de explicar por qué alguien debería confiar y continuar.
+
+Cómo parece pensada:
+- Como landing ligera dentro de la propia app, no como sitio marketing separado.
+- Con foco en seguridad percibida, control del usuario y promesa de limpieza sin sorpresas.
+
+Acción principal:
+- Continue with Google / Get started.
+
+Flujo:
+- Entrada desde `/` cuando el usuario no está autenticado.
+- Desde aquí se pasa a LoginPage.
+
+Dependencias:
+- No depende de datos del backend para renderizar su contenido principal.
+- La decisión de mostrarla depende del estado de autenticación en `App.jsx`.
+
+Estados relevantes:
+- Estado público normal.
+- Puede redirigir al login si el usuario pulsa la CTA.
+
+Observaciones UX para experto:
+- Combina marketing y onboarding en una sola superficie.
+- La promesa “we only read metadata” merece revisión con backend/producto porque condiciona confianza y alcance percibido.

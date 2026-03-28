@@ -68,11 +68,21 @@ describe('App shell view mounting', () => {
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
+    expect(
+      screen.getByRole('heading', { name: 'Cola guiada de decisiones' })
+    ).toBeInTheDocument();
+    expect(screen.getByText('Empieza aqui')).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: /Inbox/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument();
-      expect(screen.getByText('Tus correos recientes en una vista tipo Gmail.')).toBeInTheDocument();
+      expect(screen.getByText('Revision manual y contexto completo')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Usa esta vista cuando necesites leer el correo completo, revisar contexto adicional o ejecutar una accion manual fuera de la cola guiada.'
+        )
+      ).toBeInTheDocument();
     });
   });
 
@@ -88,7 +98,12 @@ describe('App shell view mounting', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Ajustes' })).toBeInTheDocument();
-      expect(screen.getByText('Configura tus preferencias de limpieza y seguridad.')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Esta pantalla solo muestra preferencias coherentes con el flujo actual de revision. No administra password, perfil ni seguridad avanzada.'
+        )
+      ).toBeInTheDocument();
+      expect(screen.getByText('Lo que esta fuera de alcance aqui')).toBeInTheDocument();
     });
   });
 });

@@ -404,6 +404,14 @@ export default function InboxList() {
     setMobileActionsId(null);
   };
 
+  const buildPreviewGuidance = () => {
+    if (!selectedEmail) {
+      return null;
+    }
+
+    return 'Esta vista sirve para leer el correo completo y confirmar contexto cuando la cola guiada no te dio suficiente evidencia.';
+  };
+
   const handleBulkAction = (action) => {
     if (action === 'mark_unread') {
       void executeBulkAction(action);
@@ -413,9 +421,9 @@ export default function InboxList() {
   };
 
   const buildActionTitle = () => {
-    if (actionDialog.action === 'archive') return 'Archive this email?';
-    if (actionDialog.action === 'delete') return 'Delete this email?';
-    return 'Confirm Inbox action';
+    if (actionDialog.action === 'archive') return '¿Archivar este correo?';
+    if (actionDialog.action === 'delete') return '¿Eliminar este correo?';
+    return 'Confirmar acción de Inbox';
   };
 
   const buildActionDescription = () => {
@@ -423,40 +431,40 @@ export default function InboxList() {
     const sender = parseFrom(actionTargetEmail?.from).name;
 
     if (actionDialog.action === 'archive') {
-      return `This will archive "${subject}" from ${sender}. You can still find it later in Gmail.`;
+      return `Esto archivará "${subject}" de ${sender}. Podrás encontrarlo más tarde en Gmail.`;
     }
     if (actionDialog.action === 'delete') {
-      return `This will delete "${subject}" from ${sender}. Use this only when you are sure.`;
+      return `Esto eliminará "${subject}" de ${sender}. Úsalo solo cuando estés seguro.`;
     }
-    return 'Confirm the selected Inbox action.';
+    return 'Confirma la acción seleccionada de Inbox.';
   };
 
   const buildActionButtonLabel = () => {
-    if (actionDialog.action === 'archive') return 'Archive email';
-    if (actionDialog.action === 'delete') return 'Delete email';
-    return 'Continue';
+    if (actionDialog.action === 'archive') return 'Archivar correo';
+    if (actionDialog.action === 'delete') return 'Eliminar correo';
+    return 'Continuar';
   };
 
   const buildBulkActionTitle = () => {
-    if (bulkActionDialog.action === 'archive') return 'Archive selected emails?';
-    if (bulkActionDialog.action === 'delete') return 'Delete selected emails?';
-    return 'Confirm bulk Inbox action';
+    if (bulkActionDialog.action === 'archive') return '¿Archivar correos seleccionados?';
+    if (bulkActionDialog.action === 'delete') return '¿Eliminar correos seleccionados?';
+    return 'Confirmar acción masiva de Inbox';
   };
 
   const buildBulkActionDescription = () => {
     if (bulkActionDialog.action === 'archive') {
-      return `This will archive ${selectedCount} selected email${selectedCount > 1 ? 's' : ''}.`;
+      return `Esto archivará ${selectedCount} correo${selectedCount > 1 ? 's' : ''} seleccionado${selectedCount > 1 ? 's' : ''}.`;
     }
     if (bulkActionDialog.action === 'delete') {
-      return `This will delete ${selectedCount} selected email${selectedCount > 1 ? 's' : ''}. Use this only when you are sure.`;
+      return `Esto eliminará ${selectedCount} correo${selectedCount > 1 ? 's' : ''} seleccionado${selectedCount > 1 ? 's' : ''}. Úsalo solo cuando estés seguro.`;
     }
-    return 'Confirm the selected bulk Inbox action.';
+    return 'Confirma la acción masiva seleccionada de Inbox.';
   };
 
   const buildBulkActionButtonLabel = () => {
-    if (bulkActionDialog.action === 'archive') return 'Archive selected';
-    if (bulkActionDialog.action === 'delete') return 'Delete selected';
-    return 'Continue';
+    if (bulkActionDialog.action === 'archive') return 'Archivar seleccionados';
+    if (bulkActionDialog.action === 'delete') return 'Eliminar seleccionados';
+    return 'Continuar';
   };
 
   if (loading && emails.length === 0) {
@@ -488,10 +496,10 @@ export default function InboxList() {
 
   const readingPanel = selectedEmail ? (
     <>
-      <div className="border-b p-6">
+      <div className="border-b bg-card p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="mb-3 text-xl font-semibold">
+            <h2 className="mb-3 text-xl font-semibold text-foreground">
               {selectedEmail.subject || '(Sin asunto)'}
             </h2>
             <div className="flex items-center gap-3">
@@ -501,7 +509,7 @@ export default function InboxList() {
                 </span>
               </div>
               <div>
-                <p className="font-medium">{parseFrom(selectedEmail.from).name}</p>
+                <p className="font-medium text-foreground">{parseFrom(selectedEmail.from).name}</p>
                 {parseFrom(selectedEmail.from).email ? (
                   <p className="text-sm text-muted-foreground">
                     {parseFrom(selectedEmail.from).email}
@@ -515,11 +523,11 @@ export default function InboxList() {
               {formatFullDate(selectedEmail.date)}
             </p>
             <Badge variant="secondary" className="mt-2 text-xs">
-              Read-only
+              Vista previa
             </Badge>
             {selectedEmail.hasSuggestion && !selectedEmail.reviewStatus ? (
               <Badge variant="secondary" className="mt-2 text-xs">
-                Pending review in Suggestions
+                Pendiente en sugerencias
               </Badge>
             ) : null}
           </div>
@@ -528,32 +536,35 @@ export default function InboxList() {
 
       <ScrollArea className="flex-1">
         <div className="p-6">
-          <div className="text-sm leading-relaxed text-foreground">
+          <div className="rounded-2xl border border-border/60 bg-background p-4 text-sm leading-relaxed text-foreground shadow-sm">
             {selectedEmail.snippet || 'Sin vista previa disponible.'}
           </div>
         </div>
       </ScrollArea>
 
       <Separator />
-      <div className="bg-muted/30 p-4 text-center">
-        <p className="text-sm text-muted-foreground">
-          This is a read-only view.{' '}
+      <div className="border-t bg-primary/[0.04] p-4 text-center">
+        <p className="text-sm text-foreground/80">
+          {buildPreviewGuidance()}{' '}
           <a className="text-primary hover:underline font-medium" href="#">
-            Go to Suggestions
+            Vuelve a Suggestions
           </a>{' '}
-          to take action on emails.
+          si quieres retomar la cola principal antes de actuar.
         </p>
       </div>
     </>
   ) : (
     <div className="flex flex-1 items-center justify-center p-6 text-center">
-      <div className="max-w-sm">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-          <ArrowLeft className="h-6 w-6 text-muted-foreground" />
+      <div className="max-w-sm rounded-3xl border border-dashed border-primary/25 bg-primary/[0.04] px-6 py-8 shadow-sm">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/20 bg-background shadow-sm">
+          <ArrowLeft className="h-6 w-6 text-primary" />
         </div>
-        <h3 className="mb-2 font-medium">Select an email to read</h3>
-        <p className="text-sm text-muted-foreground">
-          Choose an email from the list to view its full content.
+        <h3 className="mb-2 text-lg font-semibold text-foreground">
+          Abre un correo cuando necesites mas contexto
+        </h3>
+        <p className="text-sm leading-relaxed text-foreground/75">
+          Suggestions es el mejor lugar para empezar. Usa Inbox cuando necesites leer un correo
+          completo o ejecutar una accion manual.
         </p>
       </div>
     </div>
@@ -561,33 +572,43 @@ export default function InboxList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <input
-            ref={selectAllRef}
-            type="checkbox"
-            aria-label="Seleccionar todos"
-            checked={allVisibleSelected}
-            onChange={toggleSelectAll}
-            disabled={isBulkActionInFlight}
-            className="h-4 w-4 rounded border-input"
+      <div className="rounded-2xl border border-border/70 bg-card/90 p-4 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
+              Revision manual
+            </p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <input
+                ref={selectAllRef}
+                type="checkbox"
+                aria-label="Seleccionar todos"
+                checked={allVisibleSelected}
+                onChange={toggleSelectAll}
+                disabled={isBulkActionInFlight}
+                className="h-4 w-4 rounded border-input"
+              />
+              <span>
+                {total ? `${filteredEmails.length} de ${total}` : `${filteredEmails.length}`} correos
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Lee el contexto completo y usa acciones puntuales solo cuando la cola guiada no sea suficiente.
+            </p>
+          </div>
+          <Input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Buscar por remitente o asunto"
+            className="w-full rounded-xl border-border/70 bg-background lg:max-w-xs"
           />
-          <span>
-            {total ? `${filteredEmails.length} de ${total}` : `${filteredEmails.length}`} correos
-          </span>
         </div>
-        <Input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Buscar por remitente o asunto"
-          className="w-full sm:max-w-xs"
-        />
       </div>
 
       {selectedCount > 0 && (
         <div
           data-testid="bulk-action-bar"
-          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-3 py-2 text-sm"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/[0.05] px-4 py-3 text-sm shadow-sm"
         >
           <span className="text-muted-foreground">
             {selectedCount} seleccionado{selectedCount > 1 ? 's' : ''}
@@ -684,10 +705,10 @@ export default function InboxList() {
       )}
 
       <div className="flex flex-col gap-4 lg:h-[calc(100vh-14rem)] lg:flex-row">
-        <Card className="flex h-full flex-col overflow-hidden lg:w-[40%]">
-          <div className="border-b bg-muted/30 p-3">
-            <span className="text-sm text-muted-foreground">
-              Vista de lectura (sin acciones directas)
+        <Card className="flex h-full flex-col overflow-hidden border-border/70 lg:w-[40%]">
+          <div className="border-b bg-muted/25 px-4 py-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Lista de correos y acciones contextuales
             </span>
           </div>
           <ScrollArea className="inbox-list-scroll flex-1">
@@ -712,9 +733,9 @@ export default function InboxList() {
                     role="button"
                     tabIndex={0}
                     className={[
-                      'group w-full text-left transition-colors focus:outline-none',
-                      'hover:bg-muted/50 focus:bg-muted/50',
-                      isSelected ? 'bg-primary/5 border-l-2 border-l-primary' : '',
+                      'group w-full text-left transition-all focus:outline-none',
+                      'hover:bg-muted/45 focus:bg-muted/45',
+                      isSelected ? 'border-l-2 border-l-primary bg-primary/[0.06] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]' : '',
                       !email.isRead ? 'bg-muted/20' : '',
                     ].join(' ')}
                   >
@@ -764,33 +785,34 @@ export default function InboxList() {
                         <p className="mt-1 truncate text-xs text-muted-foreground">{preview}</p>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {email.hasSuggestion && !email.reviewStatus && (
-                            <Badge variant="secondary" className="text-[10px]">
-                              Has suggestion
+                            <Badge variant="secondary" className="rounded-full border border-border/60 text-[10px]">
+                              Sugerencia disponible
                             </Badge>
                           )}
                           {email.reviewStatus === 'accepted' && (
-                            <Badge variant="outline" className="text-[10px]">
-                              Accepted
+                            <Badge variant="outline" className="rounded-full border-emerald-500/30 bg-emerald-500/[0.06] text-[10px]">
+                              Aceptada
                             </Badge>
                           )}
                           {email.reviewStatus === 'rejected' && (
-                            <Badge variant="outline" className="text-[10px]">
-                              Kept
+                            <Badge variant="outline" className="rounded-full border-amber-500/30 bg-amber-500/[0.08] text-[10px]">
+                              Conservado
                             </Badge>
                           )}
                           {email.labels?.slice(0, 2).map((label) => (
-                            <Badge key={label} variant="secondary" className="text-[10px]">
+                            <Badge key={label} variant="secondary" className="rounded-full text-[10px]">
                               {label}
                             </Badge>
                           ))}
                         </div>
                       </div>
 
-                      <div className="hidden items-center gap-2 text-muted-foreground sm:flex">
+                      <div className="relative hidden items-center gap-2 text-muted-foreground sm:flex">
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
+                          className="rounded-full border-border/70 bg-background"
                           disabled={processingAction.emailId === email.id || isBulkActionInFlight}
                           onClick={(event) => {
                             event.stopPropagation();
@@ -803,41 +825,55 @@ export default function InboxList() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          aria-label="Archivar"
-                          disabled={processingAction.emailId === email.id || isBulkActionInFlight}
+                          aria-label="Mostrar acciones"
+                          ref={mobileButtonRef}
                           onClick={(event) => {
                             event.stopPropagation();
-                            handleRowAction({ emailId: email.id, action: 'archive' });
+                            setMobileActionsId((current) => (current === email.id ? null : email.id));
                           }}
                         >
-                          <Archive className="h-4 w-4" aria-hidden="true" />
+                          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                         </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Marcar no leído"
-                          disabled={processingAction.emailId === email.id || isBulkActionInFlight}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleRowAction({ emailId: email.id, action: 'mark_unread' });
-                          }}
-                        >
-                          <Mail className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Eliminar"
-                          disabled={processingAction.emailId === email.id || isBulkActionInFlight}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleRowAction({ emailId: email.id, action: 'delete' });
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" aria-hidden="true" />
-                        </Button>
+                        {mobileActionsId === email.id && (
+                          <div
+                            ref={mobileMenuRef}
+                            className="absolute right-4 top-14 z-10 w-48 rounded-2xl border border-border/70 bg-card/95 p-2 shadow-xl backdrop-blur"
+                          >
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'archive' });
+                              }}
+                            >
+                              <Archive className="h-4 w-4" aria-hidden="true" />
+                              Archivar
+                            </button>
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'mark_unread' });
+                              }}
+                            >
+                              <Mail className="h-4 w-4" aria-hidden="true" />
+                              Marcar no leído
+                            </button>
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-destructive hover:bg-muted"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRowAction({ emailId: email.id, action: 'delete' });
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" aria-hidden="true" />
+                              Eliminar
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       <div className="relative sm:hidden">
@@ -857,11 +893,11 @@ export default function InboxList() {
                         {mobileActionsId === email.id && (
                           <div
                             ref={mobileMenuRef}
-                            className="absolute right-0 top-9 z-10 w-40 rounded-md border bg-card p-2 shadow-lg"
+                            className="absolute right-0 top-9 z-10 w-44 rounded-2xl border border-border/70 bg-card/95 p-2 shadow-xl backdrop-blur"
                           >
                             <button
                               type="button"
-                              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 handleReviewReceipt(email.id);
@@ -871,7 +907,7 @@ export default function InboxList() {
                             </button>
                             <button
                               type="button"
-                              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 handleRowAction({ emailId: email.id, action: 'archive' });
@@ -882,7 +918,7 @@ export default function InboxList() {
                             </button>
                             <button
                               type="button"
-                              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 handleRowAction({ emailId: email.id, action: 'mark_unread' });
@@ -893,7 +929,7 @@ export default function InboxList() {
                             </button>
                             <button
                               type="button"
-                              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-destructive hover:bg-muted"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-destructive hover:bg-muted"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 handleRowAction({ emailId: email.id, action: 'delete' });

@@ -1,0 +1,53 @@
+Nombre: InboxPage
+Tipo: pantalla de inbox operativo
+
+Qué hace:
+- Presenta correos recientes en una vista tipo Gmail.
+- Permite leer, seleccionar, archivar, eliminar y marcar no leído.
+- Soporta acciones por fila y acciones bulk.
+- Sirve de base para abrir revisión de recibos.
+
+Para qué sirve:
+- Dar una vista más directa y operativa del inbox que la capa de sugerencias.
+- Resolver tareas manuales y de control fino.
+
+Propósito de producto:
+- Complementar la automatización asistida con una superficie de trabajo manual.
+- Acercarse al modelo mental de inbox tradicional sin perder acciones del sistema.
+
+Qué resuelve:
+- El problema de necesitar contexto más granular que una sugerencia agregada.
+- La necesidad de acciones directas y selección múltiple.
+
+Cómo parece pensada:
+- Como una mezcla entre bandeja de entrada clásica y panel de acciones productivas.
+- Diseñada para mantener visibles acciones por fila y soportar lectura paralela.
+
+Acciones principales:
+- Abrir correo.
+- Archivar.
+- Marcar no leído.
+- Eliminar.
+- Selección múltiple y bulk actions.
+- Revisar recibo.
+
+Flujo:
+- Se accede desde la navegación autenticada.
+- Desde aquí puede abrirse `ReceiptReviewDialog`.
+
+Dependencias:
+- `getEmails()`
+- `runInboxAction()`
+- Layout con lista, preview y controles bulk.
+
+Estados relevantes:
+- Loading.
+- Error.
+- Empty state.
+- Lista normal.
+- Bulk action bar visible.
+- Selección y lectura de correo.
+
+Observaciones UX para experto:
+- Es la superficie más densa del front.
+- Merece revisión de jerarquía visual, claridad de acciones destructivas y carga cognitiva.
