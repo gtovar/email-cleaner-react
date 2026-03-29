@@ -211,3 +211,15 @@ Frontend: yes
 ## 2026-03-28 — Experimental UX remediation checkpoint
 - Reframed the authenticated loop so Suggestions is the primary review queue, Inbox is manual context, and Settings is limited to scope-true workflow preferences.
 - Reworked `ReceiptReviewDialog.jsx` into an explicit four-step sequence and revalidated the affected frontend slices with targeted Vitest and local Playwright visual checks.
+
+## 2026-03-29 — DDR: public auth funnel simplified
+- Changed the public funnel so `HomePage` now launches Google OAuth directly while `LoginPage` remains the re-entry screen for logout, session expiry, callback error, and deliberate `/login` access.
+- Updated the public copy and frontend auth tests to match the new entry-flow behavior.
+
+### [2026-03-29] Session Close
+- **Done:** Collapsed the normal public auth funnel so HomePage now launches Google OAuth directly.
+- **Done:** Repositioned LoginPage as the re-entry/exception screen for logout, session expiry, callback error, and deliberate /login access.
+- **Done:** Updated frontend tests and re-entry/state docs to match the new funnel behavior.
+- **Learned:** When a public entry screen already explains the product clearly, keeping a second pre-OAuth screen as a mandatory step adds funnel friction; the better pattern is direct OAuth for the normal path and a separate re-entry screen for exceptional auth states.
+- **Status:** PAUSADA
+- **Next:** Review the mixed frontend working tree and cut a local commit boundary for the public auth funnel and home UX slice before starting another UI change.

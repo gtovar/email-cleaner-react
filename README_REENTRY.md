@@ -6,9 +6,9 @@
 - Latest commit: `e6fffa6`
 - Current work is a local experimental UX remediation pass based on `ux_review_bundle/feedback_pack_v2`.
 - Summary lives in a right-side drawer (Sheet) opened from the header.
-- OAuth login uses a dedicated Login page and httpOnly session cookie.
+- OAuth login uses Google directly from `HomePage`, with `LoginPage` reserved for re-entry, callback errors, logout, and session expiry.
 - Session expiry triggers a Login screen via `onAuthExpired`.
-- Public Home page now renders at `/` and redirects to `/login` when unauthenticated.
+- Public Home page now renders at `/` and launches Google OAuth directly for unauthenticated users.
 - Suggestions is now the explicit authenticated start point; Inbox is framed as manual review/context.
 - Settings now exposes only scope-true workflow preferences and explicitly excludes account/security management.
 - Open Graph / Twitter preview assets are present in `public/`.
@@ -24,6 +24,7 @@
 - Added richer decision quality in `src/components/SuggestionsList.jsx` with visible priority, confidence, sensitivity, and expanded context.
 - Reordered `src/components/ReceiptReviewDialog.jsx` into explicit steps and clarified that receipt status and WhatsApp send are independent actions.
 - Replaced the old generic account/security `SettingsPage` with scope-true workflow preferences plus an explicit out-of-scope section.
+- Collapsed the normal public auth funnel from `Home -> Login -> Google` to `Home -> Google`, keeping `LoginPage` only for re-entry and exception states.
 - Revalidated the affected slices with targeted Vitest and local Playwright visual passes.
 
 ## 3) Exact Commands to Resume Work
@@ -41,7 +42,7 @@ npm run dev
 - The next risk is not implementation uncertainty; it is letting more work accumulate before cutting a local checkpoint boundary.
 
 ## 5) Immediate Next Step
-➡️ Review the mixed experimental working tree and cut a local checkpoint boundary before adding another UX slice.
+➡️ Review the mixed frontend working tree and cut a local commit boundary for the public auth funnel and home UX slice before starting another UI change.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`

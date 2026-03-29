@@ -87,6 +87,24 @@ describe('App auth callback and session expiry flow', () => {
     expect(replaceStateSpy).toHaveBeenCalledWith(null, '', '/');
   });
 
+  test('shows the public home for anonymous users at root', async () => {
+    const { getAuthMe } = await import('../src/services/api.js');
+    getAuthMe.mockResolvedValue({ authenticated: false });
+
+    window.history.pushState(null, '', '/');
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', {
+          name: /Review important email before anything happens/i,
+        })
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole('button', { name: /Continue with Google/i })).toHaveLength(3);
+    });
+  });
+
   test('handles /auth/callback error by returning to login with a visible message', async () => {
     const { getAuthMe } = await import('../src/services/api.js');
     getAuthMe.mockResolvedValue({ authenticated: false });

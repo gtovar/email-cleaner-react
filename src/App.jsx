@@ -132,11 +132,6 @@ function App() {
     window.location.href = `${API_ORIGIN}/auth/google`;
   };
 
-  const handleGoToLogin = () => {
-    setActiveView('login');
-    window.history.pushState(null, '', '/login');
-  };
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -227,7 +222,7 @@ function App() {
         ) : authStatus !== 'checking' ? (
           <>
             {isHomeView ? (
-              <HomePage onStart={handleGoToLogin} />
+              <HomePage onStart={handleLogin} />
             ) : (
               <LoginPage
                 onLogin={handleLogin}

@@ -28,7 +28,7 @@ export default function LoginPage({ onLogin, message }) {
             Email Cleaner
           </h1>
           <p className="mx-auto max-w-sm text-base text-muted-foreground">
-            Connect your inbox with more clarity and control.
+            Reopen your workspace, retry Google sign-in, or review the flow again before continuing.
           </p>
         </div>
 
@@ -36,12 +36,12 @@ export default function LoginPage({ onLogin, message }) {
           <CardContent className="space-y-6 p-6">
             <div className="rounded-xl border border-border/70 bg-muted/30 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
-                What happens when you connect Google
+                When this screen appears
               </p>
               <ul className="mt-3 space-y-2 text-sm text-foreground">
-                <li>Review suggestions and inbox context inside one workspace.</li>
-                <li>Sensitive actions stay under your control before they are applied.</li>
-                <li>The app does not silently clean your inbox without your review.</li>
+                <li>You are reopening the workspace after logout, expiry, or a sign-in issue.</li>
+                <li>Google sign-in still takes you into the same review-first workspace.</li>
+                <li>Sensitive actions stay under your control after sign-in succeeds.</li>
               </ul>
             </div>
 
@@ -111,20 +111,27 @@ export default function LoginPage({ onLogin, message }) {
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Connect with Google to review your inbox with context before taking action.
+              Continue with Google to reopen the review workspace.
             </p>
           </CardContent>
         </Card>
 
         <p className="text-center text-xs text-muted-foreground">
-          By continuing, you agree to our{' '}
-          <a href="#" className="underline underline-offset-2 transition-colors hover:text-foreground">
-            Terms of Service
+          Want the full picture first? Review{' '}
+          <a
+            href="/#how-it-works"
+            className="underline underline-offset-2 transition-colors hover:text-foreground"
+          >
+            how the flow works
           </a>{' '}
           and{' '}
-          <a href="#" className="underline underline-offset-2 transition-colors hover:text-foreground">
-            Privacy Policy
+          <a
+            href="/#trust-principles"
+            className="underline underline-offset-2 transition-colors hover:text-foreground"
+          >
+            what stays under your control
           </a>
+          .
         </p>
       </div>
     </div>

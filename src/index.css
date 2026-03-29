@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -83,6 +85,14 @@
 }
 
 @layer utilities {
+  .font-home-display {
+    font-family: 'Lexend', sans-serif;
+  }
+
+  .font-home-body {
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

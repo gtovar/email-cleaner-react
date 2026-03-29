@@ -1,18 +1,18 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-28 14:46 CST — Commit: e6fffa6
+Last updated: 2026-03-29 13:17 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-28 14:46 CST
+SNAPSHOT_DATE: 2026-03-29 13:17 CST
 COMMIT: e6fffa6
 ENVIRONMENT: feature/ux-review-bundle-experiments
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: feat/ux-review-bundle-experiments
-WORKING_TREE_STATUS: Dirty (experimental UX slices and checkpoint docs in progress)
+WORKING_TREE_STATUS: Dirty (modified files present)
 TEST_STATUS: PASS (`npm test -- --run tests/AppAuthFlow.test.jsx tests/SummaryPanel.test.jsx tests/HistoryList.test.jsx tests/AppShellViews.test.jsx tests/InboxList.test.jsx tests/SuggestionsList.test.jsx tests/ReceiptReviewDialog.test.jsx tests/SettingsPage.test.jsx`)
 
 Notes:
@@ -30,8 +30,8 @@ Notes:
 - History screen loads paginated data from `/api/v1/notifications/history`.
 - Inbox and Settings views are available from the app shell navigation.
 - Confirmation actions call `/api/v1/notifications/confirm` and update UI state.
-- Login view handles OAuth redirect and session expiry via `onAuthExpired`.
-- Public Home page renders at `/` for unauthenticated users.
+- Public Home page now launches Google OAuth directly for unauthenticated users at `/`.
+- Login view is reserved for callback errors, session expiry, logout, and deliberate `/login` access.
 - Open Graph / Twitter tags are defined in `index.html` with assets in `public/`.
 - `InboxList` now exposes the `Revisar recibo` row action for the first `HU_05` frontend slice.
 - `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
@@ -195,6 +195,7 @@ Notes:
 
 **Recent change:**
 - Added direct coverage for successful callback, callback error routing, and session-expiry behavior; fixed callback error handling so failed OAuth returns to `/login` without losing the error message (commit: pending).
+- Simplified the public entry funnel so `HomePage` launches Google OAuth directly while `LoginPage` remains the re-entry and exception screen; targeted auth-flow tests passed locally (commit: pending).
 
 ### HU19 — Inbox direct and bulk actions (frontend)
 
@@ -324,7 +325,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Review the mixed experimental working tree and cut a local checkpoint boundary before adding another UX slice.
+➡️ Review the mixed frontend working tree and cut a local commit boundary for the public auth funnel and home UX slice before starting another UI change.
 
 ---
 
