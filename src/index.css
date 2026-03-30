@@ -109,141 +109,38 @@
   }
 }
 
-/* Glass & Void — HomePage design system */
+/* Midnight Aurora — HomePage design system */
 
-.home-void {
-  --void-bg: #050505;
-  --void-surface: #0a0a0a;
-  --void-card: rgba(255, 255, 255, 0.03);
-  --void-border: rgba(255, 255, 255, 0.06);
-  --void-text: #e4e4e7;
-  --void-text-muted: #71717a;
-  --void-accent: #22d3ee;
-  --void-accent-2: #a78bfa;
-  --void-accent-3: #f97316;
-  --void-glow-cyan: rgba(34, 211, 238, 0.15);
-  --void-glow-violet: rgba(167, 139, 250, 0.12);
-  background: var(--void-bg);
-  color: var(--void-text);
+.home-aurora {
+  background: #0B1120;
+  color: #e2e8f0;
 }
 
-/* Animated background grid mesh */
-.home-grid-mesh {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 64px 64px;
+/* Aurora drift animation for background gradient blobs */
+@keyframes aurora-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.05); }
+  100% { transform: translate(-20px, 15px) scale(0.97); }
 }
 
-/* Ambient glow orbs behind sections */
-.home-glow-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  pointer-events: none;
-  will-change: transform;
-}
-
-/* Glassmorphism card surface */
-.home-glass-card {
-  background: var(--void-card);
-  border: 1px solid var(--void-border);
-  backdrop-filter: blur(24px) saturate(1.3);
-  -webkit-backdrop-filter: blur(24px) saturate(1.3);
-  border-radius: 1.25rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.home-glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 40px -12px var(--void-glow-cyan);
-}
-
-/* Glowing gradient border effect */
-.home-glow-border {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1.25rem;
-}
-
-.home-glow-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    var(--void-accent) 0%,
-    var(--void-accent-2) 50%,
-    transparent 100%
-  );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.5;
-  transition: opacity 0.3s ease;
-}
-
-.home-glow-border:hover::before {
-  opacity: 1;
-}
-
-/* Suggestion preview row hover glow */
-.home-preview-row {
-  background: var(--void-card);
-  border: 1px solid var(--void-border);
-  border-radius: 0.875rem;
-  transition: all 0.25s ease;
-}
-
-.home-preview-row:hover {
-  border-color: rgba(34, 211, 238, 0.2);
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: 0 0 24px -8px var(--void-glow-cyan);
-}
-
-/* Animated scan line effect for the preview panel */
-@keyframes home-scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(400%); }
-}
-
-.home-scanline::after {
+/* CTA button shimmer sweep */
+.aurora-cta::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(34, 211, 238, 0.03) 50%,
-    transparent 100%
+    105deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.05) 55%,
+    transparent 80%
   );
-  height: 25%;
-  animation: home-scanline 6s ease-in-out infinite;
-  pointer-events: none;
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
-/* Pulse animation for status badges */
-@keyframes home-pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 var(--void-glow-cyan); }
-  50% { box-shadow: 0 0 12px 2px var(--void-glow-cyan); }
-}
-
-.home-pulse-badge {
-  animation: home-pulse-glow 3s ease-in-out infinite;
-}
-
-/* Floating particle keyframes */
-@keyframes home-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  33% { transform: translateY(-8px) rotate(1deg); }
-  66% { transform: translateY(4px) rotate(-0.5deg); }
+.aurora-cta:hover::before {
+  transform: translateX(100%);
 }
 
 @keyframes collapsible-down {

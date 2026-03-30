@@ -229,3 +229,8 @@ Frontend: yes
 - **Done:** Implemented Glass & Void (dark mode) HomePage redesign with framer-motion, glassmorphism, gradient borders, grid mesh, typing terminal, and animated counters.
 - **Decided:** Visual direction not selected as final; will iterate with a new proposal.
 - **Next:** Commit Glass & Void iteration and explore a different visual direction.
+
+## 2026-03-30 — Public Home redesign iteration selected
+- Updated `src/pages/HomePage.jsx` and `src/index.css` to the current dark aurora Home direction on the experimental branch.
+- Applied a two-block React-aligned headline gradient and a faux window-style inbox mockup chrome with hover-straighten behavior.
+- Local validation passed with `npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx`.

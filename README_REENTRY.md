@@ -19,13 +19,10 @@
 - `ReceiptReviewDialog.jsx` now separates review context, extracted evidence, receipt status, and WhatsApp send into an explicit four-step sequence.
 
 ## 2) What Changed During the Last Session
-- Reframed the authenticated UX so `Suggestions` is the primary loop and `Inbox` is manual review/context support.
-- Improved visible operational truth across public auth screens, summary/history messaging, fixture content, and local review data.
-- Added richer decision quality in `src/components/SuggestionsList.jsx` with visible priority, confidence, sensitivity, and expanded context.
-- Reordered `src/components/ReceiptReviewDialog.jsx` into explicit steps and clarified that receipt status and WhatsApp send are independent actions.
-- Replaced the old generic account/security `SettingsPage` with scope-true workflow preferences plus an explicit out-of-scope section.
-- Collapsed the normal public auth funnel from `Home -> Login -> Google` to `Home -> Google`, keeping `LoginPage` only for re-entry and exception states.
-- Revalidated the affected slices with targeted Vitest and local Playwright visual passes.
+- Reworked `src/pages/HomePage.jsx` into the current dark aurora visual direction and kept the direct Google OAuth entry from `/`.
+- Updated the headline treatment to use React-aligned two-block gradients instead of the earlier single-block experiment.
+- Added a faux macOS-inspired chrome treatment plus hover-straighten behavior to the hero inbox mockup.
+- Revalidated the current Home slice with `npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx`.
 
 ## 3) Exact Commands to Resume Work
 ```bash
@@ -36,12 +33,12 @@ npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- The Glass & Void (dark mode) HomePage redesign is implemented and tests pass.
-- Visual direction was not selected as final by the user.
-- The next step is exploring a second visual proposal.
+- The current public Home direction is implemented locally in `src/pages/HomePage.jsx` and selected by the user for this experimental branch.
+- The working tree is commit-ready for the Home slice, excluding local temporary screenshot helpers.
+- No remote action has been taken from this checkpoint.
 
 ## 5) Immediate Next Step
-➡️ Commit the Glass & Void iteration and then implement a new visual direction for `HomePage.jsx`.
+➡️ Commit the current public Home redesign iteration for `src/pages/HomePage.jsx` and `src/index.css`.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`

@@ -1,18 +1,18 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-30 10:10 CST — Commit: pending
+Last updated: 2026-03-30 12:35 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-29 13:17 CST
+SNAPSHOT_DATE: 2026-03-30 12:35 CST
 COMMIT: e6fffa6
 ENVIRONMENT: feature/ux-review-bundle-experiments
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: feat/ux-review-bundle-experiments
-WORKING_TREE_STATUS: Dirty (Glass & Void redesign implemented, pending commit)
+WORKING_TREE_STATUS: Dirty (public Home redesign slice ready for commit)
 TEST_STATUS: PASS (npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx)
 
 Notes:
@@ -31,6 +31,7 @@ Notes:
 - Inbox and Settings views are available from the app shell navigation.
 - Confirmation actions call `/api/v1/notifications/confirm` and update UI state.
 - Public Home page now launches Google OAuth directly for unauthenticated users at `/`.
+- `src/pages/HomePage.jsx` now uses a dark aurora hero with React-aligned headline gradients, a faux window-style inbox mockup, and the current selected visual direction for the public landing experiment.
 - Login view is reserved for callback errors, session expiry, logout, and deliberate `/login` access.
 - Open Graph / Twitter tags are defined in `index.html` with assets in `public/`.
 - `InboxList` now exposes the `Revisar recibo` row action for the first `HU_05` frontend slice.
@@ -319,13 +320,13 @@ Notes:
 - Local Settings toggles are intentionally scope-true but still presentational only; no backend persistence contract exists for these workflow preferences.
 - HU06 browser validation currently proves the happy path only against the local controlled fixture/auth path, not against live Gmail or a live WhatsApp provider.
 - HU06 provider-error coverage is browser-level only because the spec uses a controlled route override instead of a real backend/provider failure.
-- The experimental branch now contains multiple uncommitted UX slices in one working tree, so commit-boundary drift is the main operational risk before further implementation.
+- The experimental branch still relies on a local-only Home redesign iteration that has not been pushed or merged yet.
 
 ---
 
 ## 6. Next Immediate Action
 
-➡️ Explore a second visual direction for the HomePage redesign after committing the Glass & Void iteration.
+➡️ Commit the current public Home redesign iteration for `src/pages/HomePage.jsx` and `src/index.css`.
 
 ---
 
@@ -373,3 +374,4 @@ Notes:
 - 2026-03-28 14:46 CST — Local experimental UX remediation updated the authenticated loop, improved decision quality in `Suggestions`, reordered `ReceiptReviewDialog`, reduced `Settings` to scope-true workflow preferences, and revalidated the affected slices with targeted Vitest plus local Playwright visual passes (commit: pending)
 - 2026-03-30 08:50 CST — Checkpointed the experimental auth funnel and home slice to establish a clean commit boundary before proceeding with a new high-fidelity visual redesign iteration.
 - 2026-03-30 10:10 CST — Implemented the Glass & Void (dark mode) HomePage redesign with framer-motion animations, glassmorphism cards, gradient borders, and grid mesh background; tests pass but visual direction not selected as final.
+- 2026-03-30 12:35 CST — Reworked the experimental public Home into the currently selected dark aurora direction with a two-block React-aligned headline gradient, a faux macOS-inspired inbox mockup chrome, and hover-straighten motion; `npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx` passed locally (commit: pending)

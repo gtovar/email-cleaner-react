@@ -1,104 +1,90 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { motion, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import {
   ArrowRight,
+  CheckCircle2,
   Eye,
+  Inbox,
   Lock,
   Mail,
   Scan,
   Shield,
   Sparkles,
-  Terminal,
-  Zap,
 } from 'lucide-react';
 import { Button } from '../components/ui/button.jsx';
 
-/* ───────────────────────────────── Data ───────────────────────────────── */
+/* ─────────────────────────────── Data ─────────────────────────────── */
 
 const principles = [
   {
     icon: Eye,
     title: 'Review before action',
-    body: 'Open the email, inspect the evidence, and decide with full context — never from a subject line alone.',
-    accent: 'var(--void-accent)',
+    body: 'Open the email, inspect the evidence, and decide with full context — not from a subject line.',
+    gradient: 'from-teal-400 to-emerald-400',
+    glow: 'rgba(45, 212, 191, 0.12)',
   },
   {
     icon: Shield,
     title: 'Sensitive actions stay explicit',
-    body: 'Nothing critical runs behind the scenes. Every important confirmation is visible and requires your input.',
-    accent: 'var(--void-accent-2)',
+    body: 'Nothing critical runs behind the scenes. Every important confirmation is visible and requires your call.',
+    gradient: 'from-violet-400 to-purple-400',
+    glow: 'rgba(167, 139, 250, 0.12)',
   },
   {
     icon: Sparkles,
     title: 'Suggestions first, inbox second',
-    body: 'Your workspace opens with the decisions that matter most, then drops into manual review only when needed.',
-    accent: 'var(--void-accent-3)',
+    body: 'Your workspace opens with the decisions that matter most. Manual review is always one step away.',
+    gradient: 'from-amber-400 to-orange-400',
+    glow: 'rgba(251, 191, 36, 0.12)',
   },
 ];
 
-const workflowSteps = [
-  {
-    step: '01',
-    label: 'Connect',
-    detail: 'Authenticate your workspace with Google.',
-    icon: Lock,
-  },
-  {
-    step: '02',
-    label: 'Review',
-    detail: 'See suggestions with visible context, confidence, and sensitivity.',
-    icon: Scan,
-  },
-  {
-    step: '03',
-    label: 'Decide',
-    detail: 'Confirm, ignore, or inspect the original email before acting.',
-    icon: Terminal,
-  },
+const steps = [
+  { n: '01', label: 'Connect your workspace with Google.', icon: Lock },
+  { n: '02', label: 'Review suggestions with visible context and confidence.', icon: Scan },
+  { n: '03', label: 'Confirm, ignore, or inspect the original email before acting.', icon: CheckCircle2 },
 ];
 
 const previewRows = [
   {
     sender: 'payments@northstar.io',
     subject: 'Invoice 8821 pending review',
-    priority: 'High',
-    badgeClass: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+    tag: 'High priority',
+    dot: 'bg-amber-400',
   },
   {
     sender: 'ops@warehouse.mx',
     subject: 'Receipt requires manual follow-up',
-    priority: 'Receipt',
-    badgeClass: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/20',
+    tag: 'Needs receipt check',
+    dot: 'bg-teal-400',
   },
   {
     sender: 'support@vendor.example',
     subject: 'General update, low urgency',
-    priority: 'Low',
-    badgeClass: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/20',
+    tag: 'Manual inbox context',
+    dot: 'bg-slate-400',
   },
 ];
 
-/* ──────────────────────────── Motion presets ──────────────────────────── */
+/* ────────────────────────── Motion helpers ────────────────────────── */
+
+const ease = [0.22, 1, 0.36, 1];
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 28 },
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.8, delay: i * 0.1, ease },
   }),
 };
 
-const stagger = {
-  visible: { transition: { staggerChildren: 0.1 } },
-};
+const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
 
-/* ─────────────────────── Reusable subcomponents ──────────────────────── */
-
-/* Scroll-triggered section wrapper with fade-up entrance */
-function RevealSection({ children, className = '', delay = 0 }) {
+/* Scroll-triggered section wrapper */
+function Reveal({ children, className = '', delay = 0, ...rest }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
     <motion.section
@@ -108,341 +94,366 @@ function RevealSection({ children, className = '', delay = 0 }) {
       variants={fadeUp}
       custom={delay}
       className={className}
+      {...rest}
     >
       {children}
     </motion.section>
   );
 }
 
-/* Animated number counter for the stats ring */
-function CountUp({ target, suffix = '', duration = 2 }) {
-  const [value, setValue] = useState(0);
+/* Interactive tilt card — follows cursor with a soft 3D rotation */
+function TiltCard({ children, className = '', glowColor }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
-  useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const step = target / (duration * 60);
-    const tick = () => {
-      start += step;
-      if (start >= target) {
-        setValue(target);
-        return;
-      }
-      setValue(Math.round(start));
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }, [inView, target, duration]);
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 200, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 200, damping: 20 });
 
-  return (
-    <span ref={ref} className="font-home-mono text-3xl font-semibold tracking-tight text-white">
-      {value}
-      {suffix}
-    </span>
+  const handleMouse = useCallback(
+    (e) => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      x.set((e.clientX - rect.left) / rect.width - 0.5);
+      y.set((e.clientY - rect.top) / rect.height - 0.5);
+    },
+    [x, y],
   );
-}
 
-/* Typing effect for the terminal-style tagline */
-function TerminalTyper({ text }) {
-  const [chars, setChars] = useState('');
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (!inView) return;
-    let i = 0;
-    const id = setInterval(() => {
-      i += 1;
-      setChars(text.slice(0, i));
-      if (i >= text.length) clearInterval(id);
-    }, 32);
-    return () => clearInterval(id);
-  }, [inView, text]);
+  const handleLeave = useCallback(() => {
+    x.set(0);
+    y.set(0);
+  }, [x, y]);
 
   return (
-    <span ref={ref} className="font-home-mono">
-      {chars}
-      <motion.span
-        className="inline-block h-5 w-[2px] translate-y-[2px] bg-cyan-400"
-        animate={{ opacity: [1, 0] }}
-        transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-        aria-hidden="true"
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleLeave}
+      style={{ rotateX, rotateY, transformPerspective: 800 }}
+      className={className}
+    >
+      {/* Colored glow behind the card on hover */}
+      <div
+        className="pointer-events-none absolute -inset-px rounded-[1.25rem] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{ background: `radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${glowColor || 'rgba(56,189,248,0.06)'}, transparent 40%)` }}
       />
-    </span>
+      {children}
+    </motion.div>
   );
 }
 
-/* ──────────────────────────── Main component ─────────────────────────── */
+/* Animated mesh gradient background — pure CSS, no canvas */
+function AuroraMesh() {
+  return (
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      {/* Base gradient */}
+      <div className="absolute inset-0 bg-[#0B1120]" />
+
+      {/* Animated aurora blobs */}
+      <div
+        className="absolute -left-[20%] -top-[30%] h-[70vh] w-[70vh] rounded-full opacity-30"
+        style={{
+          background: 'radial-gradient(circle, rgba(56,189,248,0.4) 0%, transparent 70%)',
+          animation: 'aurora-drift 18s ease-in-out infinite alternate',
+        }}
+      />
+      <div
+        className="absolute -right-[15%] top-[10%] h-[60vh] w-[60vh] rounded-full opacity-25"
+        style={{
+          background: 'radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%)',
+          animation: 'aurora-drift 22s ease-in-out infinite alternate-reverse',
+        }}
+      />
+      <div
+        className="absolute bottom-[5%] left-[20%] h-[50vh] w-[50vh] rounded-full opacity-20"
+        style={{
+          background: 'radial-gradient(circle, rgba(20,184,166,0.3) 0%, transparent 70%)',
+          animation: 'aurora-drift 15s ease-in-out 3s infinite alternate',
+        }}
+      />
+
+      {/* Subtle noise texture overlay */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
+    </div>
+  );
+}
+
+/* ────────────────────────── Main component ────────────────────────── */
 
 export default function HomePage({ onStart }) {
+  /* Track mouse for glow effect on hero card */
+  const heroCardRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: '50%', y: '50%' });
+
+  const handleHeroMouse = useCallback((e) => {
+    const el = heroCardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setMousePos({
+      x: `${e.clientX - rect.left}px`,
+      y: `${e.clientY - rect.top}px`,
+    });
+  }, []);
+
   return (
-    <div className="home-void home-grid-mesh relative min-h-screen overflow-x-hidden">
+    <div className="home-aurora relative min-h-screen overflow-x-hidden text-slate-100">
+      <AuroraMesh />
 
-      {/* ── Ambient glow orbs ── */}
-      <div
-        className="home-glow-orb"
-        style={{ width: 600, height: 600, top: -120, left: '-10%', background: 'var(--void-glow-cyan)' }}
-      />
-      <div
-        className="home-glow-orb"
-        style={{ width: 500, height: 500, top: '25%', right: '-8%', background: 'var(--void-glow-violet)' }}
-      />
-      <div
-        className="home-glow-orb"
-        style={{ width: 400, height: 400, bottom: '10%', left: '15%', background: 'rgba(249,115,22,0.08)' }}
-      />
+      {/* ═══════════════════════ NAV ═══════════════════════ */}
+      <motion.nav
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-8"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-400 to-blue-500 shadow-lg shadow-teal-500/20">
+            <Mail className="h-4 w-4 text-white" aria-hidden="true" />
+          </div>
+          <span className="font-home-display text-base font-semibold tracking-tight text-white">
+            Email Cleaner
+          </span>
+        </div>
 
-      {/* ════════════════════ HERO ════════════════════ */}
-      <header className="relative px-4 pb-20 pt-6 md:px-6 md:pb-32 md:pt-8">
+        <Button
+          type="button"
+          onClick={onStart}
+          className="hidden rounded-full border border-white/10 bg-white/5 px-5 text-sm text-slate-300 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/10 hover:text-white md:inline-flex"
+        >
+          Continue with Google
+        </Button>
+      </motion.nav>
+
+      {/* ═══════════════════════ HERO ═══════════════════════ */}
+      <header className="relative z-10 px-5 pb-24 pt-12 md:px-8 md:pb-36 md:pt-20">
         <div className="mx-auto max-w-7xl">
+          <div className="grid gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
 
-          {/* ── Top navigation bar ── */}
-          <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="home-glass-card mb-12 flex items-center justify-between px-5 py-3"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500">
-                <Mail className="h-4 w-4 text-white" aria-hidden="true" />
-              </div>
-              <div>
-                <p className="font-home-display text-sm font-semibold tracking-tight text-white">
-                  Email Cleaner
-                </p>
-                <p className="font-home-mono text-[11px] tracking-wider text-zinc-500">
-                  v1.0 · review workspace
-                </p>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              onClick={onStart}
-              className="hidden rounded-full border border-white/10 bg-white/5 px-5 text-sm text-zinc-300 backdrop-blur hover:border-cyan-500/40 hover:bg-white/10 hover:text-white md:inline-flex"
-            >
-              Continue with Google
-            </Button>
-          </motion.nav>
-
-          {/* ── Hero content grid ── */}
-          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-
-            {/* Left: headline + CTA */}
+            {/* Left: copy */}
             <motion.div
               initial="hidden"
               animate="visible"
               variants={stagger}
-              className="space-y-8 pt-2 lg:pt-6"
+              className="space-y-8"
             >
               <motion.div variants={fadeUp} custom={0}>
-                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/8 px-3 py-1.5">
-                  <Zap className="h-3.5 w-3.5 text-cyan-400" aria-hidden="true" />
-                  <span className="font-home-mono text-xs tracking-wide text-cyan-400">
-                    Review important email before anything happens
-                  </span>
-                </div>
+                <span className="inline-flex items-center gap-2 rounded-full border border-teal-500/20 bg-teal-500/[0.07] px-3.5 py-1.5 text-xs font-medium text-teal-300">
+                  <Zap className="h-3.5 w-3.5" />
+                  Review important email before anything happens
+                </span>
               </motion.div>
 
               <motion.h1
                 variants={fadeUp}
                 custom={1}
-                className="max-w-[14ch] font-home-display text-5xl font-extrabold leading-[0.92] tracking-[-0.04em] text-white md:text-7xl"
+                className="max-w-[15ch] font-home-display text-[3.2rem] font-extrabold leading-[1.05] tracking-[-0.035em] md:text-[4.5rem]"
               >
-                Make inbox decisions with context, not panic.
+                <span className="block bg-[linear-gradient(135deg,#ffffff_0%,#f8fffe_18%,#c7fff5_56%,#5eead4_100%)] bg-clip-text text-transparent [text-shadow:0_14px_36px_rgba(45,212,191,0.14)]">
+                  Make inbox decisions with
+                </span>
+                <span className="block bg-[linear-gradient(135deg,#99f6e4_0%,#2dd4bf_52%,#14b8a6_100%)] bg-clip-text text-transparent [text-shadow:0_16px_40px_rgba(20,184,166,0.22)]">
+                  context, not panic.
+                </span>
               </motion.h1>
 
               <motion.p
                 variants={fadeUp}
                 custom={2}
-                className="max-w-xl font-home-body text-lg leading-8 text-zinc-400"
+                className="max-w-lg font-home-body text-lg leading-8 text-slate-400"
               >
                 Email Cleaner surfaces the emails that deserve attention, shows why they matter,
                 and keeps the final action in your hands.
               </motion.p>
 
-              <motion.div variants={fadeUp} custom={3} className="flex flex-col gap-4 sm:flex-row">
+              <motion.div variants={fadeUp} custom={3} className="flex flex-wrap items-center gap-4">
                 <Button
                   type="button"
                   onClick={onStart}
                   size="lg"
-                  className="group relative h-12 overflow-hidden rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 px-7 text-base font-semibold text-white shadow-[0_0_32px_-8px_rgba(34,211,238,0.5)] transition-all hover:shadow-[0_0_48px_-4px_rgba(34,211,238,0.6)]"
+                  className="aurora-cta group relative h-12 overflow-hidden rounded-full bg-gradient-to-r from-teal-500 to-blue-500 px-7 text-base font-semibold text-white shadow-xl shadow-teal-500/25 transition-shadow hover:shadow-teal-500/40"
                 >
-                  Continue with Google
-                  <ArrowRight
-                    className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                    aria-hidden="true"
-                  />
+                  <span className="relative z-10 flex items-center gap-2">
+                    Continue with Google
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  </span>
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   size="lg"
                   onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="h-12 rounded-full border-white/10 bg-transparent px-7 text-base text-zinc-400 hover:border-white/20 hover:bg-white/5 hover:text-white"
+                  className="h-12 rounded-full border-white/10 bg-transparent px-7 text-base text-slate-400 transition-all hover:border-white/20 hover:bg-white/5 hover:text-white"
                 >
                   See how the review works
                 </Button>
               </motion.div>
-
-              {/* Terminal-style microcopy */}
-              <motion.div
-                variants={fadeUp}
-                custom={4}
-                className="home-glass-card inline-flex items-center gap-3 px-5 py-3"
-              >
-                <Terminal className="h-4 w-4 text-cyan-400" aria-hidden="true" />
-                <p className="text-sm text-zinc-500">
-                  <TerminalTyper text="Not a magic inbox. A sharper review desk." />
-                </p>
-              </motion.div>
             </motion.div>
 
-            {/* Right: preview panel */}
+            {/* Right: suggestion board preview */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 40 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="relative"
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1, delay: 0.25, ease }}
+              ref={heroCardRef}
+              onMouseMove={handleHeroMouse}
+              className="group relative"
             >
-              <div className="home-glow-border">
-                <div className="home-scanline relative rounded-[1.25rem] bg-[#0a0a0a] p-5">
+              {/* Outer glow that follows cursor */}
+              <div
+                className="pointer-events-none absolute -inset-4 rounded-3xl opacity-0 blur-2xl transition-opacity duration-700 group-hover:opacity-100"
+                style={{ background: `radial-gradient(400px circle at ${mousePos.x} ${mousePos.y}, rgba(56,189,248,0.12), transparent 60%)` }}
+              />
 
-                  {/* Panel header */}
-                  <div className="mb-5 flex items-center justify-between border-b border-white/5 pb-4">
+              <motion.div
+                initial={{ rotate: 2.5, y: 8, scale: 0.985 }}
+                animate={{ rotate: 2.5, y: 8, scale: 0.985 }}
+                whileHover={{ rotate: 0, y: 0, scale: 1 }}
+                transition={{ duration: 0.55, ease }}
+                className="relative origin-bottom-left"
+              >
+              <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03] shadow-2xl shadow-black/20 backdrop-blur-xl">
+
+                {/* Faux window chrome */}
+                <div className="border-b border-white/[0.05] bg-white/[0.035] px-5 py-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57] shadow-[0_0_12px_rgba(255,95,87,0.28)]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e] shadow-[0_0_12px_rgba(254,188,46,0.24)]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#28c840] shadow-[0_0_12px_rgba(40,200,64,0.24)]" />
+                    </div>
+                    <div className="px-1 text-[10px] font-medium uppercase tracking-[0.22em] text-slate-500">
+                      Review board
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6">
+
+                {/* Header */}
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/10">
+                      <Inbox className="h-4 w-4 text-teal-400" aria-hidden="true" />
+                    </div>
                     <div>
-                      <p className="font-home-mono text-[11px] font-medium uppercase tracking-[0.2em] text-cyan-400">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-teal-400">
                         Suggestion board
                       </p>
-                      <h2 className="mt-1 font-home-display text-xl font-semibold tracking-tight text-white">
+                      <h2 className="font-home-display text-base font-semibold text-white">
                         Next decisions, already framed.
                       </h2>
                     </div>
-                    <div className="home-pulse-badge rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 font-home-mono text-[11px] text-cyan-400">
-                      3 active
-                    </div>
                   </div>
+                  <span className="rounded-full bg-teal-500/10 px-2.5 py-1 text-[11px] font-medium text-teal-400">
+                    3 active
+                  </span>
+                </div>
 
-                  {/* Preview rows */}
-                  <div className="space-y-3">
-                    <AnimatePresence>
-                      {previewRows.map((row, i) => (
-                        <motion.div
-                          key={row.subject}
-                          initial={{ opacity: 0, x: 12 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.6 + i * 0.15, duration: 0.5 }}
-                          className="home-preview-row px-4 py-3.5"
-                        >
-                          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="min-w-0">
-                              <p className="truncate font-home-mono text-xs font-medium text-zinc-400">
-                                {row.sender}
-                              </p>
-                              <p className="mt-1 truncate text-sm text-zinc-300">{row.subject}</p>
-                            </div>
-                            <span
-                              className={`inline-flex w-fit shrink-0 rounded-full border px-2.5 py-0.5 font-home-mono text-[11px] font-medium ${row.badgeClass}`}
-                            >
-                              {row.priority}
-                            </span>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
+                {/* Separator */}
+                <div className="mb-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
-                  {/* Stats mini-bar */}
-                  <div className="mt-5 grid grid-cols-3 gap-3">
-                    {[
-                      { label: 'Reviewed', value: 142 },
-                      { label: 'Confirmed', value: 89 },
-                      { label: 'Saved hrs', value: 24, suffix: 'h' },
-                    ].map((stat) => (
-                      <div
-                        key={stat.label}
-                        className="rounded-xl border border-white/5 bg-white/[0.02] px-3 py-3 text-center"
-                      >
-                        <CountUp target={stat.value} suffix={stat.suffix || ''} />
-                        <p className="mt-1 font-home-mono text-[10px] uppercase tracking-wider text-zinc-600">
-                          {stat.label}
-                        </p>
+                {/* Rows */}
+                <div className="space-y-2.5">
+                  {previewRows.map((row, i) => (
+                    <motion.div
+                      key={row.subject}
+                      initial={{ opacity: 0, x: 16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + i * 0.12, duration: 0.6, ease }}
+                      className="group/row flex items-center justify-between gap-4 rounded-xl border border-white/[0.04] bg-white/[0.02] px-4 py-3.5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-xs font-medium text-slate-500">{row.sender}</p>
+                        <p className="mt-0.5 truncate text-sm text-slate-300">{row.subject}</p>
                       </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className={`h-1.5 w-1.5 rounded-full ${row.dot}`} />
+                        <span className="text-[11px] font-medium text-slate-500">{row.tag}</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Bottom visual accent */}
+                <div className="mt-5 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+                <div className="mt-4 flex items-center justify-between">
+                  <p className="text-xs text-slate-600">Showing top suggestions by review priority</p>
+                  <div className="flex gap-1">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className={`h-1 rounded-full ${i === 0 ? 'w-4 bg-teal-500' : 'w-1 bg-slate-700'}`} />
                     ))}
                   </div>
                 </div>
+                </div>
               </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
       </header>
 
-      {/* ════════════════ TRUST PRINCIPLES ════════════════ */}
-      <RevealSection className="px-4 py-20 md:px-6 md:py-28">
+      {/* ═══════════════════ TRUST PRINCIPLES ═══════════════════ */}
+      <Reveal className="relative z-10 px-5 py-24 md:px-8 md:py-32">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-2xl space-y-4">
-            <p className="font-home-mono text-xs font-medium uppercase tracking-[0.25em] text-cyan-400">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-400">
               Trust principles
             </p>
-            <h2 className="font-home-display text-4xl font-bold tracking-[-0.03em] text-white md:text-5xl">
+            <h2 className="mt-4 font-home-display text-3xl font-bold tracking-[-0.02em] text-white md:text-[2.75rem]">
               Designed for review, not for blind inbox automation.
             </h2>
-            <p className="font-home-body text-lg leading-8 text-zinc-500">
-              The first screen should make the product promise clear: sharper review, less noise,
-              and no hidden loss of control.
+            <p className="mt-4 font-home-body text-base leading-7 text-slate-500">
+              The first screen should make the product promise obvious: clearer review,
+              less noise, and no hidden loss of control.
             </p>
           </div>
 
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
+            viewport={{ once: true, margin: '-60px' }}
             variants={stagger}
-            className="mt-12 grid gap-5 lg:grid-cols-3"
+            className="mt-16 grid gap-6 lg:grid-cols-3"
           >
             {principles.map((p, i) => {
               const Icon = p.icon;
               return (
-                <motion.div
-                  key={p.title}
-                  variants={fadeUp}
-                  custom={i}
-                  className="home-glass-card home-glow-border group p-6"
-                >
-                  <div className="relative z-10">
-                    <div
-                      className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl"
-                      style={{ backgroundColor: `color-mix(in srgb, ${p.accent} 12%, transparent)` }}
-                    >
-                      <Icon className="h-5 w-5" style={{ color: p.accent }} aria-hidden="true" />
+                <motion.div key={p.title} variants={fadeUp} custom={i}>
+                  <TiltCard
+                    className="group relative h-full rounded-[1.25rem] border border-white/[0.06] bg-white/[0.02] p-7 backdrop-blur-sm transition-colors hover:border-white/[0.1]"
+                    glowColor={p.glow}
+                  >
+                    <div className="relative z-10">
+                      <div className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${p.gradient} shadow-lg`}>
+                        <Icon className="h-5 w-5 text-white" aria-hidden="true" />
+                      </div>
+                      <h3 className="font-home-display text-lg font-semibold text-white">{p.title}</h3>
+                      <p className="mt-3 font-home-body text-sm leading-7 text-slate-500">{p.body}</p>
                     </div>
-                    <h3 className="font-home-display text-lg font-semibold text-white">{p.title}</h3>
-                    <p className="mt-2 font-home-body text-sm leading-7 text-zinc-500">{p.body}</p>
-                  </div>
+                  </TiltCard>
                 </motion.div>
               );
             })}
           </motion.div>
         </div>
-      </RevealSection>
+      </Reveal>
 
-      {/* ════════════════ HOW IT WORKS ════════════════ */}
-      <RevealSection id="how-it-works" className="px-4 py-20 md:px-6 md:py-28" delay={0.1}>
-        <div className="mx-auto max-w-7xl">
-          <div className="home-glass-card overflow-hidden p-8 md:p-12">
-            <div className="grid gap-12 lg:grid-cols-[0.55fr_1fr] lg:items-start">
+      {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
+      <Reveal id="how-it-works" className="relative z-10 px-5 py-24 md:px-8 md:py-32" delay={0.05}>
+        <div className="mx-auto max-w-5xl">
+          <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-sm md:p-12">
+            <div className="grid gap-12 md:grid-cols-[0.48fr_1fr] md:items-start">
 
               <div className="space-y-4">
-                <p className="font-home-mono text-xs font-medium uppercase tracking-[0.25em] text-violet-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-400">
                   How it works
                 </p>
-                <h2 className="font-home-display text-3xl font-bold tracking-[-0.03em] text-white md:text-4xl">
+                <h2 className="font-home-display text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
                   A calmer workflow for messy email.
                 </h2>
-                <p className="font-home-body text-base leading-7 text-zinc-500">
+                <p className="font-home-body text-sm leading-7 text-slate-500">
                   The product reduces noise by structuring the next decision, not by pretending
                   every email can be solved with one automatic rule.
                 </p>
@@ -453,28 +464,23 @@ export default function HomePage({ onStart }) {
                 whileInView="visible"
                 viewport={{ once: true, margin: '-40px' }}
                 variants={stagger}
-                className="grid gap-4"
+                className="space-y-4"
               >
-                {workflowSteps.map((ws, i) => {
-                  const StepIcon = ws.icon;
+                {steps.map((s, i) => {
+                  const StepIcon = s.icon;
                   return (
                     <motion.div
-                      key={ws.step}
+                      key={s.n}
                       variants={fadeUp}
                       custom={i}
-                      className="group flex items-start gap-5 rounded-2xl border border-white/5 bg-white/[0.02] px-6 py-5 transition-colors hover:border-violet-500/20 hover:bg-white/[0.04]"
+                      className="flex items-start gap-5 rounded-xl border border-white/[0.04] bg-white/[0.02] px-5 py-4 transition-colors hover:border-white/[0.08] hover:bg-white/[0.04]"
                     >
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-500/20 font-home-mono text-sm font-semibold text-violet-400">
-                        {ws.step}
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500/20 to-blue-500/20 text-sm font-bold text-violet-400">
+                        {s.n}
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <StepIcon className="h-4 w-4 text-zinc-600" aria-hidden="true" />
-                          <h3 className="font-home-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
-                            {ws.label}
-                          </h3>
-                        </div>
-                        <p className="mt-1 font-home-body text-sm leading-7 text-zinc-500">{ws.detail}</p>
+                      <div className="flex items-start gap-2 pt-1.5">
+                        <StepIcon className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" aria-hidden="true" />
+                        <p className="font-home-body text-sm leading-7 text-slate-400">{s.label}</p>
                       </div>
                     </motion.div>
                   );
@@ -483,23 +489,27 @@ export default function HomePage({ onStart }) {
             </div>
           </div>
         </div>
-      </RevealSection>
+      </Reveal>
 
-      {/* ════════════════ FINAL CTA ════════════════ */}
-      <RevealSection className="px-4 pb-24 pt-8 md:px-6 md:pb-32" delay={0.15}>
-        <div className="mx-auto max-w-5xl">
-          <div className="home-glow-border">
-            <div className="relative z-10 flex flex-col gap-8 rounded-[1.25rem] bg-[#0a0a0a] px-8 py-12 lg:flex-row lg:items-end lg:justify-between lg:px-12 lg:py-14">
+      {/* ═══════════════════ FINAL CTA ═══════════════════ */}
+      <Reveal className="relative z-10 px-5 pb-28 pt-8 md:px-8 md:pb-36" delay={0.1}>
+        <div className="mx-auto max-w-4xl">
+          <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-[#0f1d32] to-[#0B1120] p-10 md:p-14">
+            {/* Internal glow */}
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-violet-500/10 blur-3xl" />
+
+            <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="space-y-4">
-                <p className="font-home-mono text-xs font-medium uppercase tracking-[0.25em] text-cyan-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-400">
                   Start with the real workflow
                 </p>
-                <h2 className="max-w-[18ch] font-home-display text-3xl font-bold tracking-[-0.03em] text-white md:text-4xl">
+                <h2 className="max-w-[18ch] font-home-display text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
                   Open the review workspace and inspect the next decision.
                 </h2>
-                <p className="max-w-2xl font-home-body text-base leading-8 text-zinc-500">
-                  Connect Google only when you are ready to review with context. The product keeps
-                  the path focused from the first click.
+                <p className="max-w-lg font-home-body text-sm leading-7 text-slate-500">
+                  Connect Google only when you are ready to review with context. The product
+                  keeps the path focused from the first click.
                 </p>
               </div>
 
@@ -507,25 +517,31 @@ export default function HomePage({ onStart }) {
                 type="button"
                 onClick={onStart}
                 size="lg"
-                className="group h-13 shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 px-8 text-base font-semibold text-white shadow-[0_0_32px_-8px_rgba(34,211,238,0.5)] transition-all hover:shadow-[0_0_48px_-4px_rgba(34,211,238,0.6)]"
+                className="group shrink-0 rounded-full bg-gradient-to-r from-teal-500 to-blue-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-teal-500/20 transition-shadow hover:shadow-teal-500/35"
               >
                 Continue with Google
-                <ArrowRight
-                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
               </Button>
             </div>
           </div>
         </div>
-      </RevealSection>
+      </Reveal>
 
-      {/* ── Footer micro ── */}
-      <footer className="border-t border-white/5 px-4 py-8 text-center md:px-6">
-        <p className="font-home-mono text-xs tracking-wider text-zinc-600">
+      {/* ── Footer ── */}
+      <footer className="relative z-10 border-t border-white/[0.04] px-5 py-8 text-center md:px-8">
+        <p className="text-xs text-slate-600">
           Email Cleaner · Review workspace for high-signal email decisions
         </p>
       </footer>
     </div>
+  );
+}
+
+/* ── Tiny inline component used in the hero badge (avoids adding it to the lucide import list) */
+function Zap(props) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+    </svg>
   );
 }
