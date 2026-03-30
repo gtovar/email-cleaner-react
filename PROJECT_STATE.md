@@ -1,6 +1,6 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-29 13:17 CST — Commit: pending
+Last updated: 2026-03-30 10:10 CST — Commit: pending
 
 ---
 
@@ -12,8 +12,8 @@ COMMIT: e6fffa6
 ENVIRONMENT: feature/ux-review-bundle-experiments
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: feat/ux-review-bundle-experiments
-WORKING_TREE_STATUS: Clean (pending redesign)
-TEST_STATUS: PASS (frontend test suite intact)
+WORKING_TREE_STATUS: Dirty (Glass & Void redesign implemented, pending commit)
+TEST_STATUS: PASS (npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -325,7 +325,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Review the `implementation_plan.md` for the new Home Page redesign and decide the visual direction before modifying `HomePage.jsx` again.
+➡️ Explore a second visual direction for the HomePage redesign after committing the Glass & Void iteration.
 
 ---
 
@@ -372,3 +372,4 @@ Notes:
 - 2026-03-24 14:47 CST — Committed the HU_07B follow-up fix as `0138a5e` and left the feature branch clean with PR 47 open against `develop` (commit: 0138a5e)
 - 2026-03-28 14:46 CST — Local experimental UX remediation updated the authenticated loop, improved decision quality in `Suggestions`, reordered `ReceiptReviewDialog`, reduced `Settings` to scope-true workflow preferences, and revalidated the affected slices with targeted Vitest plus local Playwright visual passes (commit: pending)
 - 2026-03-30 08:50 CST — Checkpointed the experimental auth funnel and home slice to establish a clean commit boundary before proceeding with a new high-fidelity visual redesign iteration.
+- 2026-03-30 10:10 CST — Implemented the Glass & Void (dark mode) HomePage redesign with framer-motion animations, glassmorphism cards, gradient borders, and grid mesh background; tests pass but visual direction not selected as final.

@@ -36,11 +36,12 @@ npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- The local public auth funnel and home UX slice have been checkpointed.
-- The next step is planning and executing a high-fidelity visual redesign for `HomePage.jsx`.
+- The Glass & Void (dark mode) HomePage redesign is implemented and tests pass.
+- Visual direction was not selected as final by the user.
+- The next step is exploring a second visual proposal.
 
 ## 5) Immediate Next Step
-➡️ Decide the visual direction using the newly generated `implementation_plan.md` (e.g. Glass & Void vs Editorial Bento) and proceed with the new UI iteration.
+➡️ Commit the Glass & Void iteration and then implement a new visual direction for `HomePage.jsx`.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`

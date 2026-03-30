@@ -21,12 +21,10 @@ describe('HomePage', () => {
       screen.getByText(/Review important email before anything happens/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/One place to triage what actually matters\./i)
+      screen.getByText(/Next decisions, already framed\./i)
     ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: /Stop explaining\.\s*Start pulling\./i })
-    ).not.toBeInTheDocument();
 
+    /* Three "Continue with Google" CTAs: nav bar, hero, and final CTA */
     expect(screen.getAllByRole('button', { name: /Continue with Google/i })).toHaveLength(3);
     expect(screen.getByRole('button', { name: /See how the review works/i })).toBeInTheDocument();
   });
