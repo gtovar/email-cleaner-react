@@ -1,424 +1,283 @@
-import { useCallback } from 'react';
 import {
   ArrowRight,
   CheckCircle2,
-  Clock3,
   Eye,
   Mail,
-  ShieldCheck,
+  MessageSquareText,
+  Shield,
   Sparkles,
 } from 'lucide-react';
 import { Button } from '../components/ui/button.jsx';
 import { Card, CardContent } from '../components/ui/card.jsx';
 
-const trustPoints = [
+const trustSignals = [
   {
-    icon: ShieldCheck,
-    title: 'Not silent automation',
-    description:
-      'Important actions stay visible instead of happening quietly in the background.',
+    icon: Eye,
+    title: 'Review before action',
+    body: 'Open the email, inspect the evidence, and decide with context instead of guessing from a subject line.',
+  },
+  {
+    icon: Shield,
+    title: 'Sensitive actions stay explicit',
+    body: 'Nothing important is hidden behind blind automation. The product keeps critical confirmation steps visible.',
   },
   {
     icon: Sparkles,
-    title: 'Not another noisy inbox',
-    description:
-      'The goal is to narrow attention to what deserves review first.',
-  },
-  {
-    icon: Eye,
-    title: 'Yes to visible decisions',
-    description:
-      'Context, reasons, and the next step stay on screen while you move faster.',
+    title: 'Suggestions first, inbox second',
+    body: 'The workspace starts with the next decisions that matter, then lets you drop into manual review only when needed.',
   },
 ];
 
-const steps = [
-  {
-    title: 'Continue with Google',
-    description:
-      'Sign in and land directly in the review workspace.',
-  },
-  {
-    title: 'Review suggestions and context',
-    description:
-      'See what deserves attention first and why it matters.',
-  },
-  {
-    title: 'Act on important decisions',
-    description:
-      'Review first, then confirm important actions explicitly.',
-  },
+const workflowSteps = [
+  'Connect your workspace with Google.',
+  'Review the suggestions with visible context and confidence.',
+  'Confirm, ignore, or inspect the original email before acting.',
 ];
-
-const heroChecklist = [
-  'Google sign-in opens directly.',
-  'A prioritized review workspace appears right after.',
-  'Important actions stay explicit.',
-];
-
-const decisionProof = {
-  label: 'One concrete decision path',
-  title: 'From mixed inbox noise to one review-ready message',
-  description:
-    'Instead of scanning a mixed inbox and guessing what matters, the workspace surfaces one message, shows why it deserves attention, and keeps the next step visible.',
-  email: 'Monthly seat invoice ready for review',
-  why: 'Recurring billing, financial impact, and a message that should be reviewed before any action.',
-  nextAction: 'Review first, then decide from context.',
-};
-
-const proofFlow = [
-  {
-    label: 'Inbox',
-    value: 'Mixed signals',
-  },
-  {
-    label: 'Workspace',
-    value: 'Reason stays visible',
-  },
-  {
-    label: 'Decision',
-    value: 'Action stays explicit',
-  },
-];
-
-const signalReasons = ['Recurring billing', 'Financial impact', 'Needs review before action'];
 
 const previewRows = [
   {
-    sender: 'billing@workspace.io',
-    subject: 'Monthly seat invoice ready for review',
-    note: 'Needs review first',
-    tone: 'border-[#f97316]/40 bg-[#fff7ed]',
+    sender: 'payments@northstar.io',
+    subject: 'Invoice 8821 pending review',
+    status: 'High priority',
+    tone: 'bg-amber-100 text-amber-900',
   },
   {
-    sender: 'newsletter@productweekly.com',
-    subject: 'Issue #142 with repeated promotions',
-    note: 'Likely cleanup candidate',
-    tone: 'border-[#bfdbfe] bg-[#eff6ff]',
+    sender: 'ops@warehouse.mx',
+    subject: 'Receipt requires manual follow-up',
+    status: 'Needs receipt check',
+    tone: 'bg-sky-100 text-sky-900',
   },
   {
-    sender: 'updates@service.app',
-    subject: 'Security summary and activity digest',
-    note: 'Worth checking with context',
-    tone: 'border-slate-200 bg-white',
+    sender: 'support@vendor.example',
+    subject: 'General update, low urgency',
+    status: 'Manual inbox context',
+    tone: 'bg-emerald-100 text-emerald-900',
   },
 ];
 
-function TrustCard({ icon, title, description }) {
-  const IconComponent = icon;
+function SignalCard({ icon, title, body }) {
+  const Icon = icon;
 
   return (
-    <Card className="h-full border-slate-200/80 bg-white/95 shadow-[0_20px_60px_-40px_rgba(37,99,235,0.4)]">
-      <CardContent className="space-y-4 p-6">
-        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eff6ff] text-[#2563eb]">
-          <IconComponent className="h-5 w-5" aria-hidden="true" />
+    <Card className="h-full rounded-[1.75rem] border border-[#d7e6e2] bg-white/88 shadow-[0_24px_70px_-52px_rgba(15,23,42,0.45)] backdrop-blur">
+      <CardContent className="flex h-full flex-col gap-4 p-6">
+        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <Icon className="h-5 w-5" aria-hidden="true" />
         </div>
         <div className="space-y-2">
-          <h3 className="font-home-display text-lg font-semibold text-slate-900">{title}</h3>
-          <p className="font-home-body text-base leading-7 text-slate-600">{description}</p>
+          <h3 className="font-home-display text-2xl font-semibold tracking-[-0.04em] text-slate-950">
+            {title}
+          </h3>
+          <p className="font-home-body text-base leading-7 text-slate-600">{body}</p>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-function PreviewRow({ sender, subject, note, tone, className = '' }) {
-  return (
-    <div
-      className={`flex flex-col gap-3 rounded-[1.25rem] border p-4 md:flex-row md:items-center md:justify-between ${tone} ${className}`}
-    >
-      <div className="min-w-0 space-y-1">
-        <p className="font-home-display text-sm font-semibold text-slate-900">{sender}</p>
-        <p className="font-home-body text-sm text-slate-700">{subject}</p>
-      </div>
-      <div className="flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600">
-        <CheckCircle2 className="h-3.5 w-3.5 text-[#2563eb]" aria-hidden="true" />
-        <span>{note}</span>
-      </div>
-    </div>
-  );
+function scrollToId(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 }
 
 export default function HomePage({ onStart }) {
-  const handleScroll = useCallback((id) => {
-    const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900">
-      <section className="relative overflow-hidden border-b border-slate-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_34%),radial-gradient(circle_at_top_right,_rgba(249,115,22,0.14),_transparent_22%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.96))] px-4 pb-20 pt-8 md:pb-28 md:pt-12">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2563eb]/50 to-transparent" />
-        <div className="mx-auto max-w-6xl">
-          <div className="flex items-center justify-between gap-6">
+    <div className="min-h-screen overflow-x-hidden bg-[#f6efe6] text-slate-950">
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,#f6efe6_0%,#f2e6d7_34%,#efe6db_68%,#f7f3ee_100%)]" />
+      <div className="absolute inset-x-0 top-0 -z-10 h-[42rem] bg-[radial-gradient(circle_at_18%_12%,rgba(245,109,72,0.26),transparent_28%),radial-gradient(circle_at_82%_16%,rgba(31,168,146,0.18),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.3),transparent_65%)]" />
+
+      <section className="relative px-4 pb-16 pt-6 md:px-6 md:pb-24 md:pt-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 flex items-center justify-between gap-4 rounded-full border border-black/10 bg-white/70 px-4 py-3 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.3)] backdrop-blur md:px-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#2563eb] text-white shadow-[0_20px_40px_-24px_rgba(37,99,235,0.9)]">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#111111] text-[#f7f1ea] shadow-sm">
                 <Mail className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <p className="font-home-display text-base font-semibold text-slate-950">Email Cleaner</p>
-                <p className="font-home-body text-sm text-slate-500">
-                  Decision support for email.
+                <p className="font-home-display text-base font-semibold tracking-[-0.03em]">
+                  Email Cleaner
+                </p>
+                <p className="font-home-body text-sm text-slate-600">
+                  Review workspace for high-signal email decisions.
                 </p>
               </div>
             </div>
 
             <Button
+              type="button"
               onClick={onStart}
-              className="hidden h-11 rounded-full bg-[#f97316] px-6 text-sm font-semibold text-white shadow-[0_16px_40px_-24px_rgba(249,115,22,0.95)] hover:bg-[#ea6a12] md:inline-flex"
+              className="hidden rounded-full bg-[#111111] px-5 text-[#f7f1ea] hover:bg-black md:inline-flex"
             >
               Continue with Google
             </Button>
           </div>
 
-          <div className="mt-16 grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#bfdbfe] bg-white/90 px-4 py-2 text-sm text-[#1d4ed8] shadow-sm">
-                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                <span className="font-home-body font-semibold">
-                  Google sign-in, then a review-first workspace
-                </span>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start">
+            <div className="space-y-7 pt-4 lg:pt-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/80 px-3 py-2 text-sm text-slate-700 shadow-sm">
+                <CheckCircle2 className="h-4 w-4 text-[#f56d48]" aria-hidden="true" />
+                Review important email before anything happens
               </div>
 
-              <div className="space-y-6">
-                <h1 className="font-home-display text-4xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 md:text-6xl">
-                  Review important email before anything happens
+              <div className="space-y-5">
+                <h1 className="max-w-[9ch] text-balance font-home-display text-5xl font-semibold leading-[0.84] tracking-[-0.085em] text-[#111111] md:text-[5.6rem]">
+                  Make inbox decisions with context, not panic.
                 </h1>
-                <p className="font-home-body max-w-2xl text-lg leading-8 text-slate-600 md:text-xl">
-                  Open Google and land in a workspace that surfaces what needs attention,
-                  shows why it matters, and keeps the next action visible.
-                </p>
-                <p className="font-home-display text-base font-semibold text-slate-950">
-                  Not inbox automation. Decision support for your inbox.
+                <p className="max-w-xl font-home-body text-lg leading-8 text-slate-700 md:text-xl">
+                  Email Cleaner surfaces the emails that deserve attention, shows why they matter,
+                  and keeps the final action in your hands.
                 </p>
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Button
+                  type="button"
                   onClick={onStart}
                   size="lg"
-                  className="h-12 rounded-full bg-[#f97316] px-7 text-base font-semibold text-white shadow-[0_18px_40px_-24px_rgba(249,115,22,1)] hover:bg-[#ea6a12]"
+                  className="h-12 rounded-full bg-[#111111] px-7 text-base text-[#f7f1ea] shadow-[0_18px_40px_-24px_rgba(17,17,17,0.7)] hover:bg-black"
                 >
-                  <span>Continue with Google</span>
+                  Continue with Google
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
                 <Button
+                  type="button"
                   variant="outline"
                   size="lg"
-                  onClick={() => handleScroll('how-it-works')}
-                  className="h-12 rounded-full border-slate-300 bg-white/90 px-7 text-base text-slate-700 hover:bg-white"
+                  onClick={() => scrollToId('how-it-works')}
+                  className="h-12 rounded-full border-black/10 bg-white/75 px-7 text-base text-slate-700 hover:bg-white"
                 >
-                  See how review works
+                  See how the review works
                 </Button>
               </div>
 
-              <p className="font-home-body text-sm text-slate-500">
-                Google sign-in opens directly. The review workspace comes right after sign-in.
-              </p>
-
-              <div className="rounded-[1.5rem] border border-white/80 bg-white/80 p-5 shadow-[0_20px_60px_-42px_rgba(15,23,42,0.55)] backdrop-blur">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="space-y-1">
-                    <p className="font-home-display text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      Product truth
-                    </p>
-                    <p className="font-home-body text-base leading-7 text-slate-700">
-                      Faster review without hidden actions.
-                    </p>
-                  </div>
-                  <div className="hidden items-center gap-2 rounded-full bg-[#eff6ff] px-3 py-2 text-sm font-semibold text-[#1d4ed8] sm:inline-flex">
-                    <Clock3 className="h-4 w-4" aria-hidden="true" />
-                    <span>No hidden cleanup flow</span>
-                  </div>
+              <div className="grid gap-3 sm:grid-cols-[1.1fr_0.9fr]">
+                <div className="rounded-[1.8rem] border border-black/10 bg-[#111111] p-5 text-[#f7f1ea] shadow-[0_26px_80px_-46px_rgba(17,17,17,0.8)]">
+                  <p className="font-home-display text-xs font-semibold uppercase tracking-[0.28em] text-[#f2b59f]">
+                    Product truth
+                  </p>
+                  <p className="mt-3 max-w-sm font-home-display text-2xl font-semibold leading-[0.95] tracking-[-0.05em]">
+                    Not a magic inbox. A sharper review desk.
+                  </p>
+                  <p className="mt-3 font-home-body text-sm leading-6 text-[#ddd0c5]">
+                    The design should feel more like an editorial control room than a generic SaaS
+                    homepage.
+                  </p>
                 </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  {heroChecklist.map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-[1.25rem] border border-slate-200 bg-slate-50/90 px-4 py-4"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-[#2563eb]">
-                          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
-                        </div>
-                        <p className="font-home-body text-sm leading-6 text-slate-700">{item}</p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="rounded-[1.8rem] border border-black/10 bg-white/75 p-5 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.35)]">
+                  <p className="font-home-display text-xs font-semibold uppercase tracking-[0.28em] text-[#f56d48]">
+                    Visible value
+                  </p>
+                  <div className="mt-3 space-y-3 font-home-body text-sm leading-6 text-slate-700">
+                    <p>Suggestions first.</p>
+                    <p>Evidence stays visible.</p>
+                    <p>Sensitive actions remain explicit.</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="absolute inset-x-6 top-8 h-32 rounded-full bg-[#2563eb]/15 blur-3xl" />
-              <div className="absolute -left-4 top-20 hidden rounded-[1.25rem] border border-white/80 bg-white/95 px-4 py-3 shadow-[0_22px_50px_-32px_rgba(37,99,235,0.6)] lg:block">
-                <p className="font-home-display text-xs font-semibold uppercase tracking-[0.2em] text-[#1d4ed8]">
-                  Review-first
-                </p>
-                <p className="mt-1 font-home-body text-sm text-slate-600">
-                  Context before action
-                </p>
-              </div>
-              <Card className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/90 shadow-[0_30px_80px_-40px_rgba(37,99,235,0.42)] backdrop-blur">
-                <div className="border-b border-slate-200/80 bg-slate-950 px-6 py-4 text-white">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <p className="font-home-display text-sm font-semibold">Public preview</p>
-                      <p className="font-home-body text-sm text-slate-300">
-                        A review-first workspace after Google sign-in
-                      </p>
-                    </div>
-                    <div className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-slate-100">
-                      Visible decisions
-                    </div>
-                  </div>
-                </div>
+            <div className="relative lg:pl-6">
+              <div className="absolute left-[8%] top-6 hidden h-48 w-48 rounded-full border border-black/8 bg-white/20 lg:block" />
+              <div className="absolute right-0 top-0 hidden h-24 w-24 rounded-[2rem] bg-[#f56d48] lg:block" />
+              <div className="absolute bottom-12 left-0 hidden h-20 w-20 rounded-full bg-[#1fa892] lg:block" />
 
-                <CardContent className="space-y-5 p-6">
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 py-4">
-                      <p className="font-home-display text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        After sign-in
-                      </p>
-                      <p className="mt-2 font-home-display text-lg font-semibold text-slate-950">
-                        One review queue
-                      </p>
-                    </div>
-                    <div className="rounded-[1.25rem] border border-[#bfdbfe] bg-[#eff6ff] px-4 py-4">
-                      <p className="font-home-display text-xs font-semibold uppercase tracking-[0.18em] text-[#1d4ed8]">
-                        Current signal
-                      </p>
-                      <p className="mt-2 font-home-display text-lg font-semibold text-slate-950">
-                        Billing deserves review
-                      </p>
-                    </div>
-                    <div className="rounded-[1.25rem] border border-[#fed7aa] bg-[#fff7ed] px-4 py-4">
-                      <p className="font-home-display text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        Next step
-                      </p>
-                      <p className="mt-2 font-home-display text-lg font-semibold text-slate-950">
-                        Review before action
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(135deg,_rgba(37,99,235,0.08),_rgba(249,115,22,0.1))] p-5">
-                    <p className="font-home-display text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      Product preview
+              <div className="relative overflow-hidden rounded-[2.4rem] border border-black/10 bg-[linear-gradient(145deg,#fff8f1_0%,#f6ecdf_56%,#f1e5d8_100%)] p-4 shadow-[0_40px_120px_-56px_rgba(15,23,42,0.55)] md:p-5">
+                <div className="grid gap-4 lg:grid-cols-[0.78fr_1.22fr]">
+                  <div className="rounded-[1.8rem] bg-[#111111] p-5 text-[#f7f1ea]">
+                    <p className="font-home-display text-xs font-semibold uppercase tracking-[0.28em] text-[#f2b59f]">
+                      Review queue preview
                     </p>
-                    <p className="mt-3 font-home-display text-2xl font-semibold text-slate-950">
-                      The reason stays visible while you decide
-                    </p>
-                    <p className="mt-3 font-home-body text-sm leading-6 text-slate-600">
-                      The workspace does not just surface a message. It shows why this one
-                      deserves attention and keeps the decision explicit.
+                    <h2 className="mt-3 max-w-[10ch] font-home-display text-3xl font-semibold leading-[0.9] tracking-[-0.06em]">
+                      One place to triage what actually matters.
+                    </h2>
+                    <p className="mt-4 font-home-body text-sm leading-6 text-[#d6c8bc]">
+                      The home should feel like the first frame of the product, not a marketing
+                      template pasted on top of it.
                     </p>
                   </div>
 
-                  <div className="space-y-3">
-                    {previewRows.map((row, index) => (
-                      <PreviewRow
-                        key={row.sender}
-                        {...row}
-                        className={index === 2 ? 'hidden md:flex' : ''}
-                      />
+                  <div className="rounded-[1.8rem] border border-black/10 bg-white/82 p-4">
+                    <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div>
+                      <p className="font-home-display text-xs font-semibold uppercase tracking-[0.24em] text-[#1fa892]">
+                        Suggestion board
+                      </p>
+                      <h2 className="mt-2 font-home-display text-3xl font-semibold tracking-[-0.05em] text-slate-950">
+                        Next decisions, already framed.
+                      </h2>
+                    </div>
+                    <div className="hidden rounded-full bg-[#f2f4f2] px-3 py-1 text-xs font-semibold text-slate-700 md:block">
+                      Suggestions
+                    </div>
+                  </div>
+
+                    <div className="mt-5 space-y-3">
+                    {previewRows.map((row) => (
+                      <div
+                        key={row.subject}
+                        className="rounded-[1.35rem] border border-slate-200 bg-[#fcfaf7] px-4 py-4 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.25)]"
+                      >
+                        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                          <div className="min-w-0">
+                            <p className="truncate font-home-display text-sm font-semibold text-slate-900">
+                              {row.sender}
+                            </p>
+                            <p className="mt-1 text-sm text-slate-600">{row.subject}</p>
+                          </div>
+                          <span
+                            className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ${row.tone}`}
+                          >
+                            {row.status}
+                          </span>
+                        </div>
+                      </div>
                     ))}
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-                    <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50 p-4">
-                      <p className="font-home-display text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        Why this one was surfaced
-                      </p>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {signalReasons.map((reason) => (
-                          <span
-                            key={reason}
-                            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700"
-                          >
-                            {reason}
-                          </span>
-                        ))}
+                    <div className="mt-5 grid gap-3 md:grid-cols-2">
+                      <div className="rounded-[1.5rem] bg-[#f56d48] p-4 text-[#fff6ef]">
+                        <p className="font-home-display text-xs font-semibold uppercase tracking-[0.24em] text-white/70">
+                          Why this feels different
+                        </p>
+                        <p className="mt-3 font-home-body text-sm leading-6 text-white/90">
+                          The composition is asymmetrical on purpose. It should feel sharper,
+                          warmer, and less interchangeable.
+                        </p>
+                      </div>
+                      <div className="rounded-[1.5rem] bg-[#1f2c2a] p-4 text-[#eef6f3]">
+                        <p className="font-home-display text-xs font-semibold uppercase tracking-[0.24em] text-[#8ce1d1]">
+                          Visible controls
+                        </p>
+                        <div className="mt-3 flex items-center gap-2 text-sm text-[#d6ede8]">
+                          <MessageSquareText className="h-4 w-4 text-[#8ce1d1]" aria-hidden="true" />
+                          Receipt review and manual send remain explicit.
+                        </div>
                       </div>
                     </div>
-                    <div className="rounded-[1.25rem] border border-[#fed7aa] bg-[#fff7ed] p-4">
-                      <p className="font-home-display text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        Visible next action
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-[1.1fr_0.9fr]">
+                  <div className="rounded-[1.8rem] border border-black/10 bg-white/78 p-5 backdrop-blur">
+                    <p className="font-home-display text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                      Design intent
+                    </p>
+                    <p className="mt-3 max-w-lg font-home-body text-base leading-7 text-slate-700">
+                      Stronger graphic design without fake claims: warmer palette, harder shapes,
+                      layered surfaces, and a layout that looks selected rather than default.
+                    </p>
+                  </div>
+                  <div className="rounded-[1.8rem] border border-black/10 bg-[#fff8f1] p-5">
+                    <div>
+                      <p className="font-home-display text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                        What stays true
                       </p>
-                      <p className="mt-3 font-home-display text-base font-semibold text-slate-950">
-                        Review invoice details before confirming anything.
-                      </p>
-                      <p className="mt-2 font-home-body text-sm leading-6 text-slate-600">
-                        The action stays explicit until you choose it.
-                      </p>
+                      <div className="mt-3 space-y-2 font-home-body text-sm leading-6 text-slate-700">
+                        <p>Review before action.</p>
+                        <p>Context before automation.</p>
+                        <p>Product first, brochure last.</p>
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 py-16 md:py-20">
-        <div className="mx-auto max-w-6xl rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.55)] md:p-8">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
-            <div className="space-y-4">
-              <p className="font-home-display text-sm font-semibold uppercase tracking-[0.22em] text-[#1d4ed8]">
-                What changes on screen
-              </p>
-              <h2 className="font-home-display text-3xl font-semibold tracking-[-0.03em] text-slate-950 md:text-4xl">
-                {decisionProof.title}
-              </h2>
-              <p className="font-home-body max-w-xl text-lg leading-8 text-slate-600">
-                {decisionProof.description}
-              </p>
-            </div>
-
-            <div className="grid gap-4">
-              <div className="rounded-[1.5rem] border border-[#bfdbfe] bg-[#eff6ff] p-5">
-                <p className="font-home-display text-sm font-semibold uppercase tracking-[0.18em] text-[#1d4ed8]">
-                  {decisionProof.label}
-                </p>
-                <p className="mt-3 font-home-display text-2xl font-semibold text-slate-950">
-                  {decisionProof.email}
-                </p>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                {proofFlow.map((step) => (
-                  <div
-                    key={step.label}
-                    className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4"
-                  >
-                    <p className="font-home-display text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      {step.label}
-                    </p>
-                    <p className="mt-3 font-home-display text-lg font-semibold text-slate-950">
-                      {step.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-                  <p className="font-home-display text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Why it matters
-                  </p>
-                  <p className="mt-3 font-home-body text-base leading-7 text-slate-700">
-                    {decisionProof.why}
-                  </p>
-                </div>
-                <div className="rounded-[1.5rem] border border-[#fed7aa] bg-[#fff7ed] p-5">
-                  <p className="font-home-display text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Visible next step
-                  </p>
-                  <p className="mt-3 font-home-body text-base leading-7 text-slate-700">
-                    {decisionProof.nextAction}
-                  </p>
                 </div>
               </div>
             </div>
@@ -426,131 +285,86 @@ export default function HomePage({ onStart }) {
         </div>
       </section>
 
-      <section id="trust-principles" className="px-4 py-16 md:py-20">
-        <div className="mx-auto max-w-6xl">
+      <section id="trust-principles" className="px-4 py-16 md:px-6 md:py-20">
+        <div className="mx-auto max-w-7xl">
           <div className="max-w-2xl space-y-4">
-            <p className="font-home-display text-sm font-semibold uppercase tracking-[0.22em] text-[#1d4ed8]">
-              Why this can earn trust
+            <p className="font-home-display text-sm font-semibold uppercase tracking-[0.28em] text-[#f56d48]">
+              Trust principles
             </p>
-            <h2 className="font-home-display text-3xl font-semibold tracking-[-0.03em] text-slate-950 md:text-4xl">
-              Built to surface the signal, not hide the decision
+            <h2 className="text-balance font-home-display text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-slate-950 md:text-5xl">
+              Designed for review, not for blind inbox automation.
             </h2>
             <p className="font-home-body text-lg leading-8 text-slate-600">
-              Most inbox tools promise automation. Email Cleaner keeps the message, the reason,
-              and the decision visible.
+              The first screen should make the product promise obvious: clearer review, less noise,
+              and no hidden loss of control.
             </p>
           </div>
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {trustPoints.map((point) => (
-              <TrustCard key={point.title} {...point} />
+          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+            {trustSignals.map((signal) => (
+              <SignalCard key={signal.title} {...signal} />
             ))}
           </div>
         </div>
       </section>
 
-      <section id="how-it-works" className="border-y border-slate-200/80 bg-white px-4 py-16 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start">
-            <div className="space-y-5">
-              <p className="font-home-display text-sm font-semibold uppercase tracking-[0.22em] text-[#1d4ed8]">
-                How it works
-              </p>
-              <h2 className="font-home-display text-3xl font-semibold tracking-[-0.03em] text-slate-950 md:text-4xl">
-                What happens after you click Google
-              </h2>
-              <p className="font-home-body text-lg leading-8 text-slate-600">
-                The path is short: sign in, land in the review workspace, and decide from context.
-              </p>
-            </div>
-
-            <div className="grid gap-5">
-              {steps.map((step, index) => (
-                <div
-                  key={step.title}
-                  className="rounded-[1.5rem] border border-slate-200 bg-slate-50/90 p-6 shadow-[0_18px_40px_-36px_rgba(15,23,42,0.6)]"
-                >
-                  <div className="flex flex-col gap-4 md:flex-row md:items-start">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2563eb] text-sm font-semibold text-white">
-                      {index + 1}
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="font-home-display text-xl font-semibold text-slate-950">
-                        {step.title}
-                      </h3>
-                      <p className="font-home-body text-base leading-7 text-slate-600">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 py-20 md:py-24">
-        <div className="mx-auto max-w-4xl rounded-[2rem] border border-slate-200 bg-[linear-gradient(135deg,_rgba(37,99,235,0.08),_rgba(249,115,22,0.1))] p-8 text-center shadow-[0_30px_80px_-50px_rgba(15,23,42,0.65)] md:p-12">
-          <p className="font-home-display text-sm font-semibold uppercase tracking-[0.22em] text-[#1d4ed8]">
-            Ready to review with more control?
-          </p>
-          <h2 className="mt-4 font-home-display text-3xl font-semibold tracking-[-0.03em] text-slate-950 md:text-4xl">
-            Start with the message that deserves attention
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl font-home-body text-lg leading-8 text-slate-600">
-            Open Google sign-in and move directly into a review-first workspace where the
-            reason and the next action stay visible.
-          </p>
-          <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button
-              onClick={onStart}
-              size="lg"
-              className="h-12 rounded-full bg-[#f97316] px-7 text-base font-semibold text-white shadow-[0_18px_40px_-24px_rgba(249,115,22,1)] hover:bg-[#ea6a12]"
-            >
-              <span>Continue with Google</span>
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => handleScroll('how-it-works')}
-              className="h-12 rounded-full border-slate-300 bg-white/90 px-7 text-base text-slate-700 hover:bg-white"
-            >
-              Review the flow first
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t border-slate-200/80 bg-white px-4 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="flex items-center gap-3 text-slate-500">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#2563eb] text-white">
-              <Mail className="h-4 w-4" aria-hidden="true" />
-            </div>
-            <div>
-              <p className="font-home-display text-sm font-semibold text-slate-900">
-                Email Cleaner
-              </p>
-              <p className="font-home-body text-sm text-slate-500">
-                Decision support for email.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-6 font-home-body text-sm text-slate-500">
-            <a href="#trust-principles" className="transition-colors hover:text-slate-900">
-              Why it's different
-            </a>
-            <a href="#how-it-works" className="transition-colors hover:text-slate-900">
+      <section id="how-it-works" className="px-4 py-16 md:px-6 md:py-20">
+        <div className="mx-auto grid max-w-7xl gap-8 rounded-[2rem] border border-black/10 bg-white/78 p-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.45)] backdrop-blur lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:items-start">
+          <div className="space-y-4">
+            <p className="font-home-display text-sm font-semibold uppercase tracking-[0.28em] text-[#1fa892]">
               How it works
-            </a>
-            <a href="/login" className="transition-colors hover:text-slate-900">
-              Sign in
-            </a>
+            </p>
+            <h2 className="max-w-[12ch] text-balance font-home-display text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-slate-950">
+              A calmer workflow for messy email.
+            </h2>
+            <p className="font-home-body text-lg leading-8 text-slate-600">
+              The product reduces noise by structuring the next decision, not by pretending every
+              email can be solved with one automatic rule.
+            </p>
+          </div>
+
+          <div className="grid gap-4">
+            {workflowSteps.map((step, index) => (
+              <div
+                key={step}
+                className="flex items-start gap-4 rounded-[1.4rem] border border-slate-200 bg-[#fcfaf7] px-5 py-5"
+              >
+                <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#111111] text-sm font-semibold text-[#f7f1ea]">
+                  0{index + 1}
+                </div>
+                <p className="font-home-body text-base leading-7 text-slate-700">{step}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </footer>
+      </section>
+
+      <section className="px-4 pb-20 pt-6 md:px-6 md:pb-24">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 rounded-[2rem] border border-black/10 bg-[#111111] px-8 py-10 text-white shadow-[0_32px_100px_-60px_rgba(15,23,42,0.85)] lg:flex-row lg:items-end lg:justify-between">
+          <div className="space-y-3">
+            <p className="font-home-display text-sm font-semibold uppercase tracking-[0.28em] text-[#8ce1d1]">
+              Start with the real workflow
+            </p>
+            <h2 className="max-w-[14ch] text-balance font-home-display text-4xl font-semibold leading-[0.95] tracking-[-0.05em]">
+              Open the review workspace and inspect the next decision.
+            </h2>
+            <p className="max-w-2xl font-home-body text-lg leading-8 text-slate-300">
+              Connect Google only when you are ready to review with context. The product keeps the
+              path focused from the first click.
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            onClick={onStart}
+            size="lg"
+            className="h-12 rounded-full bg-[#f56d48] px-7 text-base text-white hover:bg-[#eb5f37]"
+          >
+            Continue with Google
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+      </section>
     </div>
   );
 }

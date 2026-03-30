@@ -221,5 +221,9 @@ Frontend: yes
 - **Done:** Repositioned LoginPage as the re-entry/exception screen for logout, session expiry, callback error, and deliberate /login access.
 - **Done:** Updated frontend tests and re-entry/state docs to match the new funnel behavior.
 - **Learned:** When a public entry screen already explains the product clearly, keeping a second pre-OAuth screen as a mandatory step adds funnel friction; the better pattern is direct OAuth for the normal path and a separate re-entry screen for exceptional auth states.
-- **Status:** PAUSADA
+- **Status:** CHECKPOINTED
 - **Next:** Review the mixed frontend working tree and cut a local commit boundary for the public auth funnel and home UX slice before starting another UI change.
+
+### [2026-03-30] Session Start
+- **Done:** Checkpointed the previous experimental UX changes to establish a clean state.
+- **Next:** Review `implementation_plan.md` and start building the new high-fidelity visual redesign for `HomePage.jsx`.

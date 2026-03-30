@@ -98,7 +98,7 @@ describe('App auth callback and session expiry flow', () => {
     await waitFor(() => {
       expect(
         screen.getByRole('heading', {
-          name: /Review important email before anything happens/i,
+          name: /Make inbox decisions with context, not panic\./i,
         })
       ).toBeInTheDocument();
       expect(screen.getAllByRole('button', { name: /Continue with Google/i })).toHaveLength(3);

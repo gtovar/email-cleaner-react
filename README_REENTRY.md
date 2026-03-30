@@ -36,13 +36,11 @@ npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- The experimental branch now contains a mixed local working tree across the UX remediation slices.
-- `Suggestions`, `Inbox`, `ReceiptReviewDialog`, and `Settings` have already been reworked locally and validated with targeted tests.
-- No remote action is intended from this checkpoint: no push, no merge, no PR update.
-- The next risk is not implementation uncertainty; it is letting more work accumulate before cutting a local checkpoint boundary.
+- The local public auth funnel and home UX slice have been checkpointed.
+- The next step is planning and executing a high-fidelity visual redesign for `HomePage.jsx`.
 
 ## 5) Immediate Next Step
-➡️ Review the mixed frontend working tree and cut a local commit boundary for the public auth funnel and home UX slice before starting another UI change.
+➡️ Decide the visual direction using the newly generated `implementation_plan.md` (e.g. Glass & Void vs Editorial Bento) and proceed with the new UI iteration.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`

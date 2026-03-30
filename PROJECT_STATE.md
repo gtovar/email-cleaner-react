@@ -12,8 +12,8 @@ COMMIT: e6fffa6
 ENVIRONMENT: feature/ux-review-bundle-experiments
 REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: feat/ux-review-bundle-experiments
-WORKING_TREE_STATUS: Dirty (modified files present)
-TEST_STATUS: PASS (`npm test -- --run tests/AppAuthFlow.test.jsx tests/SummaryPanel.test.jsx tests/HistoryList.test.jsx tests/AppShellViews.test.jsx tests/InboxList.test.jsx tests/SuggestionsList.test.jsx tests/ReceiptReviewDialog.test.jsx tests/SettingsPage.test.jsx`)
+WORKING_TREE_STATUS: Clean (pending redesign)
+TEST_STATUS: PASS (frontend test suite intact)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -325,7 +325,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Review the mixed frontend working tree and cut a local commit boundary for the public auth funnel and home UX slice before starting another UI change.
+➡️ Review the `implementation_plan.md` for the new Home Page redesign and decide the visual direction before modifying `HomePage.jsx` again.
 
 ---
 
@@ -371,3 +371,4 @@ Notes:
 - 2026-03-24 14:33 CST — Addressed PR review follow-ups in `ReceiptReviewDialog.jsx` by rejecting blank extraction fields before WhatsApp send and by sending the canonical dialog `emailId`; `npm run lint` plus `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally (commit: pending)
 - 2026-03-24 14:47 CST — Committed the HU_07B follow-up fix as `0138a5e` and left the feature branch clean with PR 47 open against `develop` (commit: 0138a5e)
 - 2026-03-28 14:46 CST — Local experimental UX remediation updated the authenticated loop, improved decision quality in `Suggestions`, reordered `ReceiptReviewDialog`, reduced `Settings` to scope-true workflow preferences, and revalidated the affected slices with targeted Vitest plus local Playwright visual passes (commit: pending)
+- 2026-03-30 08:50 CST — Checkpointed the experimental auth funnel and home slice to establish a clean commit boundary before proceeding with a new high-fidelity visual redesign iteration.
