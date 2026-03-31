@@ -82,7 +82,7 @@ function getConfidenceData(email) {
     return {
       label: 'Alta confianza',
       detail: `${percent}%`,
-      tone: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+      tone: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400',
       rank: 3,
     };
   }
@@ -90,14 +90,14 @@ function getConfidenceData(email) {
     return {
       label: 'Confianza media',
       detail: `${percent}%`,
-      tone: 'border-amber-200 bg-amber-50 text-amber-700',
+      tone: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
       rank: 2,
     };
   }
   return {
     label: 'Baja confianza',
     detail: `${percent}%`,
-    tone: 'border-rose-200 bg-rose-50 text-rose-700',
+    tone: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
     rank: 1,
   };
 }
@@ -109,7 +109,7 @@ function getSensitivityData(email) {
     return {
       label: 'Alta sensibilidad',
       detail: 'Accion destructiva',
-      tone: 'border-rose-200 bg-rose-50 text-rose-700',
+      tone: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
       rank: 3,
     };
   }
@@ -117,7 +117,7 @@ function getSensitivityData(email) {
     return {
       label: 'Alta supervision',
       detail: 'Requiere contexto humano',
-      tone: 'border-violet-200 bg-violet-50 text-violet-700',
+      tone: 'border-violet-500/20 bg-violet-500/10 text-violet-400',
       rank: 3,
     };
   }
@@ -125,14 +125,14 @@ function getSensitivityData(email) {
     return {
       label: 'Sensibilidad media',
       detail: 'Mantener visible',
-      tone: 'border-amber-200 bg-amber-50 text-amber-700',
+      tone: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
       rank: 2,
     };
   }
   return {
     label: 'Baja sensibilidad',
     detail: 'Limpieza reversible',
-    tone: 'border-slate-200 bg-slate-50 text-slate-700',
+    tone: 'border-white/10 bg-white/5 text-slate-300',
     rank: 1,
   };
 }
@@ -145,7 +145,7 @@ function getPriorityData(email) {
     return {
       label: 'Alta prioridad',
       detail: 'Necesita revision humana',
-      tone: 'border-violet-200 bg-violet-50 text-violet-700',
+      tone: 'border-violet-500/20 bg-violet-500/10 text-violet-400',
       rank: 4,
     };
   }
@@ -153,7 +153,7 @@ function getPriorityData(email) {
     return {
       label: 'Prioridad media',
       detail: 'Conviene mantenerlo visible',
-      tone: 'border-amber-200 bg-amber-50 text-amber-700',
+      tone: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
       rank: 3,
     };
   }
@@ -161,14 +161,14 @@ function getPriorityData(email) {
     return {
       label: 'Prioridad media',
       detail: 'Revisa antes de eliminar',
-      tone: 'border-rose-200 bg-rose-50 text-rose-700',
+      tone: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
       rank: 2,
     };
   }
   return {
     label: 'Baja prioridad',
     detail: 'Limpieza ligera',
-    tone: 'border-slate-200 bg-slate-50 text-slate-700',
+    tone: 'border-white/10 bg-white/5 text-slate-300',
     rank: 1,
   };
 }
@@ -382,13 +382,13 @@ function SuggestionsList() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-border/70 bg-card/80 p-4 shadow-sm backdrop-blur sm:p-5">
+      <div className="rounded-[1.25rem] border border-white/[0.06] bg-white/[0.02] p-4 text-slate-100 shadow-xl backdrop-blur-xl sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-teal-300">
               Decisiones guiadas
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-slate-400">
               Empieza aqui para limpiar mas rapido. Usa Inbox solo cuando necesites mas evidencia.
             </p>
           </div>
@@ -396,31 +396,31 @@ function SuggestionsList() {
             type="button"
             variant={compactView ? 'default' : 'ghost'}
             size="sm"
-            className="rounded-full px-4"
+            className="rounded-full border border-white/10 bg-white/5 px-4 text-slate-300 hover:bg-white/10 hover:text-white"
             onClick={() => setCompactView((prev) => !prev)}
           >
             Vista compacta
           </Button>
         </div>
         <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+          <div className="flex items-center justify-between text-xs font-medium text-slate-500">
             <span>{reviewedCount} de {initialCount} revisados</span>
             <span>{progressPercent}% completado</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-muted">
+          <div className="h-2 overflow-hidden rounded-full bg-slate-800">
             <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-teal-400 to-blue-500 transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
         </div>
-        <div className="mt-4 rounded-2xl border border-border/70 bg-muted/35 px-4 py-3 text-sm text-muted-foreground">
+        <div className="mt-4 rounded-2xl border border-white/8 bg-slate-900/60 px-4 py-3 text-sm text-slate-400">
           Si una tarjeta no te da suficiente confianza, abre el mismo correo en Inbox para ver
           el contexto completo antes de decidir.
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <span className="rounded-full bg-muted px-2.5 py-1">Ordenadas por prioridad de revision</span>
-          <span className="rounded-full bg-muted px-2.5 py-1">Confianza y sensibilidad visibles</span>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          <span className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1">Ordenadas por prioridad de revision</span>
+          <span className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1">Confianza y sensibilidad visibles</span>
         </div>
       </div>
 
@@ -433,7 +433,7 @@ function SuggestionsList() {
       {loading && (
         <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
-            <Card key={`loading-${index}`} className="p-6">
+            <Card key={`loading-${index}`} className="border-white/10 bg-white/[0.03] p-6 text-slate-100">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <Skeleton className="h-10 w-10 rounded-lg" />
@@ -479,39 +479,39 @@ function SuggestionsList() {
             return (
             <Card
               key={email.id}
-              className="overflow-hidden border-border/70 bg-card/95 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+              className="overflow-hidden border-white/[0.06] bg-white/[0.02] text-slate-100 shadow-xl shadow-black/20 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.12] hover:bg-white/[0.04]"
             >
             <CardHeader className="p-4 pb-3 sm:p-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary/10 bg-primary/5 shadow-inner">
-                    <Mail className="h-5 w-5 text-primary/80" aria-hidden="true" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-teal-400/12 bg-teal-400/10 shadow-inner">
+                    <Mail className="h-5 w-5 text-teal-300" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
                       Decision guiada
                     </p>
                     <p className="font-medium leading-snug truncate" title={sender}>
                       {sender}
                     </p>
                     <p
-                      className="text-sm text-muted-foreground line-clamp-2 break-words sm:truncate"
+                      className="text-sm text-slate-400 line-clamp-2 break-words sm:truncate"
                       title={email.subject}
                     >
                       {email.subject || '(Sin asunto)'}
                     </p>
                   </div>
                 </div>
-                <Badge variant="secondary" className="shrink-0 self-start rounded-full border border-border/60 bg-muted/60 px-2.5 py-1 text-[11px] font-semibold sm:self-auto">
+                <Badge variant="secondary" className="shrink-0 self-start rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[11px] font-semibold text-slate-200 sm:self-auto">
                   {priority.label}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="p-4 pb-4 sm:p-6 sm:pt-0">
               {!compactView && (
-                <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   {formatDate(email.date) && (
-                    <span className="rounded-full bg-muted px-2.5 py-1">{formatDate(email.date)}</span>
+                    <span className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1">{formatDate(email.date)}</span>
                   )}
                   <span className={`rounded-full border px-2.5 py-1 font-medium ${priority.tone}`}>
                     {priority.detail}
@@ -533,52 +533,52 @@ function SuggestionsList() {
                   )}
                 </div>
               )}
-              <div className="space-y-3 text-sm">
+                <div className="space-y-3 text-sm">
                 {!compactView && email.snippet && (
-                  <div className="rounded-2xl border border-border/60 bg-background p-3.5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <div className="rounded-2xl border border-white/8 bg-slate-950/60 p-3.5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                       Correo
                     </p>
-                    <p className="mt-1 text-foreground/80 line-clamp-3">{email.snippet}</p>
+                    <p className="mt-1 text-slate-300 line-clamp-3">{email.snippet}</p>
                   </div>
                 )}
 
-                <div className="rounded-2xl border border-primary/15 bg-primary/[0.05] p-3.5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="rounded-2xl border border-teal-400/15 bg-teal-400/[0.08] p-3.5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Sugerencia
                   </p>
-                  <p className="mt-1 text-base font-semibold text-foreground">{actionLabel}</p>
+                  <p className="mt-1 text-base font-semibold text-slate-100">{actionLabel}</p>
                 </div>
 
-                <div className="rounded-2xl border border-border/60 bg-background p-3.5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="rounded-2xl border border-white/8 bg-slate-950/60 p-3.5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Motivo
                   </p>
-                  <p className="mt-1 text-foreground/80 line-clamp-2">{reasonText}</p>
+                  <p className="mt-1 text-slate-300 line-clamp-2">{reasonText}</p>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-border/60 bg-background p-3.5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <div className="rounded-2xl border border-white/8 bg-slate-950/60 p-3.5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                       Confianza
                     </p>
-                    <p className="mt-1 font-medium text-foreground">{confidence.label}</p>
-                    <p className="mt-1 text-muted-foreground">{confidence.detail}</p>
+                    <p className="mt-1 font-medium text-slate-100">{confidence.label}</p>
+                    <p className="mt-1 text-slate-400">{confidence.detail}</p>
                   </div>
-                  <div className="rounded-2xl border border-border/60 bg-background p-3.5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <div className="rounded-2xl border border-white/8 bg-slate-950/60 p-3.5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                       Sensibilidad
                     </p>
-                    <p className="mt-1 font-medium text-foreground">{sensitivity.label}</p>
-                    <p className="mt-1 text-muted-foreground">{sensitivity.detail}</p>
+                    <p className="mt-1 font-medium text-slate-100">{sensitivity.label}</p>
+                    <p className="mt-1 text-slate-400">{sensitivity.detail}</p>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-border/60 bg-muted/[0.35] p-3.5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-3.5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Si apruebas
                   </p>
-                  <p className="mt-1 text-muted-foreground">{consequenceText}</p>
+                  <p className="mt-1 text-slate-400">{consequenceText}</p>
                 </div>
 
                 {!compactView && hasExtraContext && (
@@ -587,17 +587,17 @@ function SuggestionsList() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-auto rounded-full px-3 text-primary hover:bg-primary/5 hover:text-primary/80"
+                      className="h-auto rounded-full px-3 text-teal-300 hover:bg-teal-400/10 hover:text-teal-200"
                       onClick={() => setExpandedId((current) => (current === email.id ? null : email.id))}
                     >
                       {isExpanded ? 'Ocultar contexto' : 'Ver contexto'}
                     </Button>
                     {isExpanded && (
-                      <div className="rounded-2xl border border-border/70 bg-background p-3 text-sm text-muted-foreground shadow-inner">
+                      <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3 text-sm text-slate-400 shadow-inner">
                         <div className="space-y-3">
                           {email.snippet && (
                             <div>
-                              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                                 Vista previa completa
                               </p>
                               <p className="mt-1 leading-relaxed">{email.snippet}</p>
@@ -605,13 +605,13 @@ function SuggestionsList() {
                           )}
                           <div className="grid gap-3 sm:grid-cols-2">
                             <div>
-                              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                                 Tipo detectado
                               </p>
                               <p className="mt-1 leading-relaxed">{classificationLabel}</p>
                             </div>
                             <div>
-                              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                                 Prioridad de revision
                               </p>
                               <p className="mt-1 leading-relaxed">{priority.label} · {priority.detail}</p>
@@ -619,14 +619,14 @@ function SuggestionsList() {
                           </div>
                           {suggestion && (
                             <div>
-                              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                                 Evidencia del sistema
                               </p>
                               <p className="mt-1 leading-relaxed">{formatSuggestion(suggestion)}</p>
                             </div>
                           )}
                         </div>
-                        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                        <p className="mt-3 text-xs leading-relaxed text-slate-500">
                           Si todavia tienes dudas, continua en Inbox para leer este correo con mas detalle
                           antes de aprobar o descartar la sugerencia.
                         </p>
@@ -636,7 +636,7 @@ function SuggestionsList() {
                 )}
               </div>
             </CardContent>
-            <CardFooter className="flex-col gap-2 border-t border-border/60 bg-muted/[0.22] p-4 pt-4 sm:flex-row sm:p-6 sm:pt-4">
+            <CardFooter className="flex-col gap-2 border-t border-white/8 bg-white/[0.03] p-4 pt-4 sm:flex-row sm:p-6 sm:pt-4">
               <ConfirmButton
                 emailId={email.id}
                 action="accept"
@@ -649,7 +649,7 @@ function SuggestionsList() {
                   setProcessingId((current) => (current === email.id ? null : current));
                 }}
                 disabled={processingId === email.id || rejectLoadingId === email.id}
-                className="h-11 w-full flex-1 gap-2 rounded-xl sm:w-auto"
+                className="h-11 w-full flex-1 gap-2 rounded-xl border-0 bg-gradient-to-r from-teal-500 to-blue-500 text-white shadow-[0_18px_40px_-28px_rgba(45,212,191,0.7)] sm:w-auto"
                 icon={<Check className="h-4 w-4" aria-hidden="true" />}
               />
               <AlertDialog
@@ -659,14 +659,14 @@ function SuggestionsList() {
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="outline"
-                    className="h-11 w-full flex-1 gap-2 rounded-xl border-border/70 bg-background text-muted-foreground hover:text-foreground sm:w-auto"
+                    className="h-11 w-full flex-1 gap-2 rounded-xl border-white/10 bg-slate-950/50 text-slate-300 hover:bg-white/[0.04] hover:text-white sm:w-auto"
                     disabled={processingId === email.id || rejectLoadingId === email.id}
                   >
                     <X className="h-4 w-4" aria-hidden="true" />
                     No aplicar
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="border-slate-800 bg-[#0F172A] text-slate-100 sm:rounded-2xl">
                   <AlertDialogHeader>
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
@@ -676,9 +676,9 @@ function SuggestionsList() {
                         ¿Descartar esta sugerencia?
                       </AlertDialogTitle>
                     </div>
-                  <AlertDialogDescription className="pt-2">
+                  <AlertDialogDescription className="pt-2 text-slate-400">
                     Vas a descartar la sugerencia para:
-                    <span className="mt-2 block font-medium text-foreground">
+                    <span className="mt-2 block font-medium text-slate-200">
                       "{email.subject || 'Sin asunto'}"
                     </span>
                     <span className="mt-2 block">

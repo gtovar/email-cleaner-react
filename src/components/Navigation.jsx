@@ -11,13 +11,13 @@ import {
 
 export default function Navigation({ currentView, setView }) {
   const baseClasses =
-    'rounded-md px-3 py-2 text-sm font-medium transition-colors';
-  const activeClasses = 'bg-primary/10 text-primary';
-  const idleClasses = 'text-muted-foreground hover:text-foreground hover:bg-muted';
+    'rounded-md px-3 py-1.5 text-sm font-medium transition-colors';
+  const activeClasses = 'bg-teal-500/10 text-teal-400';
+  const idleClasses = 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]';
 
   return (
     <TooltipProvider>
-      <nav className="flex flex-wrap items-center gap-2 rounded-lg bg-muted px-2 py-1">
+      <nav className="flex flex-wrap items-center gap-1.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-1.5 py-1.5">
         <Tooltip>
           <TooltipTrigger asChild>
             <button

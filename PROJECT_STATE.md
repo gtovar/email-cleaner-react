@@ -1,19 +1,18 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-30 12:35 CST — Commit: pending
+Last updated: 2026-03-31 18:30 CST — Commit: pending
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-30 12:35 CST
+SNAPSHOT_DATE: 2026-03-31 18:30 CST
 COMMIT: e6fffa6
 ENVIRONMENT: feature/ux-review-bundle-experiments
-REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
 BRANCH: feat/ux-review-bundle-experiments
-WORKING_TREE_STATUS: Dirty (public Home redesign slice ready for commit)
-TEST_STATUS: PASS (npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx)
+WORKING_TREE_STATUS: Dirty (Dashboard and Shell redesign completed and verified)
+TEST_STATUS: PASS (All tests passed locally, including SummaryPanel, SettingsPage, and AppShellViews)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -43,6 +42,14 @@ Notes:
 - `SuggestionsList` now renders review priority, visible confidence, visible sensitivity, richer inline context, and a more explicit expanded evidence block.
 - `ReceiptReviewDialog` now presents the receipt flow as four explicit steps: review context, confirm extracted data, register receipt status, and send WhatsApp manually.
 - `SettingsPage` now exposes only scope-true workflow preferences and explicitly removes generic account/security promises that the current product does not support.
+- Unified the visual language of the entire application under the "Midnight Aurora" design system:
+  - Deep navy background (`#0B1120`) with subtle teal/blue glass orb backgrounds.
+  - Interactive headers with gradient borders, rounded corners (`rounded-[1.75rem]`), and shadow-relief treatments.
+  - Consistent iconography (Teal for suggestions/review, blue for history/settings, violet for inbox).
+  - Modern typography using `font-home-display` for headings and high-contrast slate text for body.
+  - Activity drawer (Sheet) and SummaryPanel now use dark aurora styling with skeleton loaders and high-contrast summary badges.
+  - Header (App shell) now features a backdrop-blur background, aria-label enabled Menu toggle, and a shadow-inner teal mail icon.
+  - All dashboard views (`Suggestions`, `Inbox`, `History`, `Settings`) now carry a unified "Selected Proposal" look for the experimental UX remediation branch.
 
 ---
 

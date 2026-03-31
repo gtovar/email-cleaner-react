@@ -7,10 +7,10 @@ describe('SettingsPage', () => {
   test('renders only settings aligned with the current product scope', () => {
     render(<SettingsPage />);
 
-    expect(screen.getByRole('heading', { name: 'Ajustes' })).toBeInTheDocument();
-    expect(screen.getByText('Preferencias de revision')).toBeInTheDocument();
-    expect(screen.getByText('Notificaciones del flujo')).toBeInTheDocument();
-    expect(screen.getByText('Lo que esta fuera de alcance aqui')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Ajustes/i })).toBeInTheDocument();
+    expect(screen.getByText('Revisión guiada')).toBeInTheDocument();
+    expect(screen.getByText('Notificaciones')).toBeInTheDocument();
+    expect(screen.getByText('Gestión de Cuenta')).toBeInTheDocument();
 
     expect(screen.queryByText('Cuenta')).not.toBeInTheDocument();
     expect(screen.queryByText('Seguridad')).not.toBeInTheDocument();

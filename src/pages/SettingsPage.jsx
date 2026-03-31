@@ -6,145 +6,145 @@ import { Badge } from '../components/ui/badge.jsx';
 
 export default function SettingsPage() {
   return (
-    <div className="container max-w-3xl py-8">
-      <div className="mb-8 space-y-2">
-        <span className="inline-flex w-fit rounded-full border border-border/70 bg-muted px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-          Alcance actual del producto
-        </span>
-        <h2 className="text-2xl font-semibold tracking-tight">Ajustes</h2>
-        <p className="text-sm text-muted-foreground">
-          Esta pantalla solo muestra preferencias coherentes con el flujo actual de revision.
-          No administra password, perfil ni seguridad avanzada.
-        </p>
-      </div>
+    <div className="container max-w-4xl space-y-6 py-8">
+      <section className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-[#0B1120] px-6 py-7 text-slate-100 shadow-[0_28px_80px_-52px_rgba(15,23,42,0.85)] md:px-8 md:py-8">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.18),transparent_28%),radial-gradient(circle_at_right,rgba(59,130,246,0.16),transparent_24%)]" />
+        <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="space-y-3">
+            <span className="inline-flex w-fit rounded-full border border-teal-500/20 bg-teal-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-teal-300">
+              Configuración del workspace
+            </span>
+            <h2 className="max-w-[13ch] font-home-display text-3xl font-bold leading-[0.96] tracking-[-0.03em] md:text-[2.7rem]">
+              Ajustes de Workflow
+            </h2>
+            <p className="max-w-xl text-sm leading-7 text-slate-400 md:text-base">
+              Esta pantalla muestra preferencias para el flujo actual de revisión.
+              Email Cleaner se enfoca en la limpieza de tu inbox, no en la gestión de cuenta.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div className="space-y-6">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="border-white/[0.06] bg-white/[0.02] text-slate-100 shadow-xl backdrop-blur-xl">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/10 text-teal-400">
                 <Sparkles className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <CardTitle>Preferencias de revision</CardTitle>
-                <CardDescription>
-                  Ajustes locales para la forma en que recorres sugerencias y casos manuales.
+                <CardTitle className="text-lg font-semibold text-slate-100">Revisión guiada</CardTitle>
+                <CardDescription className="text-slate-500">
+                  Preferencias para el loop de sugerencias.
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4 text-sm text-foreground">
+          <CardContent className="space-y-4 text-sm">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Vista compacta en sugerencias</div>
-                <div className="text-xs text-muted-foreground">
-                  Empieza con tarjetas mas densas cuando revises varias decisiones seguidas.
+                <div className="font-medium text-slate-200">Vista compacta</div>
+                <div className="text-xs text-slate-500">
+                  Tarjeta densas para revisión masiva.
                 </div>
               </div>
-              <Switch />
+              <Switch className="data-[state=checked]:bg-teal-500" />
             </div>
-            <Separator />
+            <Separator className="bg-white/5" />
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Mostrar primero casos especializados</div>
-                <div className="text-xs text-muted-foreground">
-                  Da prioridad visual a recibos y correos que requieren mas supervision humana.
+                <div className="font-medium text-slate-200">Casos especializados</div>
+                <div className="text-xs text-slate-500">
+                  Prioridad a recibos y alertas.
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="data-[state=checked]:bg-teal-500" />
             </div>
-            <Separator />
+            <Separator className="bg-white/5" />
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Recordar preferencia del panel Inbox</div>
-                <div className="text-xs text-muted-foreground">
-                  Conserva el contexto manual como vista de apoyo durante la sesion local.
+                <div className="font-medium text-slate-200">Contexto Inbox</div>
+                <div className="text-xs text-slate-500">
+                  Sincronizar vista con el panel manual.
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="data-[state=checked]:bg-teal-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-white/[0.06] bg-white/[0.02] text-slate-100 shadow-xl backdrop-blur-xl">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-400">
                 <Bell className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <CardTitle>Notificaciones del flujo</CardTitle>
-                <CardDescription>
-                  Preferencias visibles para los recorridos que hoy existen en la app.
+                <CardTitle className="text-lg font-semibold text-slate-100">Notificaciones</CardTitle>
+                <CardDescription className="text-slate-500">
+                  Avisos del sistema y feedback.
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4 text-sm text-foreground">
+          <CardContent className="space-y-4 text-sm">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Avisar cuando haya nuevas sugerencias</div>
-                <div className="text-xs text-muted-foreground">
-                  Mantiene visible el loop principal cuando reaparecen decisiones por revisar.
+                <div className="font-medium text-slate-200">Nuevas sugerencias</div>
+                <div className="text-xs text-slate-500">
+                  Notificar cuando haya items nuevos.
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="data-[state=checked]:bg-blue-500" />
             </div>
-            <Separator />
+            <Separator className="bg-white/5" />
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Confirmar antes de acciones sensibles</div>
-                <div className="text-xs text-muted-foreground">
-                  Conserva confirmacion explicita antes de descartar o ejecutar acciones destructivas.
+                <div className="font-medium text-slate-200">Confirmación de acciones</div>
+                <div className="text-xs text-slate-500">
+                  Pedir confirmación en items sensibles.
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="data-[state=checked]:bg-blue-500" />
             </div>
-            <Separator />
+            <Separator className="bg-white/5" />
             <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="font-medium">Mantener feedback visible despues del envio</div>
-                <div className="text-xs text-muted-foreground">
-                  Deja visible el resultado del envio manual de WhatsApp hasta que cierres el dialogo.
+                <div className="font-medium text-slate-200">Persistent feedback</div>
+                <div className="text-xs text-slate-500">
+                  Mantener estados de error visibles.
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="data-[state=checked]:bg-blue-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-border/70 bg-muted/[0.18]">
+        <Card className="border-white/[0.06] bg-slate-900/40 text-slate-100 shadow-xl backdrop-blur-xl md:col-span-2">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background text-primary shadow-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400">
                 <Info className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <CardTitle>Lo que esta fuera de alcance aqui</CardTitle>
-                <CardDescription>
-                  Para no prometer mas de lo que el producto sostiene hoy.
+                <CardTitle className="text-lg font-semibold text-slate-100">Gestión de Cuenta</CardTitle>
+                <CardDescription className="text-slate-500">
+                  El alcance de este workspace se limita a la limpieza operativa.
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-foreground">
+          <CardContent className="space-y-4 text-sm">
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
-                Password
-              </Badge>
-              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
-                2FA
-              </Badge>
-              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
-                Perfil editable
-              </Badge>
-              <Badge variant="outline" className="rounded-full border-border/70 bg-background">
-                Preferencias persistidas en backend
-              </Badge>
+              {['Password', '2FA', 'Perfil editable', 'Persistencia Backend'].map((tag) => (
+                <Badge key={tag} variant="outline" className="rounded-full border-white/10 bg-white/5 text-slate-400">
+                  {tag}
+                </Badge>
+              ))}
             </div>
-            <p className="text-sm text-muted-foreground">
-              La sesion y la conexion con Google se controlan desde el flujo actual de autenticacion.
-              Esta pantalla no cambia credenciales ni configuracion de cuenta.
+            <p className="text-sm leading-relaxed text-slate-400">
+              La conexión con Google se administra desde el flujo de autenticación principal.
+              Email Cleaner no almacena contraseñas ni perfiles sociales propios.
             </p>
           </CardContent>
         </Card>
@@ -152,3 +152,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

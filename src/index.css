@@ -5,74 +5,52 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Email Cleaner design tokens */
+/* Email Cleaner Midnight Aurora design tokens */
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 17%;
+    /* Base background: deep navy #0B1120 */
+    --background: 223 48% 8%;
+    /* Text: slate-100 */
+    --foreground: 210 40% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 17%;
+    /* Cards and popovers: slate-900 with some transparency */
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 17%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 96%;
 
-    --primary: 173 58% 39%;
-    --primary-foreground: 0 0% 100%;
+    /* Accent primary: Teal-400/500 */
+    --primary: 173 80% 40%;
+    --primary-foreground: 223 48% 8%;
 
-    --secondary: 210 14% 93%;
-    --secondary-foreground: 215 25% 27%;
+    /* Secondary: muted slate */
+    --secondary: 215 20% 18%;
+    --secondary-foreground: 210 40% 96%;
 
-    --muted: 210 14% 95%;
-    --muted-foreground: 215 15% 47%;
+    /* Muted labels */
+    --muted: 215 20% 16%;
+    --muted-foreground: 215 16% 65%;
 
-    --accent: 173 35% 93%;
-    --accent-foreground: 173 58% 32%;
+    --accent: 215 20% 16%;
+    --accent-foreground: 210 40% 96%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --success: 152 60% 40%;
     --success-foreground: 0 0% 100%;
 
-    --border: 214 20% 89%;
-    --input: 214 20% 89%;
-    --ring: 173 58% 39%;
+    /* Borders: white/10 or slate-800 */
+    --border: 215 25% 18%;
+    --input: 215 25% 18%;
+    --ring: 173 80% 40%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 215 28% 9%;
-    --foreground: 210 20% 96%;
-
-    --card: 215 25% 12%;
-    --card-foreground: 210 20% 96%;
-
-    --popover: 215 25% 12%;
-    --popover-foreground: 210 20% 96%;
-
-    --primary: 173 58% 45%;
-    --primary-foreground: 215 28% 9%;
-
-    --secondary: 215 20% 18%;
-    --secondary-foreground: 210 15% 85%;
-
-    --muted: 215 20% 16%;
-    --muted-foreground: 215 15% 55%;
-
-    --accent: 173 30% 18%;
-    --accent-foreground: 173 50% 70%;
-
-    --destructive: 0 62% 45%;
-    --destructive-foreground: 0 0% 100%;
-
-    --success: 152 50% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --border: 215 20% 18%;
-    --input: 215 20% 18%;
-    --ring: 173 58% 45%;
+    /* We are globally dark by default now, but keeping this for legacy components */
   }
 
   * {
@@ -80,7 +58,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground tracking-wide;
   }
 }
 

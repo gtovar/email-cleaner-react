@@ -496,7 +496,7 @@ export default function InboxList() {
 
   const readingPanel = selectedEmail ? (
     <>
-      <div className="border-b bg-card p-6">
+      <div className="border-b border-white/[0.06] bg-[#0B1120]/60 p-6 backdrop-blur-md">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="mb-3 text-xl font-semibold text-foreground">
@@ -534,19 +534,18 @@ export default function InboxList() {
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 bg-white/[0.01]">
         <div className="p-6">
-          <div className="rounded-2xl border border-border/60 bg-background p-4 text-sm leading-relaxed text-foreground shadow-sm">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5 text-sm leading-relaxed text-slate-300 shadow-inner">
             {selectedEmail.snippet || 'Sin vista previa disponible.'}
           </div>
         </div>
       </ScrollArea>
 
-      <Separator />
-      <div className="border-t bg-primary/[0.04] p-4 text-center">
-        <p className="text-sm text-foreground/80">
+      <div className="border-t border-white/[0.06] bg-teal-500/[0.03] p-4 text-center">
+        <p className="text-sm text-slate-400">
           {buildPreviewGuidance()}{' '}
-          <a className="text-primary hover:underline font-medium" href="#">
+          <a className="font-medium text-teal-400 hover:text-teal-300 hover:underline" href="#">
             Vuelve a Suggestions
           </a>{' '}
           si quieres retomar la cola principal antes de actuar.
@@ -572,7 +571,7 @@ export default function InboxList() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-border/70 bg-card/90 p-4 shadow-sm">
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 shadow-xl backdrop-blur-xl">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
@@ -600,7 +599,7 @@ export default function InboxList() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Buscar por remitente o asunto"
-            className="w-full rounded-xl border-border/70 bg-background lg:max-w-xs"
+            className="w-full rounded-xl border-white/10 bg-slate-950/60 focus:border-teal-500/50 lg:max-w-xs"
           />
         </div>
       </div>
@@ -705,9 +704,9 @@ export default function InboxList() {
       )}
 
       <div className="flex flex-col gap-4 lg:h-[calc(100vh-14rem)] lg:flex-row">
-        <Card className="flex h-full flex-col overflow-hidden border-border/70 lg:w-[40%]">
-          <div className="border-b bg-muted/25 px-4 py-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        <Card className="flex h-full flex-col overflow-hidden border-white/[0.06] bg-white/[0.01] shadow-2xl lg:w-[40%]">
+          <div className="border-b border-white/[0.06] bg-slate-900/60 px-4 py-3 backdrop-blur-sm">
+            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
               Lista de correos y acciones contextuales
             </span>
           </div>
@@ -733,10 +732,10 @@ export default function InboxList() {
                     role="button"
                     tabIndex={0}
                     className={[
-                      'group w-full text-left transition-all focus:outline-none',
-                      'hover:bg-muted/45 focus:bg-muted/45',
-                      isSelected ? 'border-l-2 border-l-primary bg-primary/[0.06] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]' : '',
-                      !email.isRead ? 'bg-muted/20' : '',
+                      'group w-full text-left transition-all focus:outline-none border-b border-white/[0.03] duration-300',
+                      'hover:bg-white/[0.03] focus:bg-white/[0.03]',
+                      isSelected ? 'border-l-2 border-l-teal-400 bg-teal-400/[0.08] shadow-[inset_0_1px_0_rgba(0,0,0,0.2)]' : 'border-l-2 border-l-transparent',
+                      !email.isRead && !isSelected ? 'bg-white/[0.015]' : '',
                     ].join(' ')}
                   >
                     <div className="flex items-start gap-3 p-4">

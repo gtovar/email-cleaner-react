@@ -69,18 +69,18 @@ describe('App shell view mounting', () => {
     });
 
     expect(
-      screen.getByRole('heading', { name: 'Cola guiada de decisiones' })
+      screen.getByRole('heading', { name: /Cola guiada de decisiones/i })
     ).toBeInTheDocument();
     expect(screen.getByText('Empieza aqui')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Inbox/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument();
-      expect(screen.getByText('Revision manual y contexto completo')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Bandeja de Entrada/i })).toBeInTheDocument();
+      expect(screen.getByText('Contexto manual')).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Usa esta vista cuando necesites leer el correo completo, revisar contexto adicional o ejecutar una accion manual fuera de la cola guiada.'
+          /Usa esta vista cuando necesites leer el correo completo o ejecutar acciones manuales/i
         )
       ).toBeInTheDocument();
     });
@@ -93,17 +93,17 @@ describe('App shell view mounting', () => {
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Ajustes' }));
+    fireEvent.click(screen.getByRole('button', { name: /Menu/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Ajustes del Workspace/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Ajustes' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Ajustes de Workflow/i })).toBeInTheDocument();
       expect(
         screen.getByText(
-          'Esta pantalla solo muestra preferencias coherentes con el flujo actual de revision. No administra password, perfil ni seguridad avanzada.'
+          /Esta pantalla muestra preferencias para el flujo actual de revisión/i
         )
       ).toBeInTheDocument();
-      expect(screen.getByText('Lo que esta fuera de alcance aqui')).toBeInTheDocument();
+      expect(screen.getByText('Gestión de Cuenta')).toBeInTheDocument();
     });
   });
 });

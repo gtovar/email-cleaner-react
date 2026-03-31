@@ -5,56 +5,49 @@
 - Branch: `feat/ux-review-bundle-experiments`
 - Latest commit: `e6fffa6`
 - Current work is a local experimental UX remediation pass based on `ux_review_bundle/feedback_pack_v2`.
-- Summary lives in a right-side drawer (Sheet) opened from the header.
-- OAuth login uses Google directly from `HomePage`, with `LoginPage` reserved for re-entry, callback errors, logout, and session expiry.
-- Session expiry triggers a Login screen via `onAuthExpired`.
-- Public Home page now renders at `/` and launches Google OAuth directly for unauthenticated users.
-- Suggestions is now the explicit authenticated start point; Inbox is framed as manual review/context.
-- Settings now exposes only scope-true workflow preferences and explicitly excludes account/security management.
-- Open Graph / Twitter preview assets are present in `public/`.
-- SummaryPanel and drawer flow are covered by automated tests.
+- Unified "Midnight Aurora" visual identity implemented across all authenticated views (Suggestions, Inbox, History, Settings).
+- SummaryPanel and activity drawer now use the dark aurora theme with skeleton loaders and high-contrast badges.
 - Auth callback success/error and session-expiry flow are covered by direct tests.
-- Inbox and Settings app-shell mounting are covered by smoke tests in `tests/AppShellViews.test.jsx`.
-- `SuggestionsList.jsx` now shows review priority, confidence, sensitivity, and richer inline context derived from the existing suggestion contract.
-- `ReceiptReviewDialog.jsx` now separates review context, extracted evidence, receipt status, and WhatsApp send into an explicit four-step sequence.
+- App shell navigation and all dashboard views are covered by a full Vitest suite.
 
 ## 2) What Changed During the Last Session
-- Reworked `src/pages/HomePage.jsx` into the current dark aurora visual direction and kept the direct Google OAuth entry from `/`.
-- Updated the headline treatment to use React-aligned two-block gradients instead of the earlier single-block experiment.
-- Added a faux macOS-inspired chrome treatment plus hover-straighten behavior to the hero inbox mockup.
-- Revalidated the current Home slice with `npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx`.
+- Extended the "Midnight Aurora" design system from the public Home to the entire authenticated dashboard.
+- Redesigned `SuggestionsPage`, `InboxPage`, `HistoryPage`, and `SettingsPage` with animated headers, gradient borders, and dark aurora backgrounds.
+- Updated `App.jsx` Shell and `ActivityPanel`/`SummaryPanel` to match the new visual identity.
+- Redefined `isHomeView` in `App.jsx` and added accessible `aria-label` to the menu toggle.
+- Updated `tests/SummaryPanel.test.jsx`, `tests/SettingsPage.test.jsx`, and `tests/AppShellViews.test.jsx` to match copy/UI changes.
+- All 52 Vitest tests passed locally.
 
 ## 3) Exact Commands to Resume Work
 ```bash
 git switch feat/ux-review-bundle-experiments
 npm install
-npm test -- --run tests/AppAuthFlow.test.jsx tests/SummaryPanel.test.jsx tests/HistoryList.test.jsx tests/AppShellViews.test.jsx tests/InboxList.test.jsx tests/SuggestionsList.test.jsx tests/ReceiptReviewDialog.test.jsx tests/SettingsPage.test.jsx
+npm test -- --run tests/AppAuthFlow.test.jsx tests/SummaryPanel.test.jsx tests/HistoryList.test.jsx tests/AppShellViews.test.jsx tests/InboxList.test.jsx tests/SuggestionsList.test.jsx tests/ReceiptReviewDialog.test.jsx tests/SettingsPage.test.jsx tests/HomePage.test.jsx
 npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- The current public Home direction is implemented locally in `src/pages/HomePage.jsx` and selected by the user for this experimental branch.
-- The working tree is commit-ready for the Home slice, excluding local temporary screenshot helpers.
+- The unified "Midnight Aurora" dashboard and shell redesign is complete and verified locally.
+- The working tree is commit-ready for the combined Home and Dashboard bundle.
 - No remote action has been taken from this checkpoint.
 
 ## 5) Immediate Next Step
-➡️ Commit the current public Home redesign iteration for `src/pages/HomePage.jsx` and `src/index.css`.
+➡️ Push the current bundle and prepare the merge request for the experimental branch.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
 - `src/pages/HomePage.jsx`
-- `src/pages/LoginPage.jsx`
 - `src/components/activity/ActivityPanel.jsx`
 - `src/components/SummaryPanel.jsx`
-- `src/components/SuggestionsList.jsx`
-- `src/components/InboxList.jsx`
-- `src/components/ReceiptReviewDialog.jsx`
+- `src/pages/SuggestionsPage.jsx`
+- `src/pages/InboxPage.jsx`
+- `src/pages/HistoryPage.jsx`
 - `src/pages/SettingsPage.jsx`
 - `src/services/api.js`
-- `tests/SuggestionsList.test.jsx`
-- `tests/ReceiptReviewDialog.test.jsx`
+- `tests/SummaryPanel.test.jsx`
 - `tests/SettingsPage.test.jsx`
+- `tests/AppShellViews.test.jsx`
 
 ## 7) Reentry Status
-- Reentry: dirty and mid-experiment, but recoverable from this branch without remote dependencies
-- Tests: last verified PASS (`npm test -- --run tests/AppAuthFlow.test.jsx tests/SummaryPanel.test.jsx tests/HistoryList.test.jsx tests/AppShellViews.test.jsx tests/InboxList.test.jsx tests/SuggestionsList.test.jsx tests/ReceiptReviewDialog.test.jsx tests/SettingsPage.test.jsx`) on 2026-03-28
+- Reentry: ready for push/merge.
+- Tests: verified PASS (All 52 tests) on 2026-03-31.

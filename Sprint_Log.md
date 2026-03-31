@@ -233,4 +233,11 @@ Frontend: yes
 ## 2026-03-30 — Public Home redesign iteration selected
 - Updated `src/pages/HomePage.jsx` and `src/index.css` to the current dark aurora Home direction on the experimental branch.
 - Applied a two-block React-aligned headline gradient and a faux window-style inbox mockup chrome with hover-straighten behavior.
-- Local validation passed with `npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx`.
+## 2026-03-31 — Dashboard and Shell redesign completed
+- Extended the "Midnight Aurora" design language from the public Home to the entire authenticated dashboard.
+- Redesigned `SuggestionsPage`, `InboxPage`, `HistoryPage`, and `SettingsPage` with animated headers, gradient borders, and dark aurora backgrounds.
+- Updated `App.jsx` Shwell and `ActivityPanel`/`SummaryPanel` to match the new visual identity.
+- Redefined `isHomeView` in `App.jsx` and added accessible `aria-label` to the menu toggle.
+- Updated `tests/SummaryPanel.test.jsx`, `tests/SettingsPage.test.jsx`, and `tests/AppShellViews.test.jsx` to match copy/UI changes.
+- All 52 Vitest tests passed locally.
+- Next: Commit the current "Midnight Aurora" bundle and start the next feature slice.
