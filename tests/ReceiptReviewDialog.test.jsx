@@ -689,6 +689,9 @@ describe('ReceiptReviewDialog', () => {
     renderDialog();
 
     const ignoreButton = await screen.findByRole('button', { name: 'Marcar como ignorado' });
+    await waitFor(() => {
+      expect(ignoreButton).toBeEnabled();
+    });
     fireEvent.click(ignoreButton);
 
     await waitFor(() => {

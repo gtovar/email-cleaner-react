@@ -1,0 +1,532 @@
+Ejecuté lo que pedía el ZIP: abrí `PROMPT.md`, revisé `01-home-current.png` y `02-login-current.png`, y baso esta evaluación sólo en ese paquete.
+
+## 1. Resumen ejecutivo
+
+La intención del flujo es clara: vender una promesa de **revisión guiada del inbox con control humano** y llevar a la persona a autenticarse con Google.
+El problema es que hoy el flujo **explica la idea**, pero **no termina de justificar la confianza necesaria para OAuth**.
+
+Mi juicio principal:
+
+* **Sí comunica una dirección de producto razonable**: revisar, reducir ruido, actuar con control.
+* **No comunica suficiente verdad operativa antes del login**: qué verá Gmail, qué hará exactamente, qué no hará, qué queda bajo control humano, y por qué debe confiar ahora.
+* **El login actual erosiona confianza** por un detalle grave: aparece un error de “Sesión expirada. Inicia sesión de nuevo.” en una pantalla pública de acceso, lo que hace pensar que el flujo está roto o mal instrumentado.
+* **La home promete confianza, pero no la demuestra**. Dice “Why people trust Email Cleaner”, pero no muestra evidencia real de por qué confiar.
+
+Conclusión de PM: **la dirección del producto es buena, pero la capa pública todavía no está lista para sostener una promesa de confianza fuerte antes de Google OAuth.**
+
+---
+
+## 2. Qué funciona bien
+
+### Hechos visibles
+
+En `01-home-current.png` sí se ve una narrativa consistente:
+
+* Hero: “**Review your inbox with more clarity and control**”.
+* Subtítulo: “**review, organize, and act on emails without losing control of important decisions**”.
+* Bloques de confianza:
+
+  * “You stay in control”
+  * “Guided review”
+  * “Less clutter, less effort”
+  * “More detail only when needed”
+* Flujo en 3 pasos:
+
+  1. Connect your account
+  2. Review suggestions and emails
+  3. Act with control
+* Mockup del producto mostrando una lista de emails y acciones visibles.
+* CTA principal y CTA final orientados a comenzar.
+
+En `02-login-current.png` también hay continuidad con la promesa:
+
+* “**Connect your inbox with more clarity and control.**”
+* Dos bullets útiles:
+
+  * “Review emails with context before acting.”
+  * “Sensitive actions stay under your control.”
+* Botón claro: “Continue with Google”.
+
+### Inferencia
+
+Eso sí ayuda a que la persona entienda que **no es un autopilot opaco**, sino un flujo de revisión asistida.
+
+### Valor real
+
+Lo mejor del enfoque actual es que intenta posicionar el producto no como “limpiador mágico”, sino como **workspace guiado con decisión humana**. Ese framing es correcto para este tipo de producto.
+
+---
+
+## 3. Problemas detectados
+
+Voy a separarlos como pediste:
+
+1. arquitectura de decisión,
+2. UI/copy/jerarquía visual,
+3. verdad de producto o alcance.
+
+---
+
+# A. Problemas de arquitectura de decisión
+
+## Problema A1 — Falta el puente crítico de confianza antes de OAuth
+
+### Qué observo
+
+La home explica beneficios generales, y la pantalla de login repite dos bullets de valor, pero **no hay una capa explícita que prepare la decisión de conectar Google**.
+No se ve algo como:
+
+* qué acceso necesita
+* para qué lo necesita
+* qué acciones hace el sistema
+* qué acciones requieren aprobación humana
+* qué no hará automáticamente
+
+### Por qué compromete el objetivo
+
+El objetivo no es sólo “explicar el producto”; es **hacer que la persona se sienta suficientemente segura como para autenticarse con Google**.
+En productos conectados al inbox, la barrera principal no es visual: es **“¿qué va a pasar con mi correo si conecto esto?”**
+
+### Impacto
+
+* Usuario: duda, fricción, abandono antes de login.
+* Negocio: menor conversión a autenticación; peor percepción de confiabilidad.
+
+### Severidad
+
+**Alta**
+
+### Cómo lo corregiría
+
+Antes del botón de Google, agregaría un bloque explícito:
+
+**What happens when you connect Google**
+
+* We import your inbox for guided review
+* We show suggestions before sensitive actions
+* Important actions stay under your control
+* You can review context before deciding
+
+Y si el producto realmente lo soporta, también:
+
+* qué permisos se solicitan
+* si borra o archiva sólo con confirmación
+* si el usuario puede revisar antes de ejecutar
+
+---
+
+## Problema A2 — La home lleva a “Get started”, pero la decisión real es “Continue with Google”
+
+### Qué observo
+
+En la home el CTA principal dice “Get started”, mientras que más abajo aparece “Continue with Google”.
+La decisión real del usuario no es “empezar” en abstracto: es **conectar su cuenta de Google**.
+
+### Por qué compromete el objetivo
+
+Hay una diferencia entre interés y consentimiento.
+El flujo hoy suaviza esa realidad y eso puede producir una micro-fricción: la persona cree que va a “ver más” y de pronto entra a una autenticación con Google.
+
+### Impacto
+
+* Usuario: sensación de salto implícito.
+* Negocio: menor claridad de funnel; menos intención cualificada.
+
+### Severidad
+
+**Media**
+
+### Cómo lo corregiría
+
+Haría el CTA honesto desde el inicio. Ejemplos:
+
+* “Review your inbox with Google”
+* “Continue with Google”
+* “See what happens before you connect” + CTA secundario de educación
+
+---
+
+## Problema A3 — La pantalla de login muestra un estado de error impropio del momento del flujo
+
+### Qué observo
+
+En `02-login-current.png` aparece un alert rojo:
+**“Sesión expirada. Inicia sesión de nuevo.”**
+
+### Por qué compromete el objetivo
+
+Este es el hallazgo más dañino del flujo público.
+Una persona que llega por primera vez no debería ver un mensaje que implica que **ya había iniciado sesión y algo falló**. Eso introduce tres sospechas:
+
+1. el flujo está roto
+2. el producto está en estado inconsistente
+3. la app no maneja bien autenticación
+
+### Impacto
+
+* Usuario: desconfianza inmediata
+* Negocio: caída fuerte de conversión, sobre todo en first-time visitors
+
+### Severidad
+
+**Alta**
+
+### Cómo lo corregiría
+
+Ese error no debe renderizarse por defecto en una entrada pública.
+Sólo debería aparecer si el usuario realmente viene de una sesión vencida y con contexto claro.
+Además, si existe ese caso, el mensaje debería estar contextualizado y en el mismo idioma del resto del flujo.
+
+---
+
+# B. Problemas de UI / copy / jerarquía visual
+
+## Problema B1 — “Why people trust Email Cleaner” afirma confianza sin demostrarla
+
+### Qué observo
+
+La home usa el encabezado:
+**“Why people trust Email Cleaner”**
+
+Debajo no hay prueba social ni evidencia objetiva; sólo hay claims del producto.
+
+### Por qué compromete el objetivo
+
+Eso no demuestra confianza; sólo la declara.
+Y en una categoría sensible como acceso al inbox, decir “people trust” sin prueba puede sentirse como marketing hueco.
+
+### Impacto
+
+* Usuario: sospecha o escepticismo
+* Negocio: erosión de credibilidad justo antes de pedir OAuth
+
+### Severidad
+
+**Alta**
+
+### Cómo lo corregiría
+
+Cambiaría el framing a algo verificable. Por ejemplo:
+
+* “How Email Cleaner is designed to keep you in control”
+* “Why the review flow is designed for human oversight”
+
+Eso convierte una promesa social no probada en una explicación de producto.
+
+---
+
+## Problema B2 — El copy es correcto en intención, pero demasiado abstracto para justificar acceso al correo
+
+### Qué observo
+
+Frases como:
+
+* “more clarity and control”
+* “guided review”
+* “less clutter, less effort”
+* “review emails with context before acting”
+
+son coherentes, pero abstractas.
+
+### Por qué compromete el objetivo
+
+La persona no sólo necesita una promesa aspiracional.
+Necesita entender **qué va a pasar con su inbox**.
+
+### Impacto
+
+* Usuario: entiende el tono, no el mecanismo.
+* Negocio: conversión más débil porque la propuesta no aterriza lo suficiente.
+
+### Severidad
+
+**Media**
+
+### Cómo lo corregiría
+
+Cambiar parte del copy hacia comportamiento observable:
+
+* “See grouped email patterns before deciding what to archive”
+* “Review suggestions before approving sensitive actions”
+* “Inspect context on a specific email before taking action”
+
+---
+
+## Problema B3 — Inconsistencia de idioma
+
+### Qué observo
+
+La interfaz está en inglés, pero el mensaje de error está en español:
+“Sesión expirada. Inicia sesión de nuevo.”
+
+### Por qué compromete el objetivo
+
+Esto transmite producto incompleto o estados no cuidados.
+No es un tema estético; es una señal de falta de pulido en un punto delicado del funnel.
+
+### Impacto
+
+* Usuario: percepción de improvisación
+* Negocio: menos confianza en el flujo de autenticación
+
+### Severidad
+
+**Media**
+
+### Cómo lo corregiría
+
+Unificar idioma por locale real.
+Y no mostrar el error salvo que corresponda.
+
+---
+
+## Problema B4 — La demo visual del producto sugiere acciones, pero no aclara el grado de automatización
+
+### Qué observo
+
+El mockup en la home muestra una lista de correos con contadores y acciones visibles a la derecha.
+
+### Por qué compromete el objetivo
+
+Visualmente sugiere que el sistema ya sabe qué hacer y permite intervenir rápido, pero el copy público insiste en control humano.
+Sin una explicación adicional, queda ambigua la frontera entre:
+
+* sugerencia
+* revisión
+* ejecución
+
+### Impacto
+
+* Usuario: puede sobreestimar o subestimar el nivel de automatización.
+* Negocio: expectativas mal calibradas.
+
+### Severidad
+
+**Media**
+
+### Cómo lo corregiría
+
+Etiquetar el mockup con lenguaje explícito, por ejemplo:
+
+* “Suggestions are reviewed before sensitive actions”
+* “You inspect context before approving changes”
+
+---
+
+# C. Problemas de verdad de producto o alcance
+
+## Problema C1 — La promesa pública aún no aterriza la verdad operativa mínima
+
+### Qué observo
+
+La home dice que ayuda a “review, organize, and act on emails”, y la login dice “Connect with Google to review your inbox inside a guided workspace”.
+
+### Inferencia
+
+Eso sugiere un producto de revisión asistida con acciones sobre correo, pero no define el alcance real.
+
+### Riesgo
+
+Si el producto en realidad:
+
+* sólo agrupa ciertos patrones,
+* sólo sugiere acciones,
+* o sólo deja revisar algunos casos,
+
+la promesa pública puede quedar demasiado amplia.
+
+### Por qué compromete el objetivo
+
+En productos de confianza, la ambigüedad de alcance no ayuda.
+La gente perdona menos la sobrepromesa cuando el activo involucrado es su inbox.
+
+### Impacto
+
+* Usuario: expectativas infladas
+* Negocio: decepción post-login, rebote, menor retención
+
+### Severidad
+
+**Alta**
+
+### Cómo lo corregiría
+
+Definir explícitamente el alcance público:
+
+* qué clase de revisión hace
+* qué tipo de acciones soporta
+* qué decisiones quedan siempre en manos del usuario
+* qué casos requieren abrir detalle
+
+---
+
+## Problema C2 — La palabra “safer” o su equivalente conceptual está insinuada sin sustento visible
+
+### Qué observo
+
+En la sección “How it works” se lee:
+“Sign in with Google to review your inbox inside a **safer, guided workspace**.”
+
+### Por qué compromete el objetivo
+
+“Safer” es una palabra delicada.
+Si no se explica por qué es más seguro, puede sonar a promesa de seguridad no demostrada.
+
+### Impacto
+
+* Usuario: puede interpretar una garantía que no ha sido explicada.
+* Negocio: riesgo de desalineación entre percepción y realidad del producto.
+
+### Severidad
+
+**Media**
+
+### Cómo lo corregiría
+
+Cambiaría “safer” por una formulación verificable:
+
+* “guided workspace with human review”
+* “guided workspace designed to keep sensitive actions under your control”
+
+---
+
+## Problema C3 — Falta una nota honesta sobre privacidad/datos en el momento de mayor ansiedad
+
+### Qué observo
+
+Hay links a Terms of Service y Privacy Policy, pero no hay un mensaje corto, visible y comprensible en el punto de decisión.
+
+### Por qué compromete el objetivo
+
+Nadie quiere abrir políticas largas para entender si puede confiar.
+Antes de OAuth hace falta una capa corta y honesta de confianza operacional.
+
+### Impacto
+
+* Usuario: incertidumbre sobre datos y permisos
+* Negocio: drop-off innecesario en login
+
+### Severidad
+
+**Alta**
+
+### Cómo lo corregiría
+
+Agregar microcopy cercano al botón:
+
+* “You’ll review your inbox in a guided workspace.”
+* “Sensitive actions remain under your control.”
+* “You can inspect context before taking action.”
+
+Y si de verdad aplica, una línea adicional de permisos concretos.
+
+---
+
+## 4. Riesgos principales
+
+### Riesgo 1 — Conversión baja por miedo a conectar Google
+
+Hecho visible: la propuesta es aspiracional, pero no explica suficientemente el comportamiento real antes del login.
+Riesgo: el usuario entiende el “por qué”, pero no el “qué va a pasar exactamente”.
+
+### Riesgo 2 — Erosión de confianza por estado roto
+
+Hecho visible: el login muestra “Sesión expirada. Inicia sesión de nuevo.”
+Riesgo: la persona asume bug o mal manejo de auth.
+
+### Riesgo 3 — Sobrepromesa de confianza
+
+Hecho visible: “Why people trust Email Cleaner”.
+Riesgo: parece prueba social sin evidencia.
+
+### Riesgo 4 — Expectativas infladas sobre automatización o seguridad
+
+Hecho visible: claims como “less clutter, less effort” y “safer, guided workspace”.
+Riesgo: el usuario proyecta más automatización o más garantías de las que el flujo visible sustenta.
+
+---
+
+## 5. Cambios prioritarios
+
+### 1. Corregir ya el estado de login
+
+Quitar el mensaje de sesión expirada del flujo público por defecto.
+Éste es el cambio más urgente.
+
+### 2. Insertar un bloque honesto pre-OAuth
+
+Antes del botón de Google, explicar:
+
+* qué hace el producto al conectar
+* qué revisa el usuario
+* qué acciones quedan bajo su control
+* qué no ocurre automáticamente, si aplica
+
+### 3. Reescribir el framing de confianza
+
+Cambiar “Why people trust Email Cleaner” por algo demostrable, orientado a diseño de producto y no a social proof no probado.
+
+### 4. Hacer el CTA más honesto
+
+Alinear el CTA con la decisión real: conectar Google.
+
+### 5. Aterrizar mejor la promesa
+
+Pasar de beneficios abstractos a comportamiento observable.
+
+---
+
+## 6. Qué no puede validarse sólo con screenshots
+
+No puedo validar con estas imágenes:
+
+* qué permisos exactos pide Google OAuth
+* si realmente las acciones sensibles requieren confirmación
+* si el sistema ejecuta acciones automáticas o sólo sugiere
+* si existe trazabilidad/historial de decisiones
+* si hay controles reales de privacidad o seguridad detrás del copy
+* si el flujo posterior al login cumple la promesa pública
+
+---
+
+## Respuestas obligatorias adicionales
+
+### 1. ¿La promesa pública coincide con lo que este tipo de producto realmente parece hacer?
+
+**Parcialmente sí.**
+La promesa de “claridad + control + guided review” sí encaja con un producto de revisión asistida del inbox.
+Lo que no está resuelto es la **verdad operativa previa al login**: el flujo no explica lo suficiente para sostener la confianza que exige conectar Gmail.
+
+### 2. ¿Qué frases o decisiones visuales podrían inflar expectativas o erosionar confianza?
+
+Las más delicadas son:
+
+* “**Why people trust Email Cleaner**”
+  Erosiona confianza porque la declara sin probarla.
+* “**Less clutter, less effort**”
+  Puede inflar expectativas de automatización.
+* “**safer, guided workspace**”
+  Puede insinuar una garantía no explicada.
+* El error rojo “**Sesión expirada. Inicia sesión de nuevo.**”
+  Es el mayor erosor de confianza del flujo actual.
+
+### 3. ¿Qué cambiarías primero para que el acceso se sienta honesto y confiable?
+
+En este orden:
+
+1. eliminar el error de sesión del login público
+2. agregar un bloque “What happens when you connect Google”
+3. reemplazar el framing de confianza por uno demostrable
+4. hacer el CTA coherente con la decisión real de conectar Google
+
+## Veredicto final
+
+La home **no está mal orientada**, pero todavía está más cerca de una landing correcta de SaaS que de una entrada realmente confiable para un producto que pide acceso al inbox.
+El mayor problema no es diseño visual; es **insuficiencia de verdad pública antes de OAuth**.
+
+Si quieres, en el siguiente paso te lo convierto en una **versión accionable tipo PRD review** con:
+
+* blockers
+* fixes recomendados
+* copy alternativo exacto para home y login.
+

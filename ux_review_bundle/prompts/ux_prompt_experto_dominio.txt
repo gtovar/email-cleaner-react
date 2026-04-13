@@ -1,0 +1,50 @@
+Actúa como un/a experto/a senior en [TU DOMINIO] con experiencia revisando productos digitales del sector.
+
+Voy a compartirte screenshots de una pantalla.
+Quiero una revisión centrada en si esta interfaz representa bien el problema del dominio, evita errores críticos y comunica correctamente lo necesario para tomar decisiones.
+
+No quiero feedback visual genérico.
+Quiero saber si la pantalla está alineada con la realidad del dominio.
+
+## Contexto
+
+* Producto: [describe producto]
+* Usuario objetivo: [tipo de usuario]
+* Objetivo de esta pantalla: [qué debe lograr]
+* Momento del flujo: [dónde aparece]
+* Restricciones: [si existen]
+
+## Analiza
+
+1. Qué parece querer resolver la pantalla dentro del dominio
+2. Qué información del dominio está bien representada
+3. Qué información importante falta o puede inducir error
+4. Qué decisiones de la interfaz parecen débiles o peligrosas desde el dominio
+5. Qué necesitaría validación adicional más allá de la screenshot
+
+## Para cada problema
+
+* qué observas
+* por qué es un problema en este dominio
+* impacto para usuario, operación o cumplimiento
+* severidad: alta / media / baja
+* cómo lo corregirías
+
+## Reglas
+
+* Prioriza precisión del dominio, no estética.
+* Si algo no puede validarse sólo con screenshots, dilo.
+* Separa:
+  * hechos visibles
+  * inferencias
+  * riesgos
+  * recomendaciones
+
+## Salida
+
+1. Resumen ejecutivo
+2. Qué funciona bien
+3. Problemas detectados
+4. Riesgos principales
+5. Cambios prioritarios
+6. Qué no puede validarse sólo con screenshots

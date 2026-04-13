@@ -1,0 +1,46 @@
+Nombre: LoginPage
+Tipo: pantalla de autenticación
+
+Qué hace:
+- Presenta el acceso con Google.
+- Explica de forma resumida qué hace la app y qué no hace.
+- Muestra mensajes de error visibles cuando falla el callback o expira la sesión.
+
+Para qué sirve:
+- Convertir al usuario anónimo en usuario autenticado.
+- Reducir miedo a compartir acceso al inbox.
+- Resolver el punto de entrada seguro al producto.
+
+Propósito de producto:
+- Hacer explícita la propuesta de confianza antes del login.
+- Enmarcar el acceso como conexión segura, no como permiso opaco.
+
+Qué resuelve:
+- El problema de pedir OAuth sin suficiente contexto.
+- La necesidad de distinguir entre lectura de metadata, aprobación explícita y desconexión posible.
+
+Cómo parece pensada:
+- Como una pantalla de conversión y confianza.
+- Menos orientada a branding y más a bajar ansiedad y objeciones.
+
+Acción principal:
+- Continue with Google.
+
+Flujo:
+- Entrada desde `/login`.
+- También aparece tras error de callback o sesión expirada.
+
+Dependencias:
+- `API_ORIGIN` para lanzar `/auth/google`.
+- `App.jsx` para decidir cuándo mostrar mensaje de error o sesión expirada.
+
+Estados relevantes:
+- Estado inicial.
+- Loading al pulsar login.
+- Error de callback.
+- Error por sesión expirada.
+- Despliegue de “How it works”.
+
+Observaciones UX para experto:
+- La pantalla mezcla onboarding corto, confianza y acceso.
+- La sección “What we never do” es central para credibilidad del producto.

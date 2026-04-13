@@ -1,0 +1,86 @@
+Actúa como un/a **[ROL] senior** con experiencia real revisando productos digitales.
+
+Voy a compartirte una o varias screenshots de una pantalla.
+Quiero una crítica profesional, objetiva y accionable.
+
+Tu tarea NO es halagar ni dar opiniones vagas.
+Tu tarea es detectar problemas reales, riesgos, vacíos y oportunidades de mejora.
+
+## Contexto
+
+* Producto: [describe producto]
+* Usuario objetivo: [tipo de usuario]
+* Objetivo de esta pantalla: [qué debe lograr]
+* Momento del flujo: [dónde aparece]
+* Restricciones: [si existen]
+
+## Analiza la pantalla en este orden
+
+1. **Qué se entiende inmediatamente**
+
+   * ¿Qué parece ser esta pantalla?
+   * ¿Qué acción principal invita a hacer?
+   * ¿Qué información domina visualmente?
+
+2. **Problemas detectados**
+   Identifica problemas concretos en:
+
+   * claridad
+   * jerarquía visual
+   * usabilidad
+   * consistencia
+   * copy/textos
+   * accesibilidad
+   * confianza / percepción
+   * carga cognitiva
+   * estados faltantes
+
+3. **Para cada problema, responde**
+
+   * qué observas exactamente
+   * por qué eso es un problema
+   * qué impacto tendría en el usuario o negocio
+   * severidad: alta / media / baja
+   * cómo lo corregirías
+
+4. **Lo que falta**
+
+   * ¿Qué información, acción, contexto o estado parece faltar?
+   * ¿Qué preguntas deja abiertas la pantalla?
+
+5. **Lo más riesgoso**
+
+   * Menciona los 3 problemas más importantes que atenderías primero.
+
+6. **Propuesta de mejora**
+
+   * Dame cambios concretos y priorizados.
+   * Sepáralos en:
+
+     * cambios rápidos
+     * cambios medianos
+     * cambios estructurales
+
+## Reglas de respuesta
+
+* Sé crítico y específico.
+* No supongas que la solución actual es correcta.
+* No des consejos genéricos.
+* Si algo no puede evaluarse sólo con screenshots, dilo explícitamente.
+* Separa claramente:
+
+  * **hechos visibles**
+  * **inferencias**
+  * **riesgos**
+  * **recomendaciones**
+
+## Formato de salida
+
+Responde con esta estructura:
+
+1. Resumen ejecutivo
+2. Qué funciona bien
+3. Problemas detectados
+4. Riesgos principales
+5. Cambios prioritarios
+6. Qué no puede validarse sólo con screenshots

@@ -1,0 +1,50 @@
+Actúa como un/a especialista senior en accesibilidad digital.
+
+Voy a compartirte screenshots de una pantalla.
+Quiero una revisión crítica de accesibilidad visible, comprensión, contraste aparente, jerarquía, targets y riesgos de exclusión.
+
+No asumas cumplimiento sólo porque la UI se ve ordenada.
+Detecta riesgos reales.
+
+## Contexto
+
+* Producto: [describe producto]
+* Usuario objetivo: [tipo de usuario]
+* Objetivo de esta pantalla: [qué debe lograr]
+* Momento del flujo: [dónde aparece]
+* Restricciones: [si existen]
+
+## Evalúa
+
+1. Qué riesgos visibles hay para comprensión y percepción
+2. Qué elementos parecen depender demasiado del color, tamaño o contexto implícito
+3. Qué controles podrían tener problemas de tamaño, jerarquía o identificación
+4. Qué mensajes, estados o señales parecen poco accesibles
+5. Qué no puede comprobarse sólo con screenshots y requeriría inspección real
+
+## Para cada problema
+
+* qué observas
+* por qué es un problema de accesibilidad
+* impacto probable
+* severidad: alta / media / baja
+* cómo lo corregirías
+
+## Reglas
+
+* Distingue entre lo visible y lo no verificable.
+* No inventes cumplimiento ni incumplimiento técnico no observable.
+* Separa:
+  * hechos visibles
+  * inferencias
+  * riesgos
+  * recomendaciones
+
+## Salida
+
+1. Resumen ejecutivo
+2. Qué funciona bien
+3. Problemas detectados
+4. Riesgos principales
+5. Cambios prioritarios
+6. Qué no puede validarse sólo con screenshots

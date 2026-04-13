@@ -1,24 +1,23 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-24 14:47 CST — Commit: 0138a5e
+Last updated: 2026-04-13 11:12 CST — Commit: 9859919
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-24 14:47 CST
-COMMIT: 0138a5e
-ENVIRONMENT: feature/hu07b-receipt-response-ui
-REPO_PATH: /Users/gil/Documents/email-cleaner/email-cleaner-react
-BRANCH: feat/hu07b-receipt-response-ui
-WORKING_TREE_STATUS: Dirty (metadata sync edits present)
-TEST_STATUS: PASS (`npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx`)
+SNAPSHOT_DATE: 2026-04-13 11:12 CST
+COMMIT: 9859919
+ENVIRONMENT: feat/ux-review-bundle-experiments
+BRANCH: feat/ux-review-bundle-experiments
+WORKING_TREE_STATUS: Clean
+TEST_STATUS: PASS (`npm run lint`, `npm test -- --run`, `npm run build`, `npm run lint:docs` with `nvm use --lts`)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
 - Fastify backend and ML service are external dependencies.
-- The Husky/comment-hygiene slice is already merged into `develop`; there is no pending hook-migration branch to resume.
+- The current branch is a frontend bundle refresh branch with the receipt-review and auth/login follow-ups already validated locally.
 
 ---
 
@@ -33,15 +32,11 @@ Notes:
 - Login view handles OAuth redirect and session expiry via `onAuthExpired`.
 - Public Home page renders at `/` for unauthenticated users.
 - Open Graph / Twitter tags are defined in `index.html` with assets in `public/`.
-- `InboxList` now exposes the `Revisar recibo` row action for the first `HU_05` frontend slice.
-- `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
-- `ReceiptReviewDialog` now shows explicit post-send feedback states that differentiate validation, network, and backend/provider failures while keeping retry and close actions clear.
-- `ReceiptReviewDialog` now reads and writes the manual receipt response state against `/api/v1/receipt-responses`, reflecting `paid`, `ignore`, or `null` inside the existing review flow.
-- `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow against dedicated HU06 fixture emails for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
-- Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to repo-local scripts under `scripts/git-hooks/`.
-- GitHub Actions `ci.yml` now validates PR commit messages with `commitlint` before the usual lint/test/build job.
-- The Husky `prepare` step now uses a guarded repo-local installer, so production-style installs that omit devDependencies skip hook installation cleanly instead of failing.
-- The repo-local Husky `pre-commit` flow now includes `scripts/git-hooks/check-comment-hygiene.sh`, blocking empty comments plus vague follow-up markers before commit.
+- `ReceiptReviewDialog` reads and writes the manual receipt response state against `/api/v1/receipt-responses`.
+- `ReceiptReviewDialog` keeps manual WhatsApp send separate from receipt-response state and surfaces validation, network, and backend/provider errors explicitly.
+- `tests/e2e/hu06-receipt-review.spec.js` validates the receipt-review browser flow against dedicated HU06 fixture emails.
+- Commit hooks are versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to repo-local scripts under `scripts/git-hooks/`.
+- GitHub Actions `ci.yml` validates PR commit messages with `commitlint` before the usual lint/test/build job.
 
 ---
 
@@ -322,7 +317,7 @@ Notes:
 
 ## 6. Next Immediate Action
 
-➡️ Review PR 47 for `feat/hu07b-receipt-response-ui`, then decide whether to keep this metadata-sync follow-up as a tiny doc commit before merge.
+➡️ Wait for PR 48 review, then merge to `develop` if there are no findings.
 
 ---
 
@@ -366,4 +361,4 @@ Notes:
 - 2026-03-23 17:08 CST — Split `HU_07` into `HU_07A` backend-first and `HU_07B` frontend follow-up, and anchored the frontend next step to wait for the stabilized backend contract (commit: pending)
 - 2026-03-24 13:48 CST — Implemented `HU_07B` in `ReceiptReviewDialog.jsx` by consuming `GET/POST /api/v1/receipt-responses`, reflecting `paid | ignore | null`, and adding targeted Vitest coverage for load/save success and failure states; `npm test -- --run tests/ReceiptReviewDialog.test.jsx` passed locally (commit: pending)
 - 2026-03-24 14:33 CST — Addressed PR review follow-ups in `ReceiptReviewDialog.jsx` by rejecting blank extraction fields before WhatsApp send and by sending the canonical dialog `emailId`; `npm run lint` plus `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally (commit: pending)
-- 2026-03-24 14:47 CST — Committed the HU_07B follow-up fix as `0138a5e` and left the feature branch clean with PR 47 open against `develop` (commit: 0138a5e)
+- 2026-04-13 11:12 CST — Published `feat/ux-review-bundle-experiments` as PR 48 against `develop`, synchronized the checkpoint docs, and revalidated the docs lint on Node LTS (commit: 9859919)

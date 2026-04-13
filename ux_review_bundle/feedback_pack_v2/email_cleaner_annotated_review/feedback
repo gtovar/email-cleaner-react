@@ -1,0 +1,344 @@
+## 1. Resumen ejecutivo
+
+**Qué se entiende inmediatamente**
+
+**Hecho visible:** la app parece organizar el flujo principal en tres zonas: **Inbox**, **Sugerencias** e **Historial**; además hay un panel lateral de **Resumen** (`03-suggestions-overview.png`, `05-inbox-overview.png`, `07-history-current.png`, `08-activity-panel-current.png`).
+
+**Hecho visible:** la acción principal parece ser **tomar decisiones de limpieza**: aprobar sugerencias, revisar un correo o re-aplicar acciones previas.
+
+**Hecho visible:** lo que más domina visualmente no es el riesgo ni la prioridad, sino la **estructura de cards y tablas**. La UI comunica orden, pero no comunica con igual fuerza **qué conviene hacer primero** ni **por qué una decisión es segura**.
+
+**Inferencia:** la arquitectura va en una dirección más madura que una versión cruda porque ya separa trabajo manual, sugerencias y trazabilidad. Pero **todavía se siente frágil**: el contexto para decidir, la acción y la verificación posterior siguen demasiado fragmentados.
+
+**Respuesta obligatoria 1:** la arquitectura de decisión **está mejor resuelta que una versión inmadura**, pero **todavía no es robusta**. Mejoró en organización, no necesariamente en calidad de decisión.
+
+**Respuesta obligatoria 2:** la UI se ve **más ordenada y más consistente**, pero **la madurez percibida todavía depende demasiado del orden visual**. Aún no transmite suficiente verdad operativa ni suficiente seguridad al decidir.
+
+**Respuesta obligatoria 3:**
+
+* **Problema de superficie:** jerarquía débil, copy ambiguo, bajo contraste de prioridades, espacio vacío mal aprovechado.
+* **Problema de arquitectura de flujo:** falta de contexto suficiente para decidir sin saltar de pantalla en pantalla.
+* **Problema de verdad de producto:** los números, etiquetas y resúmenes no siempre parecen explicar correctamente lo que está ocurriendo.
+
+---
+
+## 2. Qué funciona bien
+
+1. **La estructura general se entiende rápido.**
+   Inbox = revisar correos, Sugerencias = decidir, Historial = auditar. Eso está claro.
+
+2. **La navegación superior es limpia y consistente.**
+   El sistema tiene una columna vertebral simple y fácil de explicar.
+
+3. **La vista de sugerencias sí intenta bajar la carga de decisión.**
+   Cada card tiene acción propuesta, motivo y resultado esperado si se aprueba (`03-suggestions-overview.png`).
+
+4. **El historial introduce trazabilidad.**
+   Eso suma confianza conceptual: no todo ocurre en una caja negra (`07-history-current.png`).
+
+5. **El panel lateral de actividad tiene buena intención de producto.**
+   Un resumen operativo podría ayudar mucho, aunque hoy no esté resuelto (`08-activity-panel-current.png`).
+
+---
+
+## 3. Problemas detectados
+
+### A. Problemas de arquitectura de decisión
+
+### 1) Las sugerencias no dan suficiente contexto para aprobar con confianza
+
+**Hecho visible:** en `03-suggestions-overview.png` cada card muestra remitente, asunto, fecha, etiquetas, sugerencia, motivo y “si apruebas”, pero no muestra preview real del correo, señales de importancia, historial previo del remitente ni criterio de riesgo.
+
+**Por qué es problema:** el producto promete ayudar a limpiar sin perder correos importantes. Esa promesa exige más que una acción sugerida; exige **evidencia suficiente para confiar**.
+
+**Impacto:** el usuario puede frenar, abrir demasiados contextos o rechazar sugerencias por miedo. Negocio: menor adopción de automatización guiada.
+
+**Severidad:** **alta**
+
+**Cómo lo corregiría:** añadir en la card o en un side preview inmediato:
+
+* snippet del correo
+* señal de por qué se sugirió
+* nivel de confianza
+* indicador de riesgo/impacto
+* atajos para ver contexto sin abandonar el flujo
+
+---
+
+### 2) El flujo central está fragmentado entre tabs en vez de sentirse continuo
+
+**Hecho visible:** Inbox, Sugerencias e Historial parecen mundos separados. En `03-suggestions-overview.png` aparece “Ver contexto”, pero no se ve una relación fuerte con la vista de Inbox. En `07-history-current.png` existe “Volver a aplicar”, pero no queda claro cómo dialoga con Sugerencias o Inbox.
+
+**Por qué es problema:** el usuario no piensa en pestañas; piensa en un solo trabajo: “limpiar sin equivocarme”. Hoy el sistema reparte ese trabajo entre secciones separadas sin un hilo conductor fuerte.
+
+**Impacto:** más cambio de contexto, más esfuerzo mental, menos sensación de control continuo.
+
+**Severidad:** **alta**
+
+**Cómo lo corregiría:** convertir el flujo en un sistema más encadenado:
+
+* desde Sugerencias abrir contexto inline o side panel
+* desde Inbox mostrar si un correo tiene sugerencia asociada
+* desde Historial enlazar al contexto original y al resultado de la acción
+
+---
+
+### 3) El Inbox no guía cuál es el siguiente mejor paso
+
+**Hecho visible:** en `05-inbox-overview.png` hay una lista de correos y un gran panel derecho vacío que dice “Selecciona un correo para revisarlo”. Todos los correos compiten casi con el mismo peso visual.
+
+**Por qué es problema:** un inbox saturado necesita priorización, no solo listado.
+
+**Impacto:** el usuario entra, ve varios correos y no sabe por dónde empezar. La pantalla requiere iniciativa del usuario en vez de ayudarlo a decidir.
+
+**Severidad:** **media-alta**
+
+**Cómo lo corregiría:** introducir priorización visible:
+
+* “recomendado revisar primero”
+* agrupación por riesgo/urgencia
+* resaltado de correos con sugerencias disponibles
+* preselección del primer correo más relevante al entrar
+
+---
+
+### B. Problemas de UI / copy / jerarquía visual
+
+### 4) La jerarquía visual es demasiado plana
+
+**Hecho visible:** en `03-suggestions-overview.png` casi todas las cards pesan parecido; bloques como “Sugerencia”, “Motivo” y “Si apruebas” tienen tratamientos muy cercanos. En `07-history-current.png` la tabla es larga y uniforme.
+
+**Por qué es problema:** cuando todo pesa parecido, nada lidera la atención.
+
+**Impacto:** el usuario tarda más en escanear, priorizar y comparar. La experiencia se siente correcta pero lenta.
+
+**Severidad:** **media**
+
+**Cómo lo corregiría:** aumentar contraste entre:
+
+* título y metadata
+* acción sugerida y explicación
+* contenido principal y secundario
+* registros importantes y registros repetitivos
+
+---
+
+### 5) El copy de acciones es funcional, pero todavía ambiguo en consecuencia
+
+**Hecho visible:** conviven etiquetas como “Aprobar archivar”, “No aplicar”, “Ver contexto”, “Revisar recibo”, “Volver a aplicar” (`03`, `05`, `07`).
+
+**Por qué es problema:** algunas acciones dicen qué botón presionar, pero no siempre dejan claro **qué cambia en el sistema** ni **qué efecto tendrá sobre Gmail o sobre el historial**.
+
+**Impacto:** menor confianza y más temor a errores irreversibles.
+
+**Severidad:** **media-alta**
+
+**Cómo lo corregiría:** volver el copy más explícito y consistente:
+
+* “Archivar correo”
+* “Descartar sugerencia”
+* “Abrir contexto del correo”
+* “Repetir esta acción sobre este correo”
+  y acompañarlo con microcopy de consecuencia cuando aplique.
+
+---
+
+### 6) El panel derecho vacío en Inbox desperdicia el momento de onboarding del flujo
+
+**Hecho visible:** en `05-inbox-overview.png` más de la mitad de la pantalla queda casi vacía hasta que el usuario actúa.
+
+**Por qué es problema:** ese espacio debería ayudar a decidir, no esperar pasivamente.
+
+**Impacto:** sensación de producto incompleto o de trabajo a medio construir.
+
+**Severidad:** **media**
+
+**Cómo lo corregiría:** usar ese panel para mostrar desde el inicio:
+
+* preview del primer correo recomendado
+* explicación de cómo funciona la revisión
+* resumen de acciones disponibles
+* o una bandeja inteligente preseleccionada
+
+---
+
+### 7) La mezcla visible de idiomas debilita madurez percibida
+
+**Hecho visible:** la interfaz está en español, pero gran parte del contenido visible de fixtures está en inglés: “Archive me from the Inbox row-level flow”, “Receipt Provider Error...”, etc. (`03-suggestions-overview.png`, `05-inbox-overview.png`).
+
+**Por qué es problema:** aunque sea fixture, la percepción de producto se construye con lo que se ve.
+
+**Impacto:** baja la sensación de acabado y de coherencia, especialmente en demos o revisiones internas.
+
+**Severidad:** **media**
+
+**Cómo lo corregiría:** fixture data alineada al idioma del producto y al caso real que se quiere demostrar.
+
+---
+
+### C. Problemas de verdad de producto / alcance
+
+### 8) Hay contradicciones o ambigüedades en los números mostrados
+
+**Hecho visible:** en `07-history-current.png` hay **20 registros visibles**, pero los contadores de **Aceptadas** y **Descartadas** están en **0**. En `08-activity-panel-current.png` el panel lateral muestra **0 sugerencias, 0 confirmadas y 0 eventos**, mientras la pantalla base sí tiene historial visible.
+
+**Inferencia:** podría haber filtros o ventanas temporales distintas, pero la UI no lo explica bien.
+
+**Por qué es problema:** cuando los números no se entienden, la verdad del producto se vuelve dudosa.
+
+**Impacto:** pérdida de confianza. El usuario puede pensar que el sistema no registra bien, que los resúmenes están rotos o que la analítica no sirve.
+
+**Severidad:** **alta**
+
+**Cómo lo corregiría:** alinear métricas y explicaciones:
+
+* aclarar si son manuales vs sugeridas
+* aclarar si el panel es “últimas 24h”
+* mostrar por qué la tabla y el resumen no coinciden
+* evitar tarjetas con 0 si no ayudan
+
+---
+
+### 9) La promesa “sin perder correos importantes” no está visible en la experiencia
+
+**Hecho visible:** en ninguna de las vistas aparece una capa clara de protección de correos importantes: no hay indicador de importancia, excepción, confianza, reversibilidad destacada ni “por qué esto es seguro”.
+
+**Por qué es problema:** esa promesa es central al valor del producto.
+
+**Impacto:** el usuario entiende que puede limpiar, pero no entiende por qué debería confiar.
+
+**Severidad:** **alta**
+
+**Cómo lo corregiría:** introducir señales visibles de seguridad:
+
+* “bajo riesgo”
+* “reversible”
+* “remitente frecuente”
+* “sin respuesta reciente”
+* “nunca archivar automáticamente” para ciertos tipos
+
+---
+
+### 10) Faltan estados clave del sistema
+
+**Hecho visible:** se ven estados de lista y tabla, pero no se ven estados claros de:
+
+* éxito posterior a acción
+* vacíos útiles
+* error
+* conflicto
+* por qué no hay datos
+* qué pasa después de “No aplicar”
+* qué diferencia hay entre acciones manuales y guiadas
+
+**Por qué es problema:** un producto de limpieza necesita claridad no solo cuando todo sale bien, sino cuando hay duda o excepción.
+
+**Impacto:** sensación de fragilidad y soporte futuro más costoso.
+
+**Severidad:** **media-alta**
+
+**Cómo lo corregiría:** diseñar explícitamente estados de sistema y no solo estados felices.
+
+---
+
+## 4. Lo que falta
+
+**Hecho visible ausente / hueco funcional**
+
+1. **Confianza o score de sugerencia**
+2. **Nivel de riesgo de la acción**
+3. **Explicación del origen de la sugerencia**
+4. **Preview contextual suficiente dentro del mismo flujo**
+5. **Relación visible entre Inbox ↔ Sugerencias ↔ Historial**
+6. **Protección explícita para correos importantes**
+7. **Undo / reversibilidad visible**
+8. **Progreso real de limpieza del inbox**
+9. **Priorización clara de qué atender primero**
+10. **Estados vacíos con propósito real**
+11. **Explicación de métricas y ventanas temporales**
+12. **Diferencia explícita entre acción manual, sugerida, confirmada y repetida**
+
+**Preguntas que deja abiertas el flujo**
+
+* ¿Qué hace que una sugerencia sea confiable?
+* ¿Qué pasa exactamente si apruebo o descarto?
+* ¿Cómo sé si ya limpié algo importante o no?
+* ¿“Volver a aplicar” actúa sobre el mismo correo, sobre un patrón o sobre un nuevo correo?
+* ¿El panel lateral resume analítica real o solo una vista separada?
+* ¿Qué parte del flujo es manual y qué parte está guiada por sistema?
+
+---
+
+## 5. Riesgos principales
+
+### 1) Riesgo de confianza rota por inconsistencia de verdad
+
+**Hecho visible:** contadores y resúmenes no dialogan claramente con lo que la tabla muestra (`07`, `08`).
+
+**Riesgo:** el usuario deja de creer en la trazabilidad y en la inteligencia del producto.
+
+---
+
+### 2) Riesgo de malas decisiones por contexto insuficiente
+
+**Hecho visible:** las sugerencias piden aprobar acciones fuertes con contexto limitado (`03`).
+
+**Riesgo:** rechazo del sistema o errores de limpieza.
+
+---
+
+### 3) Riesgo de que el producto parezca más ordenado que útil
+
+**Hecho visible:** la UI está limpia, pero no prioriza ni protege suficientemente (`03`, `05`).
+
+**Riesgo:** buena primera impresión visual, pero baja retención al uso real.
+
+---
+
+## 6. Cambios prioritarios
+
+### Cambios rápidos
+
+1. Aclarar labels y consecuencias de acción.
+2. Unificar idioma de fixtures y microcopy visible.
+3. Hacer explícita la diferencia entre historial, confirmaciones y eventos.
+4. Añadir una línea de confianza/riesgo en cada sugerencia.
+5. Mejorar el estado vacío del panel derecho de Inbox con una recomendación inicial.
+
+### Cambios medianos
+
+1. Abrir preview contextual inline desde Sugerencias sin sacar al usuario del flujo.
+2. Preseleccionar un correo al entrar a Inbox.
+3. Conectar cada fila del historial con su contexto original.
+4. Mostrar por qué un resumen marca 0 cuando la pantalla sí tiene actividad.
+5. Introducir priorización visible: primero revisar esto.
+
+### Cambios estructurales
+
+1. Rediseñar el flujo como **una sola arquitectura de decisión** y no tres áreas separadas.
+2. Convertir Sugerencias en una capa realmente confiable: contexto, evidencia, riesgo, reversibilidad.
+3. Definir una **verdad única de producto** para métricas, acciones, confirmaciones e historial.
+4. Hacer visible la promesa central: limpiar rápido **sin perder correos importantes**.
+
+---
+
+## 7. Qué no puede validarse sólo con screenshots
+
+1. Si el flujo real es rápido o se siente lento al usarlo.
+2. Si las confirmaciones, toasts o errores están bien resueltos.
+3. Si “Ver contexto” realmente reduce la carga cognitiva o solo navega a otra vista.
+4. Si “Volver a aplicar” tiene salvaguardas suficientes.
+5. Si hay accesibilidad real de teclado/lector.
+6. Si las métricas inconsistentes son bug, fixture temporal o decisión de producto.
+7. Si la selección en Inbox realmente transforma bien el panel derecho.
+
+## Cierre directo
+
+Mi lectura crítica es esta:
+
+* **Sí hay avance de orden y estructura.**
+* **No hay todavía una arquitectura de decisión plenamente confiable.**
+* **Lo más delicado no es el look; es la combinación de poco contexto + métricas ambiguas + promesa de seguridad no visible.**
+
+El mayor salto de calidad no vendrá de “pulir cards”, sino de resolver mejor **por qué confiar, qué hacer primero y cómo comprobar que el sistema dice la verdad**.
+

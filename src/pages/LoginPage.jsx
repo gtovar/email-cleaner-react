@@ -21,6 +21,8 @@ import { cn } from '../lib/utils.js';
 export default function LoginPage({ onLogin, message }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const messageText = typeof message === 'string' ? message : message?.text;
+  const messageTone = typeof message === 'object' && message ? message.type : 'error';
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
@@ -71,10 +73,23 @@ export default function LoginPage({ onLogin, message }) {
               </div>
             </div>
 
-            {message && (
-              <div className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-3">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" aria-hidden="true" />
-                <p className="text-sm text-destructive">{message}</p>
+            {messageText && (
+              <div
+                className={`flex items-start gap-3 rounded-lg border p-3 ${
+                  messageTone === 'info'
+                    ? 'border-primary/20 bg-primary/10'
+                    : 'border-destructive/20 bg-destructive/10'
+                }`}
+              >
+                <AlertCircle
+                  className={`mt-0.5 h-4 w-4 flex-shrink-0 ${
+                    messageTone === 'info' ? 'text-primary' : 'text-destructive'
+                  }`}
+                  aria-hidden="true"
+                />
+                <p className={`text-sm ${messageTone === 'info' ? 'text-foreground' : 'text-destructive'}`}>
+                  {messageText}
+                </p>
               </div>
             )}
 

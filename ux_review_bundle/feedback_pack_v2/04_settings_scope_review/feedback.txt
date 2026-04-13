@@ -1,0 +1,420 @@
+Ejecutando el prompt del paquete, usando sólo la screenshot `09-settings-current.png` como evidencia visual.
+
+## Distinción previa por nivel
+
+### 1) Problemas de arquitectura de decisión
+
+Aquí el problema no es “cómo se ve”, sino **por qué esta pantalla existe con este contenido**.
+
+* La pantalla mezcla tres dominios distintos: **perfil de cuenta**, **notificaciones**, y **seguridad/autenticación**.
+* Eso convierte una pantalla secundaria en un pseudo-centro de administración de cuenta.
+* Para un producto cuyo valor es **limpiar/revisar inbox con control manual y trazabilidad**, esta pantalla introduce una ambición de producto mucho más amplia que la promesa principal.
+
+### 2) Problemas de UI / copy / jerarquía visual
+
+Aquí el problema es cómo la interfaz comunica y prioriza.
+
+* La jerarquía hace parecer que estas opciones son importantes y maduras.
+* El copy es genérico y poco verificable: “Administra los datos principales de tu cuenta”, “Elige como quieres recibir actualizaciones”, “Refuerza la protección de tu cuenta”.
+* No hay señales de alcance, limitaciones, dependencia técnica ni consecuencia real de cada toggle.
+
+### 3) Problemas de verdad de producto / alcance
+
+Aquí está el riesgo más fuerte.
+
+* La pantalla sugiere que el producto **administra identidad**, **credenciales**, **seguridad de cuenta**, **doble factor**, **preferencias persistentes de notificación** y quizá **cambio de correo principal**.
+* Si el producto real no sostiene eso end-to-end, esta pantalla no es una mejora: es una **fuente de promesas falsas**.
+
+---
+
+# 1. Problemas de alta severidad
+
+## 1) “Seguridad” parece fuera del verdadero alcance del producto
+
+**Evidencia visual:** bloque completo con `Password actual`, `Password nueva`, botón `Actualizar password`, y toggle `Doble factor (2FA)`.
+
+**Por qué es grave:**
+
+* Esto comunica que la app gestiona autenticación y endurecimiento de cuenta.
+* Cambiar password y activar 2FA no son “preferencias”; son capacidades de identidad y seguridad de alto impacto.
+* Si la autenticación depende de un proveedor externo, sesión existente, OAuth, Gmail o cualquier capa no propia, esta UI está mintiendo sobre quién controla la seguridad real.
+
+**Riesgo:**
+
+* Expectativa falsa de protección.
+* Pérdida de confianza si la persona cree que ya “aseguró” su cuenta desde aquí.
+* Riesgo reputacional serio: seguridad fake es peor que no ofrecer seguridad.
+
+---
+
+## 2) “Correo principal” editable sugiere administración de identidad/cuenta que probablemente no corresponde
+
+**Evidencia visual:** input editable `tu@email.com` bajo “Cuenta”.
+
+**Por qué es grave:**
+
+* No queda claro si esto cambia el email de acceso, el email de contacto, el email para reportes o sólo un dato decorativo.
+* “Correo principal” es una etiqueta fuerte; implica fuente canónica de identidad.
+* Si el producto no puede cambiar realmente la identidad base, este control es engañoso.
+
+**Riesgo:**
+
+* La persona cree que está actualizando su cuenta real.
+* Puede esperar efectos que no existen: login, recepción, integración, recuperación de cuenta, etc.
+
+---
+
+## 3) La pantalla parece un inventario de features estándar, no una decisión alineada al producto
+
+**Evidencia visual:** tres tarjetas típicas de SaaS (`Cuenta`, `Notificaciones`, `Seguridad`) con iconografía genérica y copy genérico.
+
+**Por qué es grave:**
+
+* Parece una pantalla construida por convención, no por necesidad.
+* Transmite “este producto tiene sistema de cuenta completo” aunque el contexto dice lo contrario: herramienta simple, sin configuración compleja, sin promesas de administración completa.
+
+**Riesgo:**
+
+* Desalineación entre producto real y superficie visible.
+* La persona empieza a evaluar la app contra una promesa más grande que la que realmente ofrece.
+
+---
+
+## 4) Los toggles de notificaciones pueden prometer capacidades operativas que quizá no existen o no están justificadas
+
+**Evidencia visual:** `Reportes por correo`, `Resumen semanal`, `Nuevas sugerencias`.
+
+**Por qué es grave:**
+
+* “Reportes por correo” implica sistema de envíos recurrentes.
+* “Resumen semanal” implica agregación de actividad, cadencia, procesamiento y valor sostenido.
+* “Nuevas sugerencias” no aclara canal: ¿email?, ¿in-app?, ¿push?, ¿banner?, ¿historial?
+
+**Riesgo:**
+
+* La persona espera automatización activa y comunicaciones persistentes.
+* Si el producto es principalmente manual y de revisión simple, estos toggles empujan la percepción hacia un asistente operativo más autónomo de lo que realmente es.
+
+---
+
+# 2. Problemas de media severidad
+
+## 5) El copy no define consecuencias reales
+
+Ejemplos:
+
+* “Administra los datos principales de tu cuenta.”
+* “Elige como quieres recibir actualizaciones.”
+* “Refuerza la protección de tu cuenta.”
+
+Esto no explica:
+
+* qué cambia,
+* dónde se usa,
+* qué impacto tiene,
+* si aplica inmediatamente,
+* si depende de algo más.
+
+No hay verdad operativa.
+
+---
+
+## 6) “Nombre visible” parece decorativo o mal justificado
+
+**Evidencia visual:** input `Nombre para mostrar`.
+
+Pregunta crítica:
+
+* ¿Dónde se muestra?
+* ¿En una app personal de limpieza de inbox, quién necesita un nombre visible?
+
+Si no existe un uso concreto, esto es ruido de configuración.
+
+---
+
+## 7) La pantalla secundaria compite demasiado con el flujo principal
+
+El producto principal parece ser inbox, sugerencias, historial.
+Esta pantalla, en cambio, ocupa mucho espacio conceptual con settings “pesados”.
+
+No está actuando como soporte; está intentando comportarse como una capa estructural del producto.
+
+---
+
+## 8) El estado visual de los toggles no comunica importancia relativa
+
+En la tarjeta de notificaciones:
+
+* dos toggles apagados,
+* uno encendido,
+* sin explicación de recomendación,
+* sin default justificado,
+* sin indicación de impacto.
+
+Eso deja la decisión como arbitraria.
+
+---
+
+## 9) Hay contradicción implícita en el modelo mental del producto
+
+Si la app ayuda a limpiar correo sin complejidad, meter:
+
+* reportes por correo,
+* resumen semanal,
+* sugerencias nuevas notificadas,
+  genera una paradoja:
+  **la app para reducir ruido también puede generar más ruido.**
+
+Eso puede romper la confianza conceptual del producto.
+
+---
+
+# 3. Problemas menores
+
+## 10) La redacción es demasiado estándar y poco específica
+
+La pantalla suena a plantilla de dashboard SaaS.
+No suena a este producto.
+
+---
+
+## 11) El botón “Guardar cambios” sólo existe en Cuenta
+
+Eso sugiere modelos de persistencia distintos:
+
+* Cuenta requiere submit explícito
+* Notificaciones persiste al toggle
+* Seguridad tiene submit propio
+
+Puede ser correcto, pero no está explicado y aumenta fricción cognitiva.
+
+---
+
+## 12) La iconografía suaviza en exceso decisiones delicadas
+
+Los íconos y el tono limpio hacen ver todo como inocuo.
+Pero cambiar password/2FA no es inocuo.
+La UI le baja gravedad a algo que, si fuera real, es sensible.
+
+---
+
+# 4. Vacíos importantes
+
+## Vacío 1: no se sabe qué de esto es real y qué es placeholder
+
+La screenshot no da ninguna pista de:
+
+* qué ya funciona,
+* qué está en beta,
+* qué depende de otra cuenta,
+* qué todavía no aplica.
+
+---
+
+## Vacío 2: no se sabe qué sistema de identidad existe
+
+Para validar esta pantalla faltaría saber:
+
+* ¿la app tiene auth propia?
+* ¿usa proveedor externo?
+* ¿existe recuperación de cuenta?
+* ¿2FA es real o sólo visual?
+* ¿password aquí realmente aplica a la cuenta que usa el usuario?
+
+---
+
+## Vacío 3: no se sabe qué canal usan las notificaciones
+
+“Nuevas sugerencias” es especialmente ambiguo.
+
+* ¿aparece en la app?
+* ¿manda email?
+* ¿dispara alertas?
+* ¿qué frecuencia?
+* ¿qué evento exacto la activa?
+
+---
+
+## Vacío 4: no se sabe si “Cuenta” tiene valor dentro del caso de uso principal
+
+Nada en la pantalla conecta estas preferencias con:
+
+* inbox,
+* sugerencias,
+* historial,
+* trazabilidad,
+* control manual.
+
+Está separada del core del producto.
+
+---
+
+# 5. Respuestas obligatorias
+
+## 1) ¿Qué partes de esta pantalla parecen fuera del verdadero alcance del producto?
+
+Las más sospechosas:
+
+* **Cambio de password**
+* **Doble factor (2FA)**
+* **Correo principal editable**
+* **Resumen semanal**
+* en menor medida, **Nombre visible**
+
+Lo más fuera de alcance es claramente **Seguridad**.
+Eso pertenece a una capa de identidad/cuenta más amplia que el producto descrito no necesita prometer.
+
+---
+
+## 2) ¿Qué elementos podrían hacer que una persona espere capacidades que la app no tiene?
+
+Principalmente:
+
+* `Password actual / Password nueva / Actualizar password`
+* `Doble factor (2FA)`
+* `Correo principal`
+* `Reportes por correo`
+* `Resumen semanal`
+* `Nuevas sugerencias`
+
+Todos esos elementos inducen expectativas de:
+
+* gestión de cuenta,
+* sistema de seguridad real,
+* comunicaciones automatizadas,
+* motores de notificación persistentes,
+* operación más madura y más autónoma de la que el producto quizá sostiene.
+
+---
+
+## 3) ¿Conviene reducir, reencuadrar o eliminar esta pantalla?
+
+Mi juicio crítico:
+
+### Opción más probable correcta: **reducirla drásticamente**
+
+No la eliminaría automáticamente, pero sí le quitaría casi todo.
+
+### Qué dejaría sólo si existe de verdad
+
+* una preferencia muy concreta y verificable de notificación, si realmente opera,
+* quizá un pequeño bloque de perfil mínimo si tiene uso real visible.
+
+### Qué movería o eliminaría
+
+* **Seguridad completa**: eliminar de esta pantalla si no es una capacidad real propia del producto.
+* **Correo principal**: eliminar o renombrar radicalmente si no cambia identidad real.
+* **Nombre visible**: eliminar si no tiene uso observable.
+* **Resumen semanal / reportes por correo**: eliminar si no están claramente implementados y validados como útiles.
+
+Mi recomendación de PM senior sería:
+**esta pantalla hoy está sobredimensionada para el producto que describes.**
+
+---
+
+# 6. Mejoras priorizadas
+
+## Prioridad 1 — cortar promesas falsas
+
+Eliminar o ocultar:
+
+* `Seguridad`
+* `2FA`
+* `Password actual/nueva`
+* `Correo principal` si no es identidad real editable
+
+Éste es el ajuste más importante.
+
+---
+
+## Prioridad 2 — redefinir Settings como “Preferencias del producto”, no “Administración de cuenta”
+
+Cambiar el framing completo:
+
+* de “Ajustes”
+* a algo como “Preferencias” o “Preferencias de la experiencia”
+
+Y dejar sólo controles del producto real.
+
+---
+
+## Prioridad 3 — hacer cada opción falsable
+
+Cada ajuste debería poder responder:
+
+* qué cambia,
+* dónde se refleja,
+* cuándo aplica,
+* cuál es el canal,
+* si se puede revertir.
+
+Ahora mismo el copy no supera esa prueba.
+
+---
+
+## Prioridad 4 — conectar la pantalla con el core del producto
+
+Si la app vive en inbox/sugerencias/historial, la configuración debería hablar ese idioma:
+
+* qué avisos del producto verás,
+* qué comportamiento de revisión prefieres,
+* qué trazabilidad quieres conservar,
+  no cuenta genérica ni seguridad abstracta.
+
+---
+
+## Prioridad 5 — reducir densidad conceptual
+
+Tres tarjetas grandes para una pantalla secundaria es demasiado si el producto quiere parecer simple.
+Menos bloques, menos categorías, más verdad.
+
+---
+
+# 7. Qué evidencia adicional necesitaría para validar mejor
+
+1. **Qué autenticación usa realmente el producto**
+   Para saber si Seguridad es legítima o una ficción.
+
+2. **Qué configuraciones persisten hoy de verdad en backend o sesión**
+   No en mock; reales.
+
+3. **Qué notificaciones existen realmente en producción**
+   Canal, frecuencia, trigger, almacenamiento, opt-in/out.
+
+4. **Qué usa el producto del “Nombre visible” y del “Correo principal”**
+   Pantallas exactas y flujo exacto.
+
+5. **Si esta pantalla fue diseñada por completitud visual o por necesidad validada**
+   Quiero saber si surgió de una hipótesis de negocio real o de una convención de UI.
+
+---
+
+# Cierre crítico
+
+## Lo que está mal
+
+La pantalla aparenta un alcance más amplio que el producto descrito.
+
+## Lo que está confuso
+
+No se distingue entre preferencias reales del producto y administración de cuenta.
+
+## Lo que puede romper la experiencia
+
+Que el usuario crea que configuró seguridad, identidad o automatizaciones que la app no sostiene.
+
+## Lo que afecta comprensión o confianza
+
+La interfaz promete madurez funcional sin demostrar verdad operativa.
+
+## Lo que parece superficial o insuficientemente justificado
+
+Casi todo el bloque de Cuenta y Seguridad, y parte de Notificaciones.
+
+## Mi veredicto
+
+**Sí conviene reducir o reencuadrar esta pantalla.**
+En su estado actual, se siente más como una pantalla genérica de SaaS que como una superficie honesta para este producto.
+
+Si quieres, puedo convertir este review en una versión todavía más dura tipo **“go / no-go de lanzamiento”**, con decisión final por bloque: **mantener / reencuadrar / eliminar**.
+

@@ -1,0 +1,44 @@
+Nombre: HistoryPage
+Tipo: pantalla de historial operativo
+
+Qué hace:
+- Muestra acciones previas sobre correos.
+- Permite filtrar por estado y buscar por correo/asunto.
+- Permite repetir una acción previa.
+
+Para qué sirve:
+- Dar trazabilidad al usuario sobre lo que ya decidió.
+- Permitir repetir acciones sin volver a empezar desde cero.
+
+Propósito de producto:
+- Cerrar el ciclo de confianza: no solo sugerir, sino permitir revisar decisiones pasadas.
+
+Qué resuelve:
+- El problema de no saber qué se hizo antes.
+- La necesidad de recuperar acciones sobre correos similares o previos.
+
+Cómo parece pensada:
+- Como bitácora funcional, no solo como auditoría pasiva.
+- Con doble modo: tabla en desktop y tarjetas en móvil.
+
+Acción principal:
+- Repetir acción.
+
+Flujo:
+- Se accede desde la navegación autenticada.
+- Complementa la pantalla de sugerencias y el loop de limpieza.
+
+Dependencias:
+- `getHistory(page, perPage)`
+- `confirmAction()` para repetir.
+
+Estados relevantes:
+- Loading.
+- Empty state.
+- Filtros sin resultados.
+- Lista con tabla desktop.
+- Lista con tarjetas móvil.
+
+Observaciones UX para experto:
+- Conviene revisar si “repetir acción” tiene suficiente contexto para evitar errores.
+- La pantalla equilibra trazabilidad con productividad; ese balance es importante.

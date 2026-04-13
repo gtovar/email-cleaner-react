@@ -2,8 +2,8 @@
 
 ## 1) Current Context Snapshot
 - Repo: `email-cleaner-react`
-- Branch: `feat/hu07b-receipt-response-ui`
-- Latest commit: `0138a5e`
+- Branch: `feat/ux-review-bundle-experiments`
+- Latest commit: `9859919`
 - Summary lives in a right-side drawer (Sheet) opened from the header.
 - OAuth login uses a dedicated Login page and httpOnly session cookie.
 - Session expiry triggers a Login screen via `onAuthExpired`.
@@ -13,20 +13,12 @@
 - SummaryPanel and drawer flow are covered by automated tests.
 - Auth callback success/error and session-expiry flow are covered by direct tests.
 - Inbox and Settings app-shell mounting are covered by smoke tests in `tests/AppShellViews.test.jsx`.
-- `InboxList` now has direct coverage for empty, error, and mobile preview states in `tests/InboxList.test.jsx`.
-- `SettingsPage` now has direct coverage for section rendering, labeled inputs, and toggle defaults in `tests/SettingsPage.test.jsx`.
-- `InboxList` now implements bulk controls for `archive`, `delete`, and `mark_unread` against the ADR 008 contract.
-- HU19 is closed on `develop` for the documented local/browser scope; the next frontend task is no longer a HU19 completion step.
-- ADR 007 now gives HU19 a direction: Inbox actions should use a dedicated contract, not the suggestion-confirm endpoint.
-- ADR 003 now defines the frontend UX contract for confirmations, disabled states, and feedback.
-- ADR 008 now defines bulk-result semantics, including partial success, per-item results, and local reconciliation for the first implementation pass.
-- Fastify now emits ADR 008 response fields for bulk execution on `/api/v1/inbox/actions`, so the next frontend step is wiring multi-select bulk behavior to that contract.
-- `InboxList` now implements the first HU19 slice for row-level actions: `archive` and `delete` confirm before executing, while `mark_unread` executes directly with toast feedback.
-- Each Inbox row now exposes `data-testid="inbox-row-{id}"` so future E2E coverage can target rows without relying on DOM position.
-- Playwright is now configured locally in `playwright.config.js`, and the first browser spec lives in `tests/e2e/hu19-row-level.spec.js`.
-- The full HU19 browser suite now passes locally for row-level and bulk Inbox actions (`archive`, `delete`, `mark_unread`) against the fixture Inbox environment.
-- Fastify already exposes the receipt-extraction route, the manual WhatsApp delivery route, and `GET /api/v1/emails/:id/content`, so the current slice consumes existing backend behavior only.
-- `ReceiptReviewDialog.jsx` now consumes `GET /api/v1/receipt-responses/:targetId` plus `POST /api/v1/receipt-responses` to read and update the manual receipt state inside the existing review dialog.
+- `ReceiptReviewDialog` reads and writes the manual receipt response state against `/api/v1/receipt-responses`.
+- `ReceiptReviewDialog` keeps manual WhatsApp send separate from receipt-response state and surfaces validation, network, and backend/provider errors explicitly.
+- `tests/e2e/hu06-receipt-review.spec.js` validates the receipt-review browser flow against dedicated HU06 fixture emails.
+- `HomePage` uses `framer-motion` for the public landing animation bundle.
+- `LoginPage` handles structured auth messages for callback and session-expiry flows.
+- PR 48 is open against `develop` for this branch.
 
 ## 2) What Changed During the Last Session
 - Added the `Revisar recibo` row action in `src/components/InboxList.jsx`.
@@ -49,22 +41,21 @@
 
 ## 3) Exact Commands to Resume Work
 ```bash
-git switch feat/hu07b-receipt-response-ui
+git switch feat/ux-review-bundle-experiments
 npm install
 npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx
 npm run dev
 ```
 
 ## 4) Where the Workflow Stopped
-- HU_07B is implemented on `feat/hu07b-receipt-response-ui`, the WhatsApp send follow-up fixes are already committed, and PR 47 is open against `develop`.
-- The only local edits right now are this metadata-sync follow-up for the React checkpoint docs.
-- The dialog now reads the current receipt-response state and allows `paid` / `ignore` writes without introducing a new screen or a parallel frontend contract.
-- Targeted Vitest coverage for the new receipt-response states and actions passed locally.
-- Browser validation still exists only for HU06 manual WhatsApp send; adding Playwright for HU_07B remains an optional future improvement, not a blocker for this slice.
-- `ReceiptReviewDialog.jsx` now carries both manual WhatsApp send state and manual receipt-response state; keep that under watch for the next large dialog change, but do not split it preemptively.
+- The branch is published on `origin` and PR 48 is open against `develop`.
+- CI is green on PR 48.
+- No review comments or reviews are present yet.
+- The next operational step is to wait for review, then address any findings before merge.
+- After merge, prune and remove `feat/ux-review-bundle-experiments` locally and remotely, then refresh `develop` and `main`.
 
 ## 5) Immediate Next Step
-➡️ Review PR 47, then decide whether to keep this small metadata-sync doc update as a final follow-up before merge.
+➡️ Wait for PR 48 review, then merge to `develop` if there are no findings.
 
 ## 6) Technical Quick Reference
 - `src/App.jsx`
@@ -80,5 +71,5 @@ npm run dev
 - `tests/ReceiptReviewDialog.test.jsx`
 
 ## 7) Reentry Status
-- Reentry: dirty only by metadata-sync doc edits; code slice already committed and PR open
-- Tests: last verified PASS (`npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx`) on 2026-03-24
+- Reentry: clean branch, PR 48 open, waiting for review
+- Tests: last verified PASS (`npm run lint`, `npm test -- --run`, `npm run build`, `npm run lint:docs` with `nvm use --lts`) on 2026-04-13

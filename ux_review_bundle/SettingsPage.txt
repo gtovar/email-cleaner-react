@@ -1,0 +1,38 @@
+Nombre: SettingsPage
+Tipo: pantalla de configuración
+
+Qué hace:
+- Agrupa ajustes de cuenta, notificaciones y seguridad.
+- Presenta formularios básicos y toggles de preferencias.
+
+Para qué sirve:
+- Centralizar preferencias del usuario.
+- Dar sensación de control sobre cuenta, reportes y seguridad.
+
+Propósito de producto:
+- Completar el app shell con una zona de administración personal.
+- Reforzar percepción de madurez del producto.
+
+Qué resuelve:
+- La necesidad de editar datos básicos y revisar opciones de notificación/seguridad.
+
+Cómo parece pensada:
+- Como una pantalla de configuración clásica por secciones.
+- Más orientada a estructura y cobertura de categorías que a flujos complejos.
+
+Acción principal:
+- Guardar cambios / actualizar password / activar switches.
+
+Flujo:
+- Se accede desde `ActivityPanel`.
+
+Dependencias:
+- Actualmente la UI expone controles, pero desde el código visible no se aprecia persistencia real conectada a backend.
+
+Estados relevantes:
+- Estado base con formularios y toggles.
+- No se observan estados explícitos de carga, guardado o error en la superficie actual.
+
+Observaciones UX para experto:
+- Hay valor en revisar si esta pantalla está demasiado “placeholder” frente al resto del producto.
+- También conviene revisar si las categorías reflejan necesidades reales ya soportadas o expectativas futuras.

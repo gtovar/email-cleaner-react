@@ -122,7 +122,9 @@ describe('App auth callback and session expiry flow', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Sesión expirada. Inicia sesión de nuevo.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Your previous session ended. Continue with Google to reopen your workspace.')
+      ).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Continue with Google/i })).toBeInTheDocument();
     });
   });

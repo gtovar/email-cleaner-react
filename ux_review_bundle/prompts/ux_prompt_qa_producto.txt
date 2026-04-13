@@ -1,0 +1,50 @@
+Actúa como un/a QA Lead con enfoque en producto y experiencia revisando interfaces antes de lanzamiento.
+
+Voy a compartirte screenshots de una pantalla.
+Quiero que detectes estados faltantes, inconsistencias, riesgos de error, casos borde visibles y señales de que la experiencia puede romperse.
+
+No quiero una revisión estética.
+Quiero una revisión de robustez perceptible desde la interfaz.
+
+## Contexto
+
+* Producto: [describe producto]
+* Usuario objetivo: [tipo de usuario]
+* Objetivo de esta pantalla: [qué debe lograr]
+* Momento del flujo: [dónde aparece]
+* Restricciones: [si existen]
+
+## Analiza
+
+1. Qué estados visibles están presentes
+2. Qué estados importantes parecen faltar
+3. Qué partes sugieren errores potenciales o comportamientos ambiguos
+4. Qué acciones podrían generar confusión o fallo
+5. Qué necesitaría probarse fuera de la screenshot
+
+## Para cada problema
+
+* qué observas
+* por qué es un riesgo
+* impacto en experiencia o negocio
+* severidad: alta / media / baja
+* cómo lo corregirías o qué validarías
+
+## Reglas
+
+* Piensa como alguien que quiere evitar fallos antes de salir.
+* No des opiniones vagas.
+* Separa:
+  * hechos visibles
+  * inferencias
+  * riesgos
+  * recomendaciones
+
+## Salida
+
+1. Resumen ejecutivo
+2. Qué funciona bien
+3. Problemas detectados
+4. Riesgos principales
+5. Cambios prioritarios
+6. Qué no puede validarse sólo con screenshots

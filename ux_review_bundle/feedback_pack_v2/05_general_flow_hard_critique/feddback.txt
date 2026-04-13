@@ -1,0 +1,362 @@
+iBasado **solo** en estos screenshots, el producto todavía no se ve listo para sostener confianza en un flujo central de limpieza de inbox.
+
+## Lo que existe realmente
+
+Se ve esto:
+
+* una vista de **Inbox** para revisión manual
+* una vista de **Sugerencias** para aprobar acciones guiadas
+* una vista de **Historial** para trazabilidad
+* un panel lateral de **Resumen**
+* datos visibles que parecen **fixtures/test data**: `E2E Sender`, `HU19`, `HU06`, textos en inglés mezclados con español
+
+Eso me permite evaluar tres niveles distintos.
+
+---
+
+## 1) Problemas de arquitectura de decisión
+
+### A. El producto no deja claro cuál es el loop principal
+
+Ahora mismo hay al menos cuatro promesas compitiendo:
+
+* limpiar inbox manualmente
+* aprobar sugerencias del sistema
+* revisar recibos
+* consultar historial/resumen
+
+Eso no es una suite coherente todavía. Parece una agregación de vistas, no una arquitectura de decisión madura.
+
+**Riesgo:** el usuario no sabe por dónde empezar ni qué camino le da más valor.
+**Impacto:** baja comprensión, menor adopción del flujo “correcto”, sensación de producto a medio amarrar.
+
+---
+
+### B. Las sugerencias no ayudan realmente a decidir
+
+En `03-suggestions-overview.png` las tarjetas dicen:
+
+* sugerencia
+* motivo
+* qué pasa si apruebas
+
+Pero no muestran lo que de verdad importa para decidir:
+
+* **por qué el sistema cree eso**
+* **qué tan seguro está**
+* **qué riesgo hay si se equivoca**
+* **qué hace que este correo sea importante o no**
+* **por qué este correo está antes que otro**
+
+Hoy no son “decisiones guiadas”. Son botones con una justificación mínima.
+
+**Riesgo:** la IA se siente decorativa, no confiable.
+**Impacto:** el usuario no delega nada, revisa todo manualmente, el valor del producto colapsa.
+
+---
+
+### C. La arquitectura de trazabilidad está conceptualmente rota
+
+En `07-history-current.png` hay:
+
+* `20 registros visibles`
+* `0 aceptadas`
+* `0 descartadas`
+
+Pero la tabla muestra muchas acciones (`archive`, `delete`, `mark_unread`).
+
+Y en `08-activity-panel-current.png` el resumen también muestra `0` en todo.
+
+Eso genera una pregunta inmediata:
+**¿qué cuenta cada cosa y cuál es la verdad del sistema?**
+
+Si el historial dice que hubo acciones, pero el resumen y los contadores dicen cero, el producto parece inconsistente o falso.
+
+**Riesgo:** pérdida directa de confianza.
+**Impacto:** aunque la UI se vea bonita, el usuario sospecha que el sistema no entiende sus propios datos.
+
+---
+
+### D. “Volver a aplicar” es una mala decisión de producto en este estado
+
+En historial aparece `Volver a aplicar` por fila.
+
+Eso es peligrosísimo porque no se ve:
+
+* el contexto original
+* si el correo sigue existiendo
+* si ya cambió de estado
+* qué validación previa se hará
+* si habrá undo
+
+Repetir acciones no es un detalle menor. Es una operación sensible.
+
+**Riesgo:** doble acción, acción inválida, acción absurda.
+**Impacto:** miedo a usar el historial como herramienta real.
+
+---
+
+### E. El inbox manual tampoco está bien resuelto
+
+En `05-inbox-overview.png`:
+
+* el panel derecho está vacío hasta seleccionar algo
+* la lista izquierda carga casi todo el peso
+* los checkboxes sugieren bulk actions, pero no se ven controles claros de bulk
+* el CTA visible más fuerte es `Revisar recibo`
+
+Eso abre otra fractura:
+¿el producto limpia inbox o revisa recibos?
+
+Porque hoy el CTA dominante no parece “archivar / borrar / conservar con contexto”, sino “revisar recibo”.
+
+**Riesgo:** el producto está mezclando el core loop con un subflujo.
+**Impacto:** se diluye la propuesta de valor principal.
+
+---
+
+## 2) Problemas de UI / copy / jerarquía visual
+
+### Alta severidad
+
+1. **Se filtra verdad de desarrollo al producto**
+
+   * `E2E Sender`
+   * `[E2E-HU19]`
+   * textos en inglés dentro de interfaz en español
+
+Eso no es solo feo. Destruye percepción de madurez.
+
+2. **Misma gravedad visual para acciones muy distintas**
+
+   * aprobar archivar
+   * aprobar eliminar
+   * aprobar marcar como no leído
+   * aprobar revisar con más detalle
+
+Eliminar no debería verse tan equivalente a revisar más detalle.
+
+3. **Jerarquía pobre en tarjetas de sugerencias**
+   Todo se parece demasiado:
+
+   * estructura repetida
+   * bloques grandes
+   * poca señal real
+   * demasiado espacio para poco contenido útil
+
+4. **El panel derecho vacío desperdicia la mitad de la pantalla**
+   Antes de seleccionar, el layout se siente incompleto, no preparado.
+
+---
+
+### Media severidad
+
+5. **Copy demasiado burocrático y repetitivo**
+   Frases como “Si apruebas, este correo se archivará y quedará registrado” se repiten con cambios mínimos.
+   Eso no ayuda a decidir; solo rellena.
+
+6. **Etiquetas redundantes**
+   `INBOX`, `UNREAD`, etc. aportan poco cuando casi todo comparte el mismo estado visible.
+
+7. **“Vista compacta” parece etiqueta, no control**
+   Si es un modo, debería comportarse como modo. Si no, sobra.
+
+8. **Los contadores no impulsan ninguna acción**
+   `0 de 5 revisados`, `20 visibles`, `0 aceptadas`, `0 descartadas` son métricas mudas.
+
+---
+
+### Menores
+
+9. Fechas con poca precisión para trazabilidad.
+10. Tabla de historial demasiado genérica para una operación sensible.
+11. El menú lateral mezcla resumen analítico con ajustes y cerrar sesión; eso se siente ensamblado, no diseñado.
+12. La pantalla general tiene demasiado “aire limpio” para un problema que requiere densidad informativa.
+
+---
+
+## 3) Problemas de verdad de producto o alcance
+
+### A. No está claro si esto es un “cleaner” o un “receipt workflow”
+
+Lo visible empuja a ambas cosas, pero no define cuál manda.
+
+### B. La promesa de “mantén tu inbox limpio sin perder correos importantes” no está respaldada
+
+No veo nada que me pruebe:
+
+* cómo protege correos importantes
+* cómo reduce errores
+* cómo explica riesgos
+* cómo recupera una mala decisión
+
+### C. La trazabilidad parece más cosmética que operativa
+
+Hay historial, sí.
+Pero no hay evidencia visual de que el historial realmente ayude a entender, auditar o revertir.
+
+---
+
+# 1. Problemas de alta severidad
+
+1. Core loop ambiguo: limpieza vs sugerencias vs recibos vs historial.
+2. Sugerencias sin confianza, riesgo, prioridad ni explicabilidad suficientes.
+3. Contradicción entre historial y resumen.
+4. `Volver a aplicar` sin garantías visibles.
+5. Fuga de test fixtures/dev strings al producto.
+6. CTA dominante de recibos contaminando el flujo principal de limpieza.
+7. Inbox con panel derecho muerto y bulk intent mal resuelto.
+
+---
+
+# 2. Problemas de media severidad
+
+1. Copy repetitivo y poco útil.
+2. Igual tratamiento visual para acciones con distinto riesgo.
+3. Métricas decorativas, no operativas.
+4. Baja densidad de señal útil en tarjetas.
+5. Menú lateral mezclando analytics y cuenta.
+6. Tabla de historial demasiado superficial.
+
+---
+
+# 3. Problemas menores
+
+1. Fechas poco informativas.
+2. Etiquetas redundantes.
+3. “Vista compacta” ambiguo.
+4. Exceso de whitespace para un producto de productividad.
+
+---
+
+# 4. Vacíos importantes
+
+Falta evidencia de:
+
+* undo real o mecanismo de recuperación
+* confirmaciones para acciones sensibles
+* detalle completo de un correo seleccionado
+* explicación real de por qué una sugerencia existe
+* nivel de confianza del sistema
+* manejo de errores / vacíos / estados reales
+* jerarquización de correos importantes
+* efecto posterior a aprobar o descartar una sugerencia
+* relación clara entre historial, resumen y estado actual del inbox
+
+---
+
+# 5. Mejoras priorizadas
+
+## Estructurales de verdad
+
+1. **Definir un solo loop primario**
+   Decide si el producto vive en:
+
+   * inbox triage asistido, o
+   * bandeja de sugerencias revisables
+
+   Hoy intenta ser ambos.
+
+2. **Rediseñar la decisión, no la estética**
+   Cada sugerencia debe mostrar:
+
+   * razón real
+   * confianza
+   * riesgo
+   * impacto
+   * forma rápida de verificar contexto
+   * capacidad de deshacer
+
+3. **Unificar semántica de métricas**
+   Historial, resumen y contadores deben contar lo mismo o explicar con brutal claridad por qué no.
+
+4. **Convertir historial en auditoría real**
+   No solo lista:
+
+   * qué pasó
+   * sobre qué correo humano
+   * cuándo
+   * por quién o por qué flujo
+   * estado previo/posterior
+   * posibilidad de inspección antes de reintentar
+
+5. **Separar recibos como subflujo**
+   Si “revisar recibo” es una capacidad especializada, no debe dominar visualmente el inbox general.
+
+6. **Hacer útil el panel derecho**
+   Debe ser el lugar donde se entiende el correo y se decide con seguridad.
+
+## Maquillaje
+
+1. limpiar copy
+2. unificar idioma
+3. mejorar jerarquía visual
+4. diferenciar acciones destructivas de seguras
+5. reducir ruido repetitivo
+
+Eso ayuda, pero no arregla el problema central.
+
+---
+
+# 6. Qué evidencia adicional necesitaría para validar mejor
+
+Necesitaría ver:
+
+* inbox con un correo realmente seleccionado
+* el detalle completo del panel derecho
+* el flujo al aprobar una sugerencia
+* el flujo al descartar una sugerencia
+* la confirmación de eliminar
+* el estado posterior a una acción
+* un historial con datos reales y explicación de métricas
+* la lógica visible de priorización o confianza
+* ejemplos con correos importantes vs irrelevantes
+* un caso donde el sistema se equivoca y cómo lo contiene
+
+---
+
+## Respuestas obligatorias
+
+### 1. ¿Qué mejoras son estructurales y cuáles son sólo maquillaje?
+
+**Estructurales:**
+
+* definir loop principal
+* arreglar semántica de métricas
+* mejorar arquitectura de decisión
+* explicar sugerencias con confianza/riesgo
+* rediseñar historial como auditoría real
+* separar recibos del core de limpieza
+
+**Maquillaje:**
+
+* espaciado
+* colores
+* consistencia de copy
+* badges más bonitos
+* botones más pulidos
+
+---
+
+### 2. ¿Dónde sigue estando débil la arquitectura de decisión?
+
+* en la priorización
+* en la explicabilidad
+* en la seguridad de acciones
+* en la relación entre sugerencia, revisión manual e historial
+* en la definición del producto principal
+
+---
+
+### 3. ¿Qué me haría desconfiar de este producto aunque la UI se vea más limpia?
+
+Tres cosas:
+
+1. **contadores que no cuadran con la actividad visible**
+2. **acciones sensibles que se pueden repetir sin contexto suficiente**
+3. **sugerencias que no demuestran por qué merecen confianza**
+
+Eso es lo más grave. No es un problema de “UI fea”. Es un problema de verdad operativa.
+
+Si quieres, puedo convertir esta crítica en una **lista de cambios accionables por pantalla**, separando **must-fix antes de launch** vs **fix después**.
+

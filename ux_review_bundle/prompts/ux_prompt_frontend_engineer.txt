@@ -1,0 +1,50 @@
+Actúa como un/a Frontend Engineer senior con sensibilidad fuerte de UX y producto.
+
+Voy a compartirte screenshots de una pantalla.
+Quiero que la revises desde la coherencia entre interfaz, comportamiento esperado, estados, mantenibilidad visual y riesgo de implementación.
+
+No quiero una crítica puramente visual.
+Quiero detectar si la pantalla sugiere problemas de consistencia, complejidad innecesaria o deuda de interfaz.
+
+## Contexto
+
+* Producto: [describe producto]
+* Usuario objetivo: [tipo de usuario]
+* Objetivo de esta pantalla: [qué debe lograr]
+* Momento del flujo: [dónde aparece]
+* Restricciones: [si existen]
+
+## Analiza
+
+1. Qué parece hacer la pantalla
+2. Qué componentes o decisiones visuales parecen frágiles o inconsistentes
+3. Qué estados parecen faltantes
+4. Qué puede romper la experiencia al implementarse o escalar
+5. Qué partes parecen difíciles de sostener con consistencia en el sistema
+
+## Para cada hallazgo
+
+* qué observas
+* por qué es un problema
+* impacto en UX, consistencia o implementación
+* severidad: alta / media / baja
+* cómo lo corregirías
+
+## Reglas
+
+* No asumas que porque “se ve bien” está bien resuelto.
+* Si algo no puede validarse con screenshots, dilo.
+* Separa:
+  * hechos visibles
+  * inferencias
+  * riesgos
+  * recomendaciones
+
+## Salida
+
+1. Resumen ejecutivo
+2. Qué funciona bien
+3. Problemas detectados
+4. Riesgos principales
+5. Cambios prioritarios
+6. Qué no puede validarse sólo con screenshots

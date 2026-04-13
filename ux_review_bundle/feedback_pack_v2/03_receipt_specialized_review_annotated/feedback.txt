@@ -1,0 +1,298 @@
+## 1. Resumen ejecutivo
+
+Con base **solo en la screenshot**, esta pantalla sí se entiende en los primeros segundos como una **rama especializada desde Inbox** para revisar un correo tipo recibo. Eso está bastante claro porque el modal dice **“Revisar recibo”**, muestra **asunto, remitente, monto, fecha límite** y termina con una acción fuerte de **“Enviar por WhatsApp”**.
+
+El problema principal no es visual sino de **arquitectura de decisión**: el modal mezcla **tres trabajos distintos** en un solo punto:
+
+1. revisar el correo/recibo,
+2. clasificar su estado (**pagado / ignorado**),
+3. capturar teléfono y disparar WhatsApp.
+
+Eso vuelve difusa la intención real de la pantalla. El usuario puede entender qué ve, pero no necesariamente **qué debe decidir primero**, **qué es opcional**, **qué guarda estado** y **qué acción tiene consecuencias externas**.
+
+Mi juicio general:
+
+* **Como rama útil:** tiene buena base.
+* **Como experiencia ya resuelta:** todavía se siente más cerca de una **interrupción operativa confusa** que de una herramienta especializada poderosa.
+
+---
+
+## 2. Qué funciona bien
+
+### A. La pantalla sí comunica que es un caso especializado
+
+**Hecho visible:** el modal aparece sobre Inbox y no reemplaza toda la aplicación.
+**Por qué ayuda:** mantiene el contexto del flujo principal y sugiere que esto es una excepción o profundización, no el producto entero.
+**Severidad:** baja.
+**Mejora:** mantener esta lógica de “rama contextual”, pero aclarando mucho mejor el objetivo del modal.
+
+### B. La información está fragmentada en bloques comprensibles
+
+**Hecho visible:** asunto/remitente, monto/fecha límite, estado del recibo y teléfono están separados visualmente.
+**Por qué ayuda:** reduce algo de la carga cognitiva y facilita escaneo rápido.
+**Severidad:** baja.
+**Mejora:** conservar esta estructura, pero reordenarla según prioridad de decisión.
+
+### C. La acción primaria y la salida son visibles
+
+**Hecho visible:** “Cancelar” y “Enviar por WhatsApp” están claros en el footer.
+**Por qué ayuda:** el usuario no queda atrapado ni buscando cómo salir.
+**Severidad:** baja.
+**Mejora:** el CTA principal debe seguir siendo claro, pero mejor conectado con el propósito real del modal.
+
+---
+
+## 3. Problemas detectados
+
+# Primero: problemas de arquitectura de decisión
+
+### 1. El modal mezcla revisión, clasificación y envío en una sola superficie
+
+**Hecho visible:** el título dice **“Revisar recibo”**; el cuerpo muestra datos extraídos; luego aparece **“Estado del recibo”** con dos decisiones; y al final se pide teléfono para **enviar por WhatsApp**.
+**Inferencia:** el usuario tiene que entender simultáneamente tres modelos mentales distintos.
+**Por qué afecta la experiencia:** aunque todo cabe visualmente, la pantalla no deja claro cuál es la **decisión principal**. ¿Estoy aquí para revisar? ¿Para registrar estado? ¿Para notificar?
+**Severidad:** alta.
+**Cómo lo mejoraría:** convertirlo en una secuencia explícita dentro del mismo modal:
+
+* **1. Confirmar contexto del recibo**
+* **2. Opcional: registrar estado**
+* **3. Opcional o principal: enviar notificación**
+
+Ahora mismo esas tres capas conviven sin jerarquía narrativa.
+
+### 2. No está clara la relación entre “Marcar como pagado / ignorado” y “Enviar por WhatsApp”
+
+**Hecho visible:** los botones de estado están en el centro del modal, pero no hay texto que explique si son requisito, alternativa o complemento del envío.
+**Riesgo:** el usuario puede pensar cualquiera de estas tres cosas:
+
+* que debe marcar estado antes de enviar,
+* que marcar estado reemplaza el envío,
+* que enviar por WhatsApp cambiará el estado automáticamente.
+  **Por qué afecta la experiencia:** genera duda justo antes de una acción con consecuencias externas.
+  **Severidad:** alta.
+  **Cómo lo mejoraría:** añadir una regla visible. Ejemplos:
+* “Registrar estado es opcional y no envía mensaje”
+* “Enviar por WhatsApp no cambia el estado del recibo”
+* o separar ambos objetivos en dos bloques claramente titulados: **Registrar estado** / **Notificar por WhatsApp**
+
+### 3. Para una pantalla de “revisión”, falta evidencia suficiente para confiar en la decisión
+
+**Hecho visible:** solo se muestran asunto, remitente, monto y fecha límite.
+**Inferencia:** no hay cuerpo del correo, preview del adjunto, motivo de detección, ni fuente de extracción.
+**Por qué afecta la experiencia:** si el usuario necesita “inspeccionar un correo puntual con más contexto”, esta pantalla todavía da **poco contexto** para validar si el recibo fue interpretado correctamente.
+**Severidad:** alta.
+**Cómo lo mejoraría:** agregar al menos uno de estos elementos:
+
+* mini preview del correo o adjunto,
+* texto “Datos extraídos del correo/adjunto”,
+* indicador de confianza o fuente,
+* acción secundaria “Ver correo completo”.
+
+Hoy la pantalla parece más preparada para **operar sobre una extracción** que para **revisar con confianza**.
+
+---
+
+# Segundo: problemas de UI, copy y jerarquía visual
+
+### 4. La jerarquía visual no prioriza del todo la decisión más importante
+
+**Hecho visible:** el bloque de asunto/remitente ocupa bastante protagonismo; monto y fecha quedan como dos tarjetas más pequeñas.
+**Por qué afecta la experiencia:** en un caso de recibo, normalmente **monto y fecha límite** son los datos más decisivos. Aquí visualmente no mandan tanto como deberían.
+**Severidad:** media.
+**Cómo lo mejoraría:** subir la jerarquía de monto y fecha:
+
+* hacerlos el bloque principal,
+* o colocarlos inmediatamente debajo del título como “resumen crítico del recibo”.
+
+### 5. El copy suena interno/operativo más que orientado al usuario
+
+**Hecho visible:** el subtítulo dice: **“Revisa los datos extraídos, captura el teléfono y dispara el WhatsApp manualmente.”**
+**Por qué afecta la experiencia:** “dispara el WhatsApp” suena a lenguaje de implementación, no a una acción de producto clara.
+**Severidad:** media.
+**Cómo lo mejoraría:** usar un copy más natural, por ejemplo:
+
+* “Revisa los datos del recibo y envía una notificación por WhatsApp”
+* o “Confirma la información antes de enviar el mensaje”
+
+### 6. “Sin respuesta registrada” es ambiguo
+
+**Hecho visible:** bajo “Estado del recibo” aparece un chip con **“Sin respuesta registrada”**.
+**Riesgo:** no se entiende de inmediato respuesta de quién:
+
+* ¿del usuario?
+* ¿del sistema?
+* ¿del proveedor?
+* ¿del cliente?
+  **Por qué afecta la experiencia:** introduce una ambigüedad innecesaria en una pantalla que ya tiene varias intenciones.
+  **Severidad:** media.
+  **Cómo lo mejoraría:** renombrar según el modelo real:
+* “Estado no clasificado”
+* “Sin decisión registrada”
+* “Aún no marcado”
+
+### 7. El campo de teléfono no da suficiente confianza para una acción sensible
+
+**Hecho visible:** se ve un número en el input y debajo el texto **“Captura manualmente el teléfono para este envío.”**
+**Inferencia:** no queda claro si el número viene sugerido, si fue escrito por el usuario, si se valida, o si solo es un ejemplo.
+**Por qué afecta la experiencia:** enviar un WhatsApp al número incorrecto es un error costoso.
+**Severidad:** alta.
+**Cómo lo mejoraría:**
+
+* indicar el origen del número, si existe,
+* mostrar validación visible,
+* usar formato local claro,
+* agregar preview del destinatario o confirmación antes de enviar.
+
+### 8. La pantalla no comunica consecuencias ni reversibilidad
+
+**Hecho visible:** no hay señales sobre qué pasa después de marcar “pagado” o “ignorado”, ni si puede deshacerse.
+**Por qué afecta la experiencia:** el usuario puede frenar por miedo a equivocarse o actuar sin entender el impacto.
+**Severidad:** media.
+**Cómo lo mejoraría:** microcopy breve:
+
+* “Puedes cambiar este estado después”
+* “Esto solo organiza el recibo, no envía mensajes”
+* “El envío se hace manualmente al confirmar”
+
+---
+
+# Tercero: problemas de verdad de producto o alcance
+
+### 9. La pantalla promete “revisión de recibo”, pero su centro real parece ser el disparo de WhatsApp
+
+**Hecho visible:** el CTA principal es **“Enviar por WhatsApp”**; no hay CTA equivalente para conservar, organizar o descartar el correo desde este modal.
+**Riesgo:** hay una desalineación entre el contexto descrito del producto y la verdad visible de esta pantalla.
+**Por qué afecta la experiencia:** si esto es un flujo de revisión especializada, el usuario esperaría que la revisión misma sea el corazón. Aquí la revisión parece una preparación para un envío.
+**Severidad:** alta.
+**Cómo lo mejoraría:** decidir qué es esta pantalla de verdad:
+
+* **si es revisión**, el CTA principal debe ser revisar/confirmar/registrar decisión;
+* **si es notificación**, el título y la estructura deben decirlo claramente.
+
+### 10. La rama especializada todavía no demuestra claramente por qué vale la pena salir del flujo rápido de Inbox
+
+**Hecho visible:** el modal tapa la lista y cambia de contexto, pero no enseña un beneficio profundo de análisis más allá de 4–5 datos y un envío manual.
+**Inferencia:** la rama especializada todavía se siente relativamente “ligera” para justificar la interrupción.
+**Por qué afecta la experiencia:** un usuario que limpia inbox rápido solo tolera esta desviación si obtiene **claridad extra real**, no solo otro formulario.
+**Severidad:** media-alta.
+**Cómo lo mejoraría:** dar valor especializado tangible:
+
+* más contexto verificable,
+* mejor soporte para decisión,
+* historial o estado previo,
+* preview del mensaje,
+* explicación de por qué este correo merece tratamiento especial.
+
+---
+
+## 4. Riesgos principales
+
+### Riesgo 1: error de interpretación del objetivo
+
+El usuario puede entrar creyendo que va a **revisar un recibo**, pero descubrir que la pantalla en realidad le pide **clasificar y notificar**.
+
+### Riesgo 2: error operacional
+
+Puede marcar **pagado/ignorado** sin entender el efecto, o enviar un WhatsApp sin suficiente confianza en el número o en la extracción.
+
+### Riesgo 3: abandono por ambigüedad
+
+Si el usuario no entiende si el estado es obligatorio, si el número es confiable, o si el envío cambia algo más, puede simplemente cancelar.
+
+### Riesgo 4: contradicción con la promesa del producto
+
+Si el producto promete ayudar a revisar y limpiar inbox, esta pantalla puede sentirse más como una herramienta interna de operación manual que como una revisión especializada elegante.
+
+---
+
+## 5. Cambios prioritarios
+
+### Prioridad 1
+
+**Separar explícitamente las decisiones dentro del modal.**
+Que el usuario vea una secuencia clara:
+
+* revisar contexto,
+* registrar estado,
+* enviar notificación.
+
+### Prioridad 2
+
+**Aclarar la relación entre estado y envío.**
+Esto hoy es el punto más confuso.
+
+### Prioridad 3
+
+**Agregar más evidencia para confiar en la revisión.**
+Aunque sea una preview corta del correo/adjunto o la fuente de extracción.
+
+### Prioridad 4
+
+**Reescribir el copy para hacerlo menos técnico y menos ambiguo.**
+Especialmente:
+
+* subtítulo,
+* “Sin respuesta registrada”,
+* ayuda del campo de teléfono.
+
+### Prioridad 5
+
+**Reducir riesgo del envío por WhatsApp.**
+Con validación, origen del número, preview o confirmación final.
+
+---
+
+## Respuestas obligatorias adicionales
+
+### 1. ¿Esta herramienta especializada se entiende como una rama útil o como una interrupción confusa del flujo principal?
+
+**Respuesta:** se entiende **parcialmente** como rama útil, pero hoy cae más del lado de **interrupción confusa** porque su propósito no está suficientemente unificado. La estructura visual es ordenada, pero la lógica de decisión no.
+
+### 2. ¿Qué información sobra, falta o compite por atención dentro del modal?
+
+**Sobra o compite:**
+
+* el bloque de asunto/remitente tiene demasiado peso frente a monto/fecha,
+* el bloque de estado compite con el objetivo de envío,
+* el copy explicativo añade operación, no claridad.
+
+**Falta:**
+
+* contexto para confiar en la extracción,
+* relación entre estado y envío,
+* consecuencias de cada acción,
+* validación/origen del teléfono,
+* posible preview del mensaje o del correo.
+
+### 3. ¿Qué rediseño harías para que este caso especializado se sienta poderoso pero no abrumador?
+
+Harías un modal con **3 secciones secuenciales y explícitas**:
+
+**1. Confirmar recibo**
+Asunto, remitente, monto, fecha, mini preview o fuente.
+
+**2. Registrar decisión**
+Estado del recibo con copy claro: “Opcional. Esto no envía mensajes.”
+
+**3. Notificar por WhatsApp**
+Teléfono, validación, preview breve y CTA final.
+
+Eso lo vuelve más poderoso porque da más control, y menos abrumador porque cada bloque tiene una función inequívoca.
+
+---
+
+## 6. Qué no puede validarse sólo con screenshots
+
+No puedo validar solo con esta imagen:
+
+* si el número se autocompleta o se captura manualmente,
+* si “pagado” e “ignorado” guardan al instante o requieren confirmación,
+* si el envío por WhatsApp tiene validación, error, éxito o confirmación,
+* si hay estados incompletos cuando faltan monto o fecha,
+* comportamiento en móvil o responsive,
+* accesibilidad real de foco, teclado y lectura,
+* si el modal permite revisar más contexto del correo antes de actuar,
+* qué pasa al cerrar/cancelar y si se pierde algo.
+
+Modelo usado: GPT-5.4 Thinking. Fue adecuado para este trabajo porque aquí lo importante era análisis crítico estructurado a partir de evidencia visual, no velocidad bruta.
+

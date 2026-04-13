@@ -1,0 +1,56 @@
+Nombre: ReceiptReviewDialog
+Tipo: diálogo modal operativo
+
+Qué hace:
+- Abre la revisión manual de un correo de recibo desde Inbox.
+- Carga contenido completo del email.
+- Extrae monto y fecha límite.
+- Permite capturar teléfono.
+- Permite enviar WhatsApp manualmente.
+- Permite leer y guardar estado manual del recibo (`paid`, `ignore`, `null`).
+
+Para qué sirve:
+- Resolver un flujo manual y específico de seguimiento de recibos sin crear una pantalla separada.
+
+Propósito de producto:
+- Integrar un caso de uso más especializado dentro del flujo principal de inbox.
+- Evitar sacar al usuario a otro contexto para una tarea puntual pero importante.
+
+Qué resuelve:
+- El problema de revisar un recibo, validar datos extraídos y disparar una notificación manual.
+- El problema de registrar respuesta manual del recibo sin flujo paralelo.
+
+Cómo parece pensada:
+- Como una tool surface de alta densidad funcional.
+- Orientada a completar una tarea concreta con feedback explícito y control manual.
+
+Acciones principales:
+- Revisar extracción.
+- Editar/capturar teléfono.
+- Enviar WhatsApp.
+- Marcar respuesta manual del recibo.
+
+Flujo:
+- Se abre desde `InboxPage` al pulsar “Revisar recibo”.
+- Se cierra al completar o cancelar la revisión.
+
+Dependencias:
+- `getEmailContent()`
+- `extractReceipt()`
+- `getReceiptResponse()`
+- `saveReceiptResponse()`
+- `sendReceiptWhatsApp()`
+
+Estados relevantes:
+- Loading de contenido.
+- Error de carga.
+- Loading de extracción.
+- Error de extracción.
+- Estado con datos extraídos.
+- Feedback de envío exitoso.
+- Feedback de validación/red/backend.
+- Estado actual de respuesta manual.
+
+Observaciones UX para experto:
+- Es la surface más compleja del bundle.
+- Merece revisión fuerte de densidad, secuencia, jerarquía de acciones y claridad de estados porque mezcla lectura, validación, comunicación y persistencia.

@@ -1,0 +1,51 @@
+Actúa como un/a UX Writer senior o Content Designer senior.
+
+Voy a compartirte screenshots de una pantalla.
+Quiero una revisión centrada en claridad de textos, labels, microcopy, tono, confianza y capacidad de guiar la acción correcta.
+
+No quiero comentarios genéricos.
+Quiero detectar ambigüedad, ruido, omisiones y textos que no ayudan al usuario a decidir o actuar.
+
+## Contexto
+
+* Producto: [describe producto]
+* Usuario objetivo: [tipo de usuario]
+* Objetivo de esta pantalla: [qué debe lograr]
+* Momento del flujo: [dónde aparece]
+* Restricciones: [si existen]
+
+## Analiza
+
+1. Qué entiende una persona sólo leyendo esta pantalla
+2. Qué textos ayudan y cuáles estorban
+3. Qué labels, botones, títulos o mensajes son ambiguos
+4. Qué información falta para completar la acción con confianza
+5. Qué copy puede dañar comprensión, confianza o conversión
+
+## Para cada problema
+
+* qué texto o patrón observas
+* por qué es un problema
+* qué impacto tendría
+* severidad: alta / media / baja
+* cómo lo reescribirías o corregirías
+
+## Reglas
+
+* Sé específico.
+* No des consejos vagos del tipo “mejorar copy”.
+* Si algo no puede evaluarse sólo con screenshots, dilo.
+* Separa:
+  * hechos visibles
+  * inferencias
+  * riesgos
+  * recomendaciones
+
+## Salida
+
+1. Resumen ejecutivo
+2. Qué funciona bien
+3. Problemas detectados
+4. Riesgos principales
+5. Cambios prioritarios
+6. Qué no puede validarse sólo con screenshots
