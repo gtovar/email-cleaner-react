@@ -17,15 +17,6 @@ describe('SuggestionsList', () => {
       subject: 'Correo de prueba',
       from: 'test@example.com',
       date: new Date('2025-01-01').toISOString(),
-      snippet: 'Resumen corto del correo de prueba para tomar una decision con contexto.',
-      suggestions: [
-        {
-          action: 'archive',
-          classification: 'repeated_low_value',
-          confidence_score: 0.93,
-          reason: 'Remitente recurrente con baja interaccion',
-        },
-      ],
     },
   ];
 
@@ -101,18 +92,8 @@ describe('SuggestionsList', () => {
       ).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Sugerencia')).toBeInTheDocument();
-    expect(screen.getByText('Archivar')).toBeInTheDocument();
-    expect(screen.getByText('Remitente recurrente con baja interaccion')).toBeInTheDocument();
-    expect(screen.getByText('Alta confianza')).toBeInTheDocument();
-    expect(screen.getByText('93%')).toBeInTheDocument();
-    expect(screen.getAllByText('Baja sensibilidad').length).toBeGreaterThan(0);
-    expect(screen.getByText('Resumen corto del correo de prueba para tomar una decision con contexto.')).toBeInTheDocument();
-    expect(
-      screen.getByText('Si apruebas, este correo se archivara y quedara registrado.')
-    ).toBeInTheDocument();
-
-    const acceptButton = screen.getByRole('button', { name: 'Aprobar archivar' });
+    // There must be an "Aceptar" button
+    const acceptButton = screen.getByRole('button', { name: 'Aceptar' });
     fireEvent.click(acceptButton);
 
     await waitFor(() => {
@@ -125,91 +106,5 @@ describe('SuggestionsList', () => {
       },
       { timeout: 2000 }
     );
-  });
-
-  test('shows a generic guided decision when suggestion data is minimal', async () => {
-    const { getSuggestions } = await import('../src/services/api.js');
-    getSuggestions.mockResolvedValueOnce([
-      {
-        id: 'email-2',
-        subject: 'Otro correo',
-        from: 'sender@example.com',
-        date: new Date('2025-02-01').toISOString(),
-      },
-    ]);
-
-    render(<SuggestionsList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Otro correo')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Revisar y decidir')).toBeInTheDocument();
-    expect(
-      screen.getByText('La sugerencia se genero a partir del patron detectado para este correo.')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Si apruebas, se aplicara la accion sugerida y quedara registrada.')
-    ).toBeInTheDocument();
-  });
-
-  test('orders emails by review priority and exposes richer context when expanded', async () => {
-    const { getSuggestions } = await import('../src/services/api.js');
-    getSuggestions.mockResolvedValueOnce([
-      {
-        id: 'email-low',
-        subject: 'Boletin semanal',
-        from: 'boletin@example.com',
-        date: new Date('2025-02-01').toISOString(),
-        snippet: 'Resumen semanal sin tareas pendientes.',
-        suggestions: [
-          {
-            action: 'archive',
-            classification: 'repeated_low_value',
-            confidence_score: 0.92,
-            reason: 'Boletin repetitivo.',
-          },
-        ],
-      },
-      {
-        id: 'email-high',
-        subject: 'Recibo de agua',
-        from: 'billing@example.com',
-        date: new Date('2025-02-02').toISOString(),
-        snippet: 'Recibo con fecha limite y monto detectados.',
-        suggestions: [
-          {
-            action: 'review',
-            classification: 'receipt_manual_review',
-            confidence_score: 0.96,
-            reason: 'Caso especializado que requiere validacion humana.',
-          },
-        ],
-      },
-    ]);
-
-    render(<SuggestionsList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Recibo de agua')).toBeInTheDocument();
-      expect(screen.getByText('Boletin semanal')).toBeInTheDocument();
-    });
-
-    expect(screen.getAllByText('Decision guiada').length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByText('Alta prioridad')).toBeInTheDocument();
-
-    const subjects = screen
-      .getAllByText(/Recibo de agua|Boletin semanal/)
-      .map((node) => node.textContent);
-    expect(subjects[0]).toBe('Recibo de agua');
-
-    fireEvent.click(screen.getAllByRole('button', { name: 'Ver contexto' })[0]);
-
-    await waitFor(() => {
-      expect(screen.getByText('Tipo detectado')).toBeInTheDocument();
-      expect(screen.getByText('Caso especializado de recibo')).toBeInTheDocument();
-      expect(screen.getByText('Prioridad de revision')).toBeInTheDocument();
-      expect(screen.getByText('Evidencia del sistema')).toBeInTheDocument();
-    });
   });
 });

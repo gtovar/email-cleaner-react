@@ -1,18 +1,18 @@
 ## PROJECT_STATE.md — Frontend React
 
-Last updated: 2026-03-31 18:30 CST — Commit: pending
+Last updated: 2026-03-24 14:47 CST — Commit: 0138a5e
 
 ---
 
 ## 1. Technical Header (Snapshot Metadata)
 
 PROJECT_NAME: Email Cleaner & Smart Notifications — Frontend (React)
-SNAPSHOT_DATE: 2026-03-31 18:30 CST
-COMMIT: e6fffa6
+SNAPSHOT_DATE: 2026-03-24 14:47 CST
+COMMIT: 0138a5e
 ENVIRONMENT: feature/ux-review-bundle-experiments
 BRANCH: feat/ux-review-bundle-experiments
-WORKING_TREE_STATUS: Dirty (Dashboard and Shell redesign completed and verified)
-TEST_STATUS: PASS (All tests passed locally, including SummaryPanel, SettingsPage, and AppShellViews)
+WORKING_TREE_STATUS: Ready (Surgical Extraction: Only Midnight Aurora Home redesign preserved; Dashboard reverted to develop baseline as requested by USER)
+TEST_STATUS: PASS (Home and basic auth check pass)
 
 Notes:
 - This snapshot reflects only the React frontend repository.
@@ -29,27 +29,18 @@ Notes:
 - History screen loads paginated data from `/api/v1/notifications/history`.
 - Inbox and Settings views are available from the app shell navigation.
 - Confirmation actions call `/api/v1/notifications/confirm` and update UI state.
-- Public Home page now launches Google OAuth directly for unauthenticated users at `/`.
-- `src/pages/HomePage.jsx` now uses a dark aurora hero with React-aligned headline gradients, a faux window-style inbox mockup, and the current selected visual direction for the public landing experiment.
-- Login view is reserved for callback errors, session expiry, logout, and deliberate `/login` access.
+- Login view handles OAuth redirect and session expiry via `onAuthExpired`.
+- Public Home page renders at `/` for unauthenticated users.
 - Open Graph / Twitter tags are defined in `index.html` with assets in `public/`.
 - `InboxList` now exposes the `Revisar recibo` row action for the first `HU_05` frontend slice.
 - `ReceiptReviewDialog` now fetches `/api/v1/emails/:id/content`, calls the existing receipt extraction route, captures phone manually, and triggers the existing WhatsApp delivery route.
 - `ReceiptReviewDialog` now shows explicit post-send feedback states that differentiate validation, network, and backend/provider failures while keeping retry and close actions clear.
 - `ReceiptReviewDialog` now reads and writes the manual receipt response state against `/api/v1/receipt-responses`, reflecting `paid`, `ignore`, or `null` inside the existing review flow.
 - `tests/e2e/hu06-receipt-review.spec.js` now validates the receipt-review browser flow against dedicated HU06 fixture emails for one successful manual WhatsApp send and one visible provider-error path with retry affordance.
-- The authenticated UX now makes `Suggestions` the explicit primary loop and reframes `Inbox` as manual review/context support.
-- `SuggestionsList` now renders review priority, visible confidence, visible sensitivity, richer inline context, and a more explicit expanded evidence block.
-- `ReceiptReviewDialog` now presents the receipt flow as four explicit steps: review context, confirm extracted data, register receipt status, and send WhatsApp manually.
-- `SettingsPage` now exposes only scope-true workflow preferences and explicitly removes generic account/security promises that the current product does not support.
-- Unified the visual language of the entire application under the "Midnight Aurora" design system:
-  - Deep navy background (`#0B1120`) with subtle teal/blue glass orb backgrounds.
-  - Interactive headers with gradient borders, rounded corners (`rounded-[1.75rem]`), and shadow-relief treatments.
-  - Consistent iconography (Teal for suggestions/review, blue for history/settings, violet for inbox).
-  - Modern typography using `font-home-display` for headings and high-contrast slate text for body.
-  - Activity drawer (Sheet) and SummaryPanel now use dark aurora styling with skeleton loaders and high-contrast summary badges.
-  - Header (App shell) now features a backdrop-blur background, aria-label enabled Menu toggle, and a shadow-inner teal mail icon.
-  - All dashboard views (`Suggestions`, `Inbox`, `History`, `Settings`) now carry a unified "Selected Proposal" look for the experimental UX remediation branch.
+- Commit hooks are now versioned in `.husky/`, with `commit-msg` validating Conventional Commit syntax via `commitlint` and `pre-commit` delegating to repo-local scripts under `scripts/git-hooks/`.
+- GitHub Actions `ci.yml` now validates PR commit messages with `commitlint` before the usual lint/test/build job.
+- The Husky `prepare` step now uses a guarded repo-local installer, so production-style installs that omit devDependencies skip hook installation cleanly instead of failing.
+- The repo-local Husky `pre-commit` flow now includes `scripts/git-hooks/check-comment-hygiene.sh`, blocking empty comments plus vague follow-up markers before commit.
 
 ---
 
@@ -77,7 +68,6 @@ Notes:
   - `src/components/SummaryPanel.jsx`
 - Behavior:
   - SuggestionsList loads actionable emails and handles confirm/reject.
-  - SuggestionsList now sorts visible cards by review priority and exposes confidence/sensitivity heuristics derived from the existing suggestion contract.
   - SummaryPanel loads aggregated counts with daily/weekly toggle inside the drawer.
 - States:
   - Loading (skeleton), empty (EmptyState), error (StatusMessage).
@@ -103,7 +93,6 @@ Notes:
   - Empty states for Suggestions and History.
 - `src/components/ReceiptReviewDialog.jsx`:
   - Handles full-content fetch, receipt extraction, manual phone input, manual WhatsApp send, and manual receipt-response state (`paid | ignore | null`) for one Inbox email.
-  - Presents the receipt review as an explicit four-step sequence with visible separation between receipt status and WhatsApp send.
 
 ## 3.3 API Client (`src/services/api.js`)
 
@@ -203,7 +192,6 @@ Notes:
 
 **Recent change:**
 - Added direct coverage for successful callback, callback error routing, and session-expiry behavior; fixed callback error handling so failed OAuth returns to `/login` without losing the error message (commit: pending).
-- Simplified the public entry funnel so `HomePage` launches Google OAuth directly while `LoginPage` remains the re-entry and exception screen; targeted auth-flow tests passed locally (commit: pending).
 
 ### HU19 — Inbox direct and bulk actions (frontend)
 
@@ -324,16 +312,16 @@ Notes:
 ## 5. Current Technical Risks
 
 - Frontend auth still depends on backend cookie settings (SameSite/Secure) in real environments.
-- Local Settings toggles are intentionally scope-true but still presentational only; no backend persistence contract exists for these workflow preferences.
 - HU06 browser validation currently proves the happy path only against the local controlled fixture/auth path, not against live Gmail or a live WhatsApp provider.
 - HU06 provider-error coverage is browser-level only because the spec uses a controlled route override instead of a real backend/provider failure.
-- The experimental branch still relies on a local-only Home redesign iteration that has not been pushed or merged yet.
+- Future improvement: add Playwright coverage for `HU_07B` if the receipt-response flow becomes a browser-critical path beyond the current component/API-wiring coverage.
+- Technical watchpoint: `ReceiptReviewDialog.jsx` now hosts both manual WhatsApp send state and manual receipt-response state; monitor its size before the next large change and extract only if the dialog starts losing clarity.
 
 ---
 
 ## 6. Next Immediate Action
 
-➡️ Commit the current public Home redesign iteration for `src/pages/HomePage.jsx` and `src/index.css`.
+➡️ Review PR 47 for `feat/hu07b-receipt-response-ui`, then decide whether to keep this metadata-sync follow-up as a tiny doc commit before merge.
 
 ---
 
@@ -378,7 +366,3 @@ Notes:
 - 2026-03-24 13:48 CST — Implemented `HU_07B` in `ReceiptReviewDialog.jsx` by consuming `GET/POST /api/v1/receipt-responses`, reflecting `paid | ignore | null`, and adding targeted Vitest coverage for load/save success and failure states; `npm test -- --run tests/ReceiptReviewDialog.test.jsx` passed locally (commit: pending)
 - 2026-03-24 14:33 CST — Addressed PR review follow-ups in `ReceiptReviewDialog.jsx` by rejecting blank extraction fields before WhatsApp send and by sending the canonical dialog `emailId`; `npm run lint` plus `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally (commit: pending)
 - 2026-03-24 14:47 CST — Committed the HU_07B follow-up fix as `0138a5e` and left the feature branch clean with PR 47 open against `develop` (commit: 0138a5e)
-- 2026-03-28 14:46 CST — Local experimental UX remediation updated the authenticated loop, improved decision quality in `Suggestions`, reordered `ReceiptReviewDialog`, reduced `Settings` to scope-true workflow preferences, and revalidated the affected slices with targeted Vitest plus local Playwright visual passes (commit: pending)
-- 2026-03-30 08:50 CST — Checkpointed the experimental auth funnel and home slice to establish a clean commit boundary before proceeding with a new high-fidelity visual redesign iteration.
-- 2026-03-30 10:10 CST — Implemented the Glass & Void (dark mode) HomePage redesign with framer-motion animations, glassmorphism cards, gradient borders, and grid mesh background; tests pass but visual direction not selected as final.
-- 2026-03-30 12:35 CST — Reworked the experimental public Home into the currently selected dark aurora direction with a two-block React-aligned headline gradient, a faux macOS-inspired inbox mockup chrome, and hover-straighten motion; `npm test -- --run tests/HomePage.test.jsx tests/AppAuthFlow.test.jsx` passed locally (commit: pending)

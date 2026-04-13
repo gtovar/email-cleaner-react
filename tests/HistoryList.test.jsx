@@ -13,7 +13,6 @@ import {
   screen,
   fireEvent,
   waitFor,
-  within,
 } from '@testing-library/react';
 
 import HistoryList from '../src/components/HistoryList.jsx';
@@ -151,21 +150,18 @@ describe('HistoryList', () => {
       expect(screen.getByText('Página 2')).toBeInTheDocument();
     });
 
-    const repeatButton = screen.getByRole('button', { name: 'Volver a aplicar descarte' });
+    // On page 2 there must be a "Repetir acción" button
+    const repeatButton = screen.getByRole('button', { name: 'Repetir acción' });
 
     fireEvent.click(repeatButton);
 
     await waitFor(() => {
-      expect(screen.getByText('¿Volver a aplicar esta decisión?')).toBeInTheDocument();
-    });
-
-    const dialog = screen.getByRole('alertdialog');
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Volver a aplicar descarte' }));
-
-    await waitFor(() => {
       expect(confirmAction).toHaveBeenCalledWith(['email-21'], 'reject');
+
+      // The component builds the message like:
+      // `✅ Acción "reject" repetida para email-21`
       expect(
-        screen.getByText(/Se volvió a aplicar "Descartar sugerencia" para email-21\./)
+        screen.getByText(/Acción "reject" repetida para email-21/)
       ).toBeInTheDocument();
     });
   });

@@ -26,7 +26,7 @@ const DialogContent = forwardRef(function DialogContent({ children, ...props }, 
       <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
-        className="fixed left-1/2 top-1/2 z-50 max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border bg-card p-6 shadow-lg focus:outline-none"
+        className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-card p-6 shadow-lg focus:outline-none"
         {...props}
       >
         {children}
@@ -496,8 +496,7 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
               Revisar recibo
             </DialogPrimitive.Title>
             <DialogPrimitive.Description className="text-sm text-muted-foreground">
-              Sigue esta secuencia: revisa el contexto del correo, valida los datos extraidos,
-              registra el estado si hace falta y envia WhatsApp solo cuando estes seguro.
+              Revisa los datos extraidos, captura el telefono y dispara el WhatsApp manualmente.
             </DialogPrimitive.Description>
           </div>
 
@@ -521,247 +520,163 @@ export default function ReceiptReviewDialog({ open, emailId, onOpenChange }) {
             </div>
           ) : null}
 
-          <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="space-y-4">
-              <section className="space-y-3 rounded-xl border p-4">
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
-                    Paso 1
-                  </p>
-                  <h3 className="text-base font-semibold text-foreground">
-                    Revisa el contexto del correo
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Verifica que este correo realmente corresponda al recibo que vas a tratar.
-                  </p>
-                </div>
+          {emailContent ? (
+            <div className="space-y-3 rounded-lg border p-4">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Asunto</p>
+                <p className="text-sm font-medium text-foreground">
+                  {emailContent.subject || '(Sin asunto)'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Remitente</p>
+                <p className="text-sm text-foreground">{emailContent.from || 'Sin remitente'}</p>
+              </div>
+            </div>
+          ) : null}
 
-                {emailContent ? (
-                  <div className="space-y-3 rounded-lg border bg-background p-4">
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Asunto</p>
-                      <p className="text-sm font-medium text-foreground">
-                        {emailContent.subject || '(Sin asunto)'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Remitente</p>
-                      <p className="text-sm text-foreground">{emailContent.from || 'Sin remitente'}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                        Vista previa del correo
-                      </p>
-                      <div className="rounded-lg border border-border/60 bg-muted/[0.24] p-3 text-sm leading-relaxed text-foreground/85">
-                        {emailContent.body || 'Sin vista previa disponible.'}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="rounded-lg border border-dashed border-border/70 bg-muted/[0.2] p-4 text-sm text-muted-foreground">
-                    Carga el correo para revisar su contexto antes de continuar.
-                  </div>
-                )}
-              </section>
+          {extractionResult ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-lg border p-4">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Monto</p>
+                <p className="text-base font-semibold text-foreground">
+                  {formatAmount(extractionResult.amount)}
+                </p>
+              </div>
+              <div className="rounded-lg border p-4">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Fecha limite</p>
+                <p className="text-base font-semibold text-foreground">
+                  {extractionResult.due_date || 'No disponible'}
+                </p>
+              </div>
+            </div>
+          ) : null}
 
-              <section className="space-y-3 rounded-xl border p-4">
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
-                    Paso 2
-                  </p>
-                  <h3 className="text-base font-semibold text-foreground">
-                    Confirma los datos extraidos
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Usa estos datos como evidencia antes de registrar estado o enviar la notificacion.
-                  </p>
-                </div>
+          {extractionResult && !hasExtractionData ? (
+            <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+              El recibo no esta listo para envio porque falta monto o fecha limite.
+            </div>
+          ) : null}
 
-                {extractionResult ? (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-lg border bg-background p-4">
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Monto</p>
-                      <p className="text-base font-semibold text-foreground">
-                        {formatAmount(extractionResult.amount)}
-                      </p>
-                    </div>
-                    <div className="rounded-lg border bg-background p-4">
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Fecha limite</p>
-                      <p className="text-base font-semibold text-foreground">
-                        {extractionResult.due_date || 'No disponible'}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="rounded-lg border border-dashed border-border/70 bg-muted/[0.2] p-4 text-sm text-muted-foreground">
-                    Todavia no hay datos extraidos para revisar.
-                  </div>
-                )}
-
-                {extractionResult && !hasExtractionData ? (
-                  <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
-                    El recibo no esta listo para envio porque falta monto o fecha limite.
-                  </div>
-                ) : null}
-
-                {showLoadRetry ? (
-                  <div className="flex justify-end">
-                    <Button type="button" onClick={handleRetryLoad} disabled={contentLoading || extractionLoading}>
-                      Reintentar carga
-                    </Button>
-                  </div>
-                ) : null}
-              </section>
+          <div className="space-y-3 rounded-lg border p-4">
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Estado del recibo</p>
+              {receiptResponseLoading ? (
+                <p className="text-sm text-muted-foreground">Cargando estado del recibo...</p>
+              ) : receiptResponseError ? (
+                <p className="text-sm text-destructive">{receiptResponseError}</p>
+              ) : (
+                <>
+                  <span
+                    data-testid="receipt-response-status"
+                    className={`inline-flex rounded-full border px-2.5 py-1 text-sm font-medium ${getReceiptResponseTone(currentResponseValue)}`}
+                  >
+                    {getReceiptResponseLabel(currentResponseValue)}
+                  </span>
+                  {receiptResponseUpdatedAt ? (
+                    <p className="text-xs text-muted-foreground">
+                      Actualizado: {formatResponseUpdatedAt(receiptResponseUpdatedAt)}
+                    </p>
+                  ) : null}
+                </>
+              )}
             </div>
 
-            <div className="space-y-4">
-              <section className="space-y-3 rounded-xl border p-4">
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
-                    Paso 3
-                  </p>
-                  <h3 className="text-base font-semibold text-foreground">
-                    Registra el estado del recibo
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Este registro no envia WhatsApp. Solo guarda el estado manual del caso.
-                  </p>
-                </div>
-
-                <div className="space-y-3 rounded-lg border bg-background p-4">
-                  <div className="space-y-1">
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Estado del recibo</p>
-                    {receiptResponseLoading ? (
-                      <p className="text-sm text-muted-foreground">Cargando estado del recibo...</p>
-                    ) : receiptResponseError ? (
-                      <p className="text-sm text-destructive">{receiptResponseError}</p>
-                    ) : (
-                      <>
-                        <span
-                          data-testid="receipt-response-status"
-                          className={`inline-flex rounded-full border px-2.5 py-1 text-sm font-medium ${getReceiptResponseTone(currentResponseValue)}`}
-                        >
-                          {getReceiptResponseLabel(currentResponseValue)}
-                        </span>
-                        {receiptResponseUpdatedAt ? (
-                          <p className="text-xs text-muted-foreground">
-                            Actualizado: {formatResponseUpdatedAt(receiptResponseUpdatedAt)}
-                          </p>
-                        ) : null}
-                      </>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      variant={currentResponseValue === 'paid' ? 'default' : 'outline'}
-                      disabled={!canSaveReceiptResponse}
-                      onClick={() => handleSaveReceiptResponse('paid')}
-                    >
-                      {receiptResponseSaving && savingResponseValue === 'paid'
-                        ? 'Guardando respuesta...'
-                        : 'Marcar como pagado'}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={currentResponseValue === 'ignore' ? 'default' : 'outline'}
-                      disabled={!canSaveReceiptResponse}
-                      onClick={() => handleSaveReceiptResponse('ignore')}
-                    >
-                      {receiptResponseSaving && savingResponseValue === 'ignore'
-                        ? 'Guardando respuesta...'
-                        : 'Marcar como ignorado'}
-                    </Button>
-                  </div>
-
-                  {receiptResponseFeedbackError ? (
-                    <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-                      {receiptResponseFeedbackError.message}
-                    </div>
-                  ) : null}
-
-                  {receiptResponseFeedbackSuccess ? (
-                    <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
-                      {receiptResponseFeedbackSuccess.message}
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-
-              <section className="space-y-3 rounded-xl border p-4">
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
-                    Paso 4
-                  </p>
-                  <h3 className="text-base font-semibold text-foreground">
-                    Envia WhatsApp manualmente
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Enviar WhatsApp no cambia el estado del recibo. Es una accion separada.
-                  </p>
-                </div>
-
-                <div className="space-y-3 rounded-lg border bg-background p-4">
-                  <div className="space-y-2">
-                    <Label htmlFor={phoneInputId}>Telefono WhatsApp</Label>
-                    <Input
-                      id={phoneInputId}
-                      type="tel"
-                      value={phone}
-                      placeholder="+52 81 1234 5678"
-                      onChange={(event) => setPhone(event.target.value)}
-                      onBlur={() => setPhoneTouched(true)}
-                      disabled={contentLoading || extractionLoading || sendLoading || Boolean(sendSuccess)}
-                    />
-                    {phoneError ? (
-                      <p className="text-sm text-destructive">{phoneError}</p>
-                    ) : (
-                      <p className="text-xs text-muted-foreground">
-                        Captura manualmente el telefono para este envio.
-                      </p>
-                    )}
-                  </div>
-
-                  {sendError ? (
-                    <div
-                      data-testid="receipt-review-feedback"
-                      className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
-                    >
-                      <p className="font-medium">{sendError.title}</p>
-                      <p className="mt-1">{sendError.message}</p>
-                    </div>
-                  ) : null}
-
-                  {sendSuccess ? (
-                    <div
-                      data-testid="receipt-review-feedback"
-                      className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900"
-                    >
-                      <p className="font-medium">{sendSuccess.title}</p>
-                      <p className="mt-1">{sendSuccess.message}</p>
-                    </div>
-                  ) : null}
-
-                  <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      onClick={handleSend}
-                      disabled={!canSend || showLoadRetry}
-                      data-testid="receipt-review-send-button"
-                    >
-                      {sendLoading ? 'Enviando...' : sendError ? 'Reintentar envio' : 'Enviar por WhatsApp'}
-                    </Button>
-                  </div>
-                </div>
-              </section>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant={currentResponseValue === 'paid' ? 'default' : 'outline'}
+                disabled={!canSaveReceiptResponse}
+                onClick={() => handleSaveReceiptResponse('paid')}
+              >
+                {receiptResponseSaving && savingResponseValue === 'paid'
+                  ? 'Guardando respuesta...'
+                  : 'Marcar como pagado'}
+              </Button>
+              <Button
+                type="button"
+                variant={currentResponseValue === 'ignore' ? 'default' : 'outline'}
+                disabled={!canSaveReceiptResponse}
+                onClick={() => handleSaveReceiptResponse('ignore')}
+              >
+                {receiptResponseSaving && savingResponseValue === 'ignore'
+                  ? 'Guardando respuesta...'
+                  : 'Marcar como ignorado'}
+              </Button>
             </div>
+
+            {receiptResponseFeedbackError ? (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                {receiptResponseFeedbackError.message}
+              </div>
+            ) : null}
+
+            {receiptResponseFeedbackSuccess ? (
+              <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
+                {receiptResponseFeedbackSuccess.message}
+              </div>
+            ) : null}
           </div>
 
-          <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
+          <div className="space-y-2">
+            <Label htmlFor={phoneInputId}>Telefono WhatsApp</Label>
+            <Input
+              id={phoneInputId}
+              type="tel"
+              value={phone}
+              placeholder="+52 81 1234 5678"
+              onChange={(event) => setPhone(event.target.value)}
+              onBlur={() => setPhoneTouched(true)}
+              disabled={contentLoading || extractionLoading || sendLoading || Boolean(sendSuccess)}
+            />
+            {phoneError ? (
+              <p className="text-sm text-destructive">{phoneError}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Captura manualmente el telefono para este envio.
+              </p>
+            )}
+          </div>
+
+          {sendError ? (
+            <div
+              data-testid="receipt-review-feedback"
+              className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
+            >
+              <p className="font-medium">{sendError.title}</p>
+              <p className="mt-1">{sendError.message}</p>
+            </div>
+          ) : null}
+
+          {sendSuccess ? (
+            <div
+              data-testid="receipt-review-feedback"
+              className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900"
+            >
+              <p className="font-medium">{sendSuccess.title}</p>
+              <p className="mt-1">{sendSuccess.message}</p>
+            </div>
+          ) : null}
+
+          <div className="flex flex-wrap justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => handleClose(false)}>
               {sendSuccess ? 'Cerrar' : 'Cancelar'}
             </Button>
+
+            {showLoadRetry ? (
+              <Button type="button" onClick={handleRetryLoad} disabled={contentLoading || extractionLoading}>
+                Reintentar carga
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={handleSend}
+                disabled={!canSend}
+                data-testid="receipt-review-send-button"
+              >
+                {sendLoading ? 'Enviando...' : sendError ? 'Reintentar envio' : 'Enviar por WhatsApp'}
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>

@@ -68,21 +68,11 @@ describe('App shell view mounting', () => {
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
-    expect(
-      screen.getByRole('heading', { name: /Cola guiada de decisiones/i })
-    ).toBeInTheDocument();
-    expect(screen.getByText('Empieza aqui')).toBeInTheDocument();
-
     fireEvent.click(screen.getByRole('button', { name: /Inbox/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Bandeja de Entrada/i })).toBeInTheDocument();
-      expect(screen.getByText('Contexto manual')).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          /Usa esta vista cuando necesites leer el correo completo o ejecutar acciones manuales/i
-        )
-      ).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument();
+      expect(screen.getByText('Tus correos recientes en una vista tipo Gmail.')).toBeInTheDocument();
     });
   });
 
@@ -93,17 +83,12 @@ describe('App shell view mounting', () => {
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /Menu/i }));
-    fireEvent.click(screen.getByRole('button', { name: /Ajustes del Workspace/i }));
+    fireEvent.click(screen.getByRole('button', { name: '' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ajustes' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Ajustes de Workflow/i })).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          /Esta pantalla muestra preferencias para el flujo actual de revisión/i
-        )
-      ).toBeInTheDocument();
-      expect(screen.getByText('Gestión de Cuenta')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Ajustes' })).toBeInTheDocument();
+      expect(screen.getByText('Configura tus preferencias de limpieza y seguridad.')).toBeInTheDocument();
     });
   });
 });

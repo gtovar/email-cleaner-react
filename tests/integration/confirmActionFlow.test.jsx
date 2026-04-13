@@ -63,7 +63,7 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
         id: 'email-1',
         subject: 'Prueba HU14',
         snippet: 'Demo de flujo integrado',
-        suggestions: [{ action: 'archive', reason: 'Patrón repetido detectado' }],
+        suggestedAction: 'accept',
       },
     ]);
 
@@ -97,7 +97,8 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       { timeout: 2500 }
     );
 
-    const acceptButton = screen.getByRole('button', { name: 'Aprobar archivar' });
+    // Paso B: el usuario hace clic en "Aceptar"
+    const acceptButton = screen.getByRole('button', { name: 'Aceptar' });
     fireEvent.click(acceptButton);
 
     // Confirmamos que se llamó confirmAction
@@ -125,6 +126,7 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       expect(screen.getByText('email-1')).toBeInTheDocument();
     });
 
+    // Paso D: el usuario hace clic en "Repetir acción" desde el historial
     confirmAction.mockResolvedValueOnce({
       success: true,
       processed: 1,
@@ -132,20 +134,15 @@ describe('Flujo integración: sugerencias → confirmación → historial', () =
       action: 'accept',
     });
 
-    const repeatButton = screen.getByRole('button', { name: 'Volver a aplicar aceptación' });
+    const repeatButton = screen.getByRole('button', { name: 'Repetir acción' });
     fireEvent.click(repeatButton);
 
     await waitFor(() => {
-      expect(screen.getByText('¿Volver a aplicar esta decisión?')).toBeInTheDocument();
-    });
-
-    const dialog = screen.getByRole('alertdialog');
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Volver a aplicar aceptación' }));
-
-    await waitFor(() => {
       expect(confirmAction).toHaveBeenCalledTimes(2);
+
+      // HistoryList usa: `✅ Acción "accept" repetida para email-1`
       expect(
-        screen.getByText(/Se volvió a aplicar "Aceptar sugerencia" para email-1\./)
+        screen.getByText(/Acción "accept" repetida para email-1/)
       ).toBeInTheDocument();
     });
   });

@@ -53,12 +53,11 @@ describe('ConfirmButton', () => {
       <ConfirmButton
         emailId="mail-1"
         action="accept"
-        label="Aprobar sugerencia"
         onSuccess={() => {}}
       />
     );
 
-    const button = screen.getByRole('button', { name: 'Aprobar sugerencia' });
+    const button = screen.getByRole('button', { name: 'Aceptar' });
     expect(button).toBeEnabled();
 
     fireEvent.click(button);
@@ -105,30 +104,14 @@ describe('ConfirmButton', () => {
       <ConfirmButton
         emailId="mail-3"
         action="accept"
-        label="Aprobar sugerencia"
         onSuccess={() => {}}
       />
     );
 
-    const button = screen.getByRole('button', { name: 'Aprobar sugerencia' });
+    const button = screen.getByRole('button', { name: 'Aceptar' });
     fireEvent.click(button);
 
     await waitFor(() => expect(consoleErrorSpy).toHaveBeenCalled());
     expect(button).toBeEnabled();
-  });
-
-  test('uses the provided label instead of the default action label', async () => {
-    confirmAction.mockResolvedValueOnce({});
-
-    render(
-      <ConfirmButton
-        emailId="mail-4"
-        action="accept"
-        label="Aprobar archivo"
-        onSuccess={() => {}}
-      />
-    );
-
-    expect(screen.getByRole('button', { name: 'Aprobar archivo' })).toBeInTheDocument();
   });
 });

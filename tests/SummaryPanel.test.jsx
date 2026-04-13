@@ -31,7 +31,7 @@ describe('SummaryPanel', () => {
 
     render(<SummaryPanel />);
 
-    render(<SummaryPanel />);
+    expect(screen.getByText('Loading summary...')).toBeInTheDocument();
 
     resolveSummary({
       totalSuggestions: 4,
@@ -43,18 +43,15 @@ describe('SummaryPanel', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Sugerencias')).toBeInTheDocument();
-      expect(screen.getAllByText('4').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('archive')).toBeInTheDocument();
-      expect(screen.getAllByText('3').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('accept')).toBeInTheDocument();
-      expect(screen.getAllByText('1').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('bulk')).toBeInTheDocument();
-      expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText('Total suggestions')).toBeInTheDocument();
+      expect(screen.getByText('4')).toBeInTheDocument();
+      expect(screen.getByText('archive: 3')).toBeInTheDocument();
+      expect(screen.getByText('accept: 1')).toBeInTheDocument();
+      expect(screen.getByText('bulk: 2')).toBeInTheDocument();
     });
 
     expect(getSummary).toHaveBeenCalledWith('daily');
-    expect(screen.getAllByText(/Ventana: ultimas 24 horas/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Window: 24 hours')).toBeInTheDocument();
   });
 
   test('switches to weekly and reloads summary', async () => {
@@ -81,21 +78,17 @@ describe('SummaryPanel', () => {
     render(<SummaryPanel />);
 
     await waitFor(() => {
-      expect(screen.getByText('archive')).toBeInTheDocument();
-      expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText('archive: 2')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '7 dias' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Weekly' })[0]);
 
     await waitFor(() => {
       expect(getSummary).toHaveBeenLastCalledWith('weekly');
-      expect(screen.getByText('Ventana: ultimos 7 dias')).toBeInTheDocument();
-      expect(screen.getByText('delete')).toBeInTheDocument();
-      expect(screen.getAllByText('7').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('accept')).toBeInTheDocument();
-      expect(screen.getAllByText('3').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('stale unread')).toBeInTheDocument();
-      expect(screen.getAllByText('7').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText('Window: 7 days')).toBeInTheDocument();
+      expect(screen.getByText('delete: 7')).toBeInTheDocument();
+      expect(screen.getByText('accept: 3')).toBeInTheDocument();
+      expect(screen.getByText('stale_unread: 7')).toBeInTheDocument();
     });
   });
 
@@ -124,9 +117,7 @@ describe('SummaryPanel', () => {
     render(<SummaryPanel />);
 
     await waitFor(() => {
-      expect(screen.getByText('Sin actividad reciente')).toBeInTheDocument();
-      expect(screen.getByText('Sin decisiones registradas')).toBeInTheDocument();
-      expect(screen.getByText('No hay patrones detectados')).toBeInTheDocument();
+      expect(screen.getAllByText('No data').length).toBeGreaterThanOrEqual(3);
     });
   });
 });

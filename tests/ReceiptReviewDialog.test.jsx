@@ -81,12 +81,6 @@ describe('ReceiptReviewDialog', () => {
       body: 'Total a pagar: $350.50. Fecha limite de pago: 2026-03-25.',
       html: null,
     });
-    expect(screen.getByText('Revisa el contexto del correo')).toBeInTheDocument();
-    expect(screen.getByText('Confirma los datos extraidos')).toBeInTheDocument();
-    expect(screen.getByText('Registra el estado del recibo')).toBeInTheDocument();
-    expect(screen.getByText('Envia WhatsApp manualmente')).toBeInTheDocument();
-    expect(screen.getByText('Este registro no envia WhatsApp. Solo guarda el estado manual del caso.')).toBeInTheDocument();
-    expect(screen.getByText('Enviar WhatsApp no cambia el estado del recibo. Es una accion separada.')).toBeInTheDocument();
     expect(screen.getByText('2026-03-25')).toBeInTheDocument();
   });
 
@@ -695,6 +689,9 @@ describe('ReceiptReviewDialog', () => {
     renderDialog();
 
     const ignoreButton = await screen.findByRole('button', { name: 'Marcar como ignorado' });
+    await waitFor(() => {
+      expect(ignoreButton).toBeEnabled();
+    });
     fireEvent.click(ignoreButton);
 
     await waitFor(() => {

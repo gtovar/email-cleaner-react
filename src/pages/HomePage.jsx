@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { motion, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import {
   ArrowRight,
@@ -12,6 +12,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Button } from '../components/ui/button.jsx';
+
+const Motion = motion;
 
 /* ─────────────────────────────── Data ─────────────────────────────── */
 
@@ -87,7 +89,7 @@ function Reveal({ children, className = '', delay = 0, ...rest }) {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <motion.section
+    <Motion.section
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -97,7 +99,7 @@ function Reveal({ children, className = '', delay = 0, ...rest }) {
       {...rest}
     >
       {children}
-    </motion.section>
+    </Motion.section>
   );
 }
 
@@ -127,7 +129,7 @@ function TiltCard({ children, className = '', glowColor }) {
   }, [x, y]);
 
   return (
-    <motion.div
+    <Motion.div
       ref={ref}
       onMouseMove={handleMouse}
       onMouseLeave={handleLeave}
@@ -140,7 +142,7 @@ function TiltCard({ children, className = '', glowColor }) {
         style={{ background: `radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${glowColor || 'rgba(56,189,248,0.06)'}, transparent 40%)` }}
       />
       {children}
-    </motion.div>
+    </Motion.div>
   );
 }
 
@@ -202,7 +204,7 @@ export default function HomePage({ onStart }) {
       <AuroraMesh />
 
       {/* ═══════════════════════ NAV ═══════════════════════ */}
-      <motion.nav
+      <Motion.nav
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -224,7 +226,7 @@ export default function HomePage({ onStart }) {
         >
           Continue with Google
         </Button>
-      </motion.nav>
+      </Motion.nav>
 
       {/* ═══════════════════════ HERO ═══════════════════════ */}
       <header className="relative z-10 px-5 pb-24 pt-12 md:px-8 md:pb-36 md:pt-20">
@@ -232,20 +234,20 @@ export default function HomePage({ onStart }) {
           <div className="grid gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
 
             {/* Left: copy */}
-            <motion.div
+            <Motion.div
               initial="hidden"
               animate="visible"
               variants={stagger}
               className="space-y-8"
             >
-              <motion.div variants={fadeUp} custom={0}>
+              <Motion.div variants={fadeUp} custom={0}>
                 <span className="inline-flex items-center gap-2 rounded-full border border-teal-500/20 bg-teal-500/[0.07] px-3.5 py-1.5 text-xs font-medium text-teal-300">
                   <Zap className="h-3.5 w-3.5" />
                   Review important email before anything happens
                 </span>
-              </motion.div>
+              </Motion.div>
 
-              <motion.h1
+              <Motion.h1
                 variants={fadeUp}
                 custom={1}
                 className="max-w-[15ch] font-home-display text-[3.2rem] font-extrabold leading-[1.05] tracking-[-0.035em] md:text-[4.5rem]"
@@ -256,18 +258,18 @@ export default function HomePage({ onStart }) {
                 <span className="block bg-[linear-gradient(135deg,#99f6e4_0%,#2dd4bf_52%,#14b8a6_100%)] bg-clip-text text-transparent [text-shadow:0_16px_40px_rgba(20,184,166,0.22)]">
                   context, not panic.
                 </span>
-              </motion.h1>
+              </Motion.h1>
 
-              <motion.p
+              <Motion.p
                 variants={fadeUp}
                 custom={2}
                 className="max-w-lg font-home-body text-lg leading-8 text-slate-400"
               >
                 Email Cleaner surfaces the emails that deserve attention, shows why they matter,
                 and keeps the final action in your hands.
-              </motion.p>
+              </Motion.p>
 
-              <motion.div variants={fadeUp} custom={3} className="flex flex-wrap items-center gap-4">
+              <Motion.div variants={fadeUp} custom={3} className="flex flex-wrap items-center gap-4">
                 <Button
                   type="button"
                   onClick={onStart}
@@ -288,11 +290,11 @@ export default function HomePage({ onStart }) {
                 >
                   See how the review works
                 </Button>
-              </motion.div>
-            </motion.div>
+              </Motion.div>
+            </Motion.div>
 
             {/* Right: suggestion board preview */}
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, y: 40, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 1, delay: 0.25, ease }}
@@ -306,7 +308,7 @@ export default function HomePage({ onStart }) {
                 style={{ background: `radial-gradient(400px circle at ${mousePos.x} ${mousePos.y}, rgba(56,189,248,0.12), transparent 60%)` }}
               />
 
-              <motion.div
+              <Motion.div
                 initial={{ rotate: 2.5, y: 8, scale: 0.985 }}
                 animate={{ rotate: 2.5, y: 8, scale: 0.985 }}
                 whileHover={{ rotate: 0, y: 0, scale: 1 }}
@@ -357,7 +359,7 @@ export default function HomePage({ onStart }) {
                 {/* Rows */}
                 <div className="space-y-2.5">
                   {previewRows.map((row, i) => (
-                    <motion.div
+                    <Motion.div
                       key={row.subject}
                       initial={{ opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -372,7 +374,7 @@ export default function HomePage({ onStart }) {
                         <span className={`h-1.5 w-1.5 rounded-full ${row.dot}`} />
                         <span className="text-[11px] font-medium text-slate-500">{row.tag}</span>
                       </div>
-                    </motion.div>
+                    </Motion.div>
                   ))}
                 </div>
 
@@ -388,8 +390,8 @@ export default function HomePage({ onStart }) {
                 </div>
                 </div>
               </div>
-              </motion.div>
-            </motion.div>
+              </Motion.div>
+            </Motion.div>
           </div>
         </div>
       </header>
@@ -410,7 +412,7 @@ export default function HomePage({ onStart }) {
             </p>
           </div>
 
-          <motion.div
+          <Motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-60px' }}
@@ -420,7 +422,7 @@ export default function HomePage({ onStart }) {
             {principles.map((p, i) => {
               const Icon = p.icon;
               return (
-                <motion.div key={p.title} variants={fadeUp} custom={i}>
+                <Motion.div key={p.title} variants={fadeUp} custom={i}>
                   <TiltCard
                     className="group relative h-full rounded-[1.25rem] border border-white/[0.06] bg-white/[0.02] p-7 backdrop-blur-sm transition-colors hover:border-white/[0.1]"
                     glowColor={p.glow}
@@ -433,10 +435,10 @@ export default function HomePage({ onStart }) {
                       <p className="mt-3 font-home-body text-sm leading-7 text-slate-500">{p.body}</p>
                     </div>
                   </TiltCard>
-                </motion.div>
+                </Motion.div>
               );
             })}
-          </motion.div>
+          </Motion.div>
         </div>
       </Reveal>
 
@@ -459,7 +461,7 @@ export default function HomePage({ onStart }) {
                 </p>
               </div>
 
-              <motion.div
+              <Motion.div
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: '-40px' }}
@@ -469,7 +471,7 @@ export default function HomePage({ onStart }) {
                 {steps.map((s, i) => {
                   const StepIcon = s.icon;
                   return (
-                    <motion.div
+                    <Motion.div
                       key={s.n}
                       variants={fadeUp}
                       custom={i}
@@ -482,10 +484,10 @@ export default function HomePage({ onStart }) {
                         <StepIcon className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" aria-hidden="true" />
                         <p className="font-home-body text-sm leading-7 text-slate-400">{s.label}</p>
                       </div>
-                    </motion.div>
+                    </Motion.div>
                   );
                 })}
-              </motion.div>
+              </Motion.div>
             </div>
           </div>
         </div>

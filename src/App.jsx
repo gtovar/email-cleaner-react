@@ -22,8 +22,7 @@ function App() {
   const callbackHandledRef = useRef(false);
   const authStatusRef = useRef('checking');
   const isAuthenticated = authStatus === 'authenticated';
-  const showNav = isAuthenticated && 
-    !location.pathname.startsWith('/login');
+  const isHomeView = activeView === 'home';
 
   useEffect(() => {
     authStatusRef.current = authStatus;
@@ -128,8 +127,6 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [authStatus, resolvePublicView]);
 
-  const isHomeView = activeView === 'home';
-
   const handleLogin = () => {
     setAuthMessage(null);
     window.location.href = `${API_ORIGIN}/auth/google`;
@@ -152,26 +149,21 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100">
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-[#0B1120]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.08),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.06),transparent_40%)]" />
-      </div>
-
+    <div className="min-h-screen bg-background">
       <Toaster position="bottom-center" richColors />
       {isAuthenticated && (
-        <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0B1120]/80 backdrop-blur-md">
+        <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
           <div className="container flex flex-wrap items-center justify-between gap-3 py-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-teal-500/20 bg-teal-500/10 text-teal-400 shadow-inner">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <Mail className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="font-home-display text-lg font-bold tracking-tight text-slate-100">
+                <h1 className="text-lg font-semibold tracking-tight text-foreground">
                   Email Cleaner
                 </h1>
-                <p className="text-[11px] font-medium uppercase tracking-[0.05em] text-slate-500">
-                  Loop de decisiones guiadas
+                <p className="text-xs text-muted-foreground">
+                  Mantén tu inbox limpio sin perder correos importantes.
                 </p>
               </div>
             </div>
@@ -180,8 +172,6 @@ function App() {
               <Button
                 variant="outline"
                 size="sm"
-                aria-label="Menu"
-                className="h-9 w-9 rounded-xl border-white/[0.06] bg-white/[0.02] p-0 text-slate-400 hover:bg-white/[0.08] hover:text-white"
                 onClick={() => setActivityOpen((prev) => !prev)}
                 aria-expanded={activityOpen}
                 aria-controls="activity-panel"
@@ -192,7 +182,6 @@ function App() {
           </div>
         </header>
       )}
-
 
       <main>
         {authStatus === 'checking' && (

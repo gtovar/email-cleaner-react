@@ -1,16 +1,28 @@
 import { useState } from 'react';
-import { AlertCircle, Eye, Loader2, Mail, Shield } from 'lucide-react';
+import {
+  AlertCircle,
+  ChevronDown,
+  Eye,
+  Loader2,
+  LogOut,
+  Mail,
+  Shield,
+  Trash2,
+} from 'lucide-react';
 import { Button } from '../components/ui/button.jsx';
 import { Card, CardContent } from '../components/ui/card.jsx';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '../components/ui/collapsible.jsx';
+import { cn } from '../lib/utils.js';
 
 export default function LoginPage({ onLogin, message }) {
   const [isLoading, setIsLoading] = useState(false);
-  const messageType = typeof message === 'object' ? message?.type : message ? 'error' : null;
-  const messageText = typeof message === 'object' ? message?.text : message;
-  const messageStyles =
-    messageType === 'error'
-      ? 'border-destructive/20 bg-destructive/10 text-destructive'
-      : 'border-primary/20 bg-primary/10 text-foreground';
+  const [showDetails, setShowDetails] = useState(false);
+  const messageText = typeof message === 'string' ? message : message?.text;
+  const messageTone = typeof message === 'object' && message ? message.type : 'error';
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
@@ -27,31 +39,20 @@ export default function LoginPage({ onLogin, message }) {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Email Cleaner
           </h1>
-          <p className="mx-auto max-w-sm text-base text-muted-foreground">
-            Reopen your workspace, retry Google sign-in, or review the flow again before continuing.
+          <p className="mx-auto max-w-xs text-base text-muted-foreground">
+            Reclaim your inbox. We'll help you find emails to clean up - safely.
           </p>
         </div>
 
         <Card className="border-border/60 shadow-sm">
           <CardContent className="space-y-6 p-6">
-            <div className="rounded-xl border border-border/70 bg-muted/30 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
-                When this screen appears
-              </p>
-              <ul className="mt-3 space-y-2 text-sm text-foreground">
-                <li>You are reopening the workspace after logout, expiry, or a sign-in issue.</li>
-                <li>Google sign-in still takes you into the same review-first workspace.</li>
-                <li>Sensitive actions stay under your control after sign-in succeeds.</li>
-              </ul>
-            </div>
-
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 flex-shrink-0">
                   <Eye className="h-4 w-4 text-primary" aria-hidden="true" />
                 </div>
                 <p className="text-sm text-foreground">
-                  Review emails with context before acting.
+                  We only read email metadata to suggest cleanup actions
                 </p>
               </div>
               <div className="flex items-start gap-3">
@@ -59,18 +60,36 @@ export default function LoginPage({ onLogin, message }) {
                   <Shield className="h-4 w-4 text-primary" aria-hidden="true" />
                 </div>
                 <p className="text-sm text-foreground">
-                  Sensitive actions stay under your control.
+                  Nothing is deleted without your confirmation
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex-shrink-0">
+                  <LogOut className="h-4 w-4 text-primary" aria-hidden="true" />
+                </div>
+                <p className="text-sm text-foreground">
+                  You can disconnect at any time
                 </p>
               </div>
             </div>
 
             {messageText && (
-              <div className={`flex items-start gap-3 rounded-lg border p-3 ${messageStyles}`}>
+              <div
+                className={`flex items-start gap-3 rounded-lg border p-3 ${
+                  messageTone === 'info'
+                    ? 'border-primary/20 bg-primary/10'
+                    : 'border-destructive/20 bg-destructive/10'
+                }`}
+              >
                 <AlertCircle
-                  className={`mt-0.5 h-4 w-4 flex-shrink-0 ${messageType === 'error' ? 'text-destructive' : 'text-primary'}`}
+                  className={`mt-0.5 h-4 w-4 flex-shrink-0 ${
+                    messageTone === 'info' ? 'text-primary' : 'text-destructive'
+                  }`}
                   aria-hidden="true"
                 />
-                <p className="text-sm">{messageText}</p>
+                <p className={`text-sm ${messageTone === 'info' ? 'text-foreground' : 'text-destructive'}`}>
+                  {messageText}
+                </p>
               </div>
             )}
 
@@ -110,28 +129,71 @@ export default function LoginPage({ onLogin, message }) {
               )}
             </Button>
 
-            <p className="text-center text-sm text-muted-foreground">
-              Continue with Google to reopen the review workspace.
-            </p>
+            <Collapsible open={showDetails} onOpenChange={setShowDetails}>
+              <CollapsibleTrigger asChild>
+                <button className="mx-auto flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <span>How it works</span>
+                  <ChevronDown
+                    className={cn(
+                      'h-4 w-4 transition-transform duration-200',
+                      showDetails && 'rotate-180'
+                    )}
+                    aria-hidden="true"
+                  />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-4">
+                <div className="space-y-4 rounded-lg border border-border/40 bg-muted/50 p-4">
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-medium text-foreground">What we do</h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span className="mt-1 text-primary">•</span>
+                        <span>Scan your inbox for newsletters, promotions, and old emails</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="mt-1 text-primary">•</span>
+                        <span>Show you suggestions based on sender patterns</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="mt-1 text-primary">•</span>
+                        <span>Let you approve or reject each suggestion individually</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-medium text-foreground">What we never do</h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <Trash2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-destructive/70" aria-hidden="true" />
+                        <span>Delete emails without your explicit approval</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Trash2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-destructive/70" aria-hidden="true" />
+                        <span>Read the content of your emails - only metadata</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Trash2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-destructive/70" aria-hidden="true" />
+                        <span>Share or sell your data to anyone</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </Card>
 
         <p className="text-center text-xs text-muted-foreground">
-          Want the full picture first? Review{' '}
-          <a
-            href="/#how-it-works"
-            className="underline underline-offset-2 transition-colors hover:text-foreground"
-          >
-            how the flow works
+          By continuing, you agree to our{' '}
+          <a href="#" className="underline underline-offset-2 transition-colors hover:text-foreground">
+            Terms of Service
           </a>{' '}
           and{' '}
-          <a
-            href="/#trust-principles"
-            className="underline underline-offset-2 transition-colors hover:text-foreground"
-          >
-            what stays under your control
+          <a href="#" className="underline underline-offset-2 transition-colors hover:text-foreground">
+            Privacy Policy
           </a>
-          .
         </p>
       </div>
     </div>
