@@ -207,3 +207,8 @@ Frontend: yes
 ## 2026-03-24 — HU_07B review follow-ups fixed
 - Hardened `ReceiptReviewDialog.jsx` so blank extraction fields no longer enable WhatsApp send, and the send payload now uses the canonical dialog `emailId`.
 - Added regression coverage in `tests/ReceiptReviewDialog.test.jsx`; `npm run lint` and `npm test -- --run tests/ReceiptReviewDialog.test.jsx tests/InboxList.test.jsx` passed locally.
+
+## 2026-04-13 — UX bundle PR published
+- Pushed `feat/ux-review-bundle-experiments` to `origin` and opened PR 48 against `develop`.
+- Synced the React checkpoint docs to the current branch and commit.
+- Verified `npm run lint`, `npm test -- --run`, `npm run build`, and `npm run lint:docs` with `nvm use --lts`.
